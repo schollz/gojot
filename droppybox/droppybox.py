@@ -223,9 +223,6 @@ def main():
     sync_up(config['server'])
     clean_up()
 
-main()
-
-
 #
 
 #
