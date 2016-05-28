@@ -53,12 +53,9 @@ def sync_down(server):
         print("Downloading...")
         cmd = "rsync --ignore-errors -arq --update %s:.droppybox/ %s/" % (
             server, os.path.join(DATA_PATH, '.droppybox'))
-        print(cmd)
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
-        print(stdout)
-        print(nothing)
 
 
 def sync_up(server):
@@ -67,12 +64,9 @@ def sync_up(server):
         print("Uploading...")
         cmd = "rsync --ignore-errors -arq --update %s/ %s:.droppybox/" % (
             os.path.join(DATA_PATH, '.droppybox'), server)
-        print(cmd)
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
-        print(stdout)
-        print(nothing)
 
 
 def is_encrypted(dfile):
@@ -139,7 +133,6 @@ def set_up():
         with open(os.path.join(DATA_PATH, '.droppybox', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
-    print(config)
     if args.local == True:
         config['server'] = None
     return {'server': config['server'], 'file': config['files'][0]}
@@ -150,7 +143,6 @@ def main(args=None):
     check_prereqs()
     config = set_up()
     clean_up()
-    print(config)
 
     # If encrypted, do the decryption
     if is_encrypted(config['file']):
@@ -194,8 +186,11 @@ def main(args=None):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
     diffFile = config['file'] + '.' + str(hashlib.sha224(output).hexdigest())
-    with open(os.path.join(DATA_PATH, '.droppybox', 'temp_diff'), 'w') as f:
-        f.write(output.decode())
+    if len(output) > 1:
+        with open(os.path.join(DATA_PATH, '.droppybox', 'temp_diff'), 'w') as f:
+            f.write(output.decode())
+    else:
+        diffFile = ""
 
     # Encrypt main file
     if password == None:
@@ -211,17 +206,18 @@ def main(args=None):
         sys.exit(1)
 
     # Encrypt diff file
-    if password == None:
-        password = getpass.getpass(prompt='Enter password: ')
-    cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-        password, os.path.join(DATA_PATH, '.droppybox', 'diffs', diffFile), os.path.join(DATA_PATH, '.droppybox', 'temp_diff'))
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    output, error = process.communicate()
-    if len(error) > 0:
-        print(error)
-        clean_up()
-        sys.exit(1)
+    if len(diffFile) > 0:
+        if password == None:
+            password = getpass.getpass(prompt='Enter password: ')
+        cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
+            password, os.path.join(DATA_PATH, '.droppybox', 'diffs', diffFile), os.path.join(DATA_PATH, '.droppybox', 'temp_diff'))
+        process = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output, error = process.communicate()
+        if len(error) > 0:
+            print(error)
+            clean_up()
+            sys.exit(1)
 
     # overwrite the main file
     os.system('mv %s %s' % (os.path.join(DATA_PATH, '.droppybox', 'temp2'),
