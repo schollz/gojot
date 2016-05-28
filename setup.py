@@ -8,5 +8,6 @@ setup(
     url='',
     license='MIT',
     packages=['droppybox'],
-    entry_points={'console_scripts': ['droppybox = droppybox', ], },
+    entry_points={'console_scripts': [
+        'droppybox = droppybox.__main__:main', ], },
 )
