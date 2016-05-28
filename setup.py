@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
     name='droppybox',
-    version='0.103',
+    version='0.12',
     description='A simple wrapper to produce a GPG-protected, distributed journal log',
     author='schollz',
-    url='',
+    url='https://github.com/schollz/droppybox',
     license='MIT',
     packages=['droppybox'],
     entry_points={'console_scripts': [
-        'droppybox = droppybox.__main__:main', ], },
+        'z = droppybox.__main__:main', ], },
 )

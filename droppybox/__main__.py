@@ -92,7 +92,7 @@ def is_encrypted(dfile):
 def set_up():
     server = None
     syncedUp = False
-    parser = argparse.ArgumentParser(prog='PROG')
+    parser = argparse.ArgumentParser(prog='droppybox')
     parser.add_argument("-l", "--local", help="work locally",
                         action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
