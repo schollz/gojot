@@ -16,7 +16,7 @@ in a server that will host copies for multiple computers to work on.
 # Install
 
 ```bash
-python3 setup.py install --record files.txt
+git clone https://github.com/schollz/droppybox.git && cd droppybox && sudo python3 setup.py install --record files.txt
 ```
 
 # Uninstall
