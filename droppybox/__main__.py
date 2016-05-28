@@ -164,6 +164,13 @@ def main(args=None):
             output, error = process.communicate()
             if len(error) == 0:
                 passwordNotAccepted = False
+    else:
+        # Copy file to temp if not encrypted
+        cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.droppybox', config['file']), os.path.join(
+            DATA_PATH, '.droppybox', 'temp'))
+        process = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output, error = process.communicate()
 
     # Copy file for diffing
     cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.droppybox', 'temp'), os.path.join(
