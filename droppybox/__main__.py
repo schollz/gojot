@@ -94,6 +94,8 @@ def set_up():
     server = None
     syncedUp = False
     parser = argparse.ArgumentParser(prog='droppybox')
+    parser.add_argument("-ls", "--list", help="list available files",
+                        action="store_true")
     parser.add_argument("-l", "--local", help="work locally",
                         action="store_true")
     parser.add_argument("-e", "--edit", help="edit full document",
@@ -116,6 +118,13 @@ def set_up():
         os.system('python3 setup.py install')
         os.chdir('../')
         os.system('rm -rf droppybox')
+        sys.exit(1)
+
+    if args.list:
+        os.chdir(os.path.join(DATA_PATH, '.droppybox'))
+        print("\nAvailable files:")
+        os.system(
+            'ls -lSht | grep -v config.json | grep -v diffs | grep -v "total "')
         sys.exit(1)
 
         # Try to download config.json if doesn't exist

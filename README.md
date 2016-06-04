@@ -29,13 +29,15 @@ cat files.txt | xargs rm -rf
 
 ```
 $ z --help
-usage: droppybox [-h] [-l] [-e] [newfile]
+usage: droppybox [-h] [-ls] [-l] [-e] [-u] [newfile]
 
 positional arguments:
-  newfile      work on a new file
+  newfile       work on a new file
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -l, --local  work locally
-  -e, --edit   edit full document
+  -h, --help    show this help message and exit
+  -ls, --list   list available files
+  -l, --local   work locally
+  -e, --edit    edit full document
+  -u, --update  update droppybox
 ```
