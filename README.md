@@ -26,7 +26,13 @@ $ sdees
 Enter passphrase: *******
 ```
 
-One command instead of 6. One password instead of 3. `sdees` also has lite version control - it keeps track of diffs (encrypted) so that every change could be recapitulated.
+One command instead of 6. One password instead of 3.
+
+`sdees` also has cute features like:
+
+* lite version control - it keeps track of diffs (encrypted)
+* automatic date time (turn off with `--nodate`)
+* list available files
 
 # Requirements
 

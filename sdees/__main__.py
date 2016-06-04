@@ -19,6 +19,7 @@ except:
     pass  # user is using as script
 
 REMOTE_SERVER = "www.google.com"
+VIM_COMMAND = "vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert'"
 DATA_PATH = os.path.expanduser('~')
 
 
@@ -102,6 +103,7 @@ def set_up():
                         action="store_true")
     parser.add_argument("-e", "--edit", help="edit full document",
                         action="store_true")
+    parser.add_argument('--editor', help='change editor')
     parser.add_argument("-u", "--update", help="update sdees",
                         action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
@@ -146,13 +148,23 @@ def set_up():
             newfile = input("Enter a new file name: ")
         files = []
         files.append(newfile)
-        config = {"server": server, "files": files}
+        config = {"server": server, "files": files, "editor": VIM_COMMAND}
         with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     # Load config
     config = json.load(
         open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'r'))
+
+    if 'editor' not in config:
+        config['editor'] = VIM_COMMAND
+    if args.editor != None:
+        print("Editor changed to %s" % args.editor)
+        config['editor'] = args.editor
+        if 'vim' == args.editor:
+            config['editor'] = VIM_COMMAND
+        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
+            f.write(json.dumps(config, indent=2))
 
     if not syncedUp and args.local == False:
         sync_down(config['server'])
@@ -169,7 +181,7 @@ def set_up():
 
     if args.local == True:
         config['server'] = None
-    return args, {'server': config['server'], 'file': config['files'][0]}
+    return args, {'server': config['server'], 'file': config['files'][0], 'editor': config['editor']}
 
 
 def main(args=None):
@@ -213,16 +225,16 @@ def main(args=None):
         # Add new entry directly to the file
         with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
             f.write("\n\n" + timeString)
-        # Open it in VIM to write
-        os.system("vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert' %s" %
-                  os.path.join(DATA_PATH, '.sdees', 'temp'))
+        # Open it in editor to write
+        os.system("%s %s" % (config['editor'],
+                             os.path.join(DATA_PATH, '.sdees', 'temp')))
     else:
         # Add new entry in a seperate file
         with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'a') as f:
             f.write(timeString)
-        # Open it in VIM to write
-        os.system("vim +100000000 +WP -c 'cal cursor(1,5000)' -c 'startinsert' %s" %
-                  os.path.join(DATA_PATH, '.sdees', 'tempEntry'))
+        # Open it in editor to write
+        os.system("%s %s" % (config['editor'],
+                             os.path.join(DATA_PATH, '.sdees', 'tempEntry')))
         # append the entry to the file
         with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
             with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'r') as f2:
