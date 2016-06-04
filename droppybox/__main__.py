@@ -10,6 +10,13 @@ import hashlib
 import argparse
 import getpass
 import subprocess
+from pkg_resources import get_distribution
+
+__version__ = "script"
+try:
+    __version__ = get_distribution('droppybox').version
+except:
+    pass  # user is using as script
 
 REMOTE_SERVER = "www.google.com"
 DATA_PATH = os.path.expanduser('~')
@@ -155,6 +162,7 @@ def set_up():
 
 
 def main(args=None):
+    print("droppybox, version " + __version__)
     password = None
     check_prereqs()
     args, config = set_up()
@@ -204,7 +212,11 @@ def main(args=None):
         # append the entry to the file
         with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
             with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'r') as f2:
-                f.write("\n\n" + f2.read())
+                tempEntry = f2.read()
+                if len(tempEntry) < 20:
+                    print("No data appended.")
+                else:
+                    f.write("\n\n" + tempEntry)
 
     # Write a diff
     cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.droppybox',
