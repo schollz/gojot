@@ -45,6 +45,12 @@ in a server that will host copies for multiple computers to work on.
 git clone https://github.com/schollz/sdees.git && cd sdees && sudo python3 setup.py install --record files.txt
 ```
 
+Once installed, you can update with
+
+```bash
+sdees --update
+```
+
 # Uninstall
 
 ```bash
@@ -55,7 +61,8 @@ cat files.txt | xargs rm -rf
 
 ```
 $ sdees --help
-usage: sdees [-h] [-ls] [-l] [-e] [-u] [newfile]
+sdees, version 0.X
+usage: sdees [-h] [-ls] [-l] [-n] [-e] [-u] [newfile]
 
 positional arguments:
   newfile       work on a new file
@@ -64,6 +71,7 @@ optional arguments:
   -h, --help    show this help message and exit
   -ls, --list   list available files
   -l, --local   work locally
+  -n, --nodate  don't add date
   -e, --edit    edit full document
-  -u, --update  update droppybox
+  -u, --update  update sdees
 ```

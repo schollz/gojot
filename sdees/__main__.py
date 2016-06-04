@@ -57,7 +57,7 @@ def check_prereqs():
 
 def sync_down(server):
     if is_connected() and server != None:
-        print("Downloading...")
+        print("Syncing down...")
         cmd = "rsync --ignore-errors -arq --update %s:.sdees/ %s/" % (
             server, os.path.join(DATA_PATH, '.sdees'))
         rsync = subprocess.Popen(
@@ -68,7 +68,7 @@ def sync_down(server):
 def sync_up(server):
     clean_up()
     if is_connected() and server != None:
-        print("Uploading...")
+        print("Syncing up...")
         cmd = "rsync --ignore-errors -arq --update %s/ %s:.sdees/" % (
             os.path.join(DATA_PATH, '.sdees'), server)
         rsync = subprocess.Popen(
@@ -97,6 +97,8 @@ def set_up():
     parser.add_argument("-ls", "--list", help="list available files",
                         action="store_true")
     parser.add_argument("-l", "--local", help="work locally",
+                        action="store_true")
+    parser.add_argument("-n", "--nodate", help="don't add date",
                         action="store_true")
     parser.add_argument("-e", "--edit", help="edit full document",
                         action="store_true")
@@ -204,17 +206,20 @@ def main(args=None):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
 
+    timeString = time.strftime("%Y-%m-%d %H:%M  ")
+    if args.nodate:
+        timeString = ""
     if args.edit:
         # Add new entry directly to the file
         with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
-            f.write(time.strftime("\n\n%Y-%m-%d %H:%M  "))
+            f.write("\n\n" + timeString)
         # Open it in VIM to write
         os.system("vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert' %s" %
                   os.path.join(DATA_PATH, '.sdees', 'temp'))
     else:
         # Add new entry in a seperate file
         with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'a') as f:
-            f.write(time.strftime("%Y-%m-%d %H:%M  "))
+            f.write(timeString)
         # Open it in VIM to write
         os.system("vim +100000000 +WP -c 'cal cursor(1,5000)' -c 'startinsert' %s" %
                   os.path.join(DATA_PATH, '.sdees', 'tempEntry'))
