@@ -213,7 +213,7 @@ def main(args=None):
         with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
             with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'r') as f2:
                 tempEntry = f2.read()
-                if len(tempEntry) < 20:
+                if len(tempEntry) < 22:
                     print("No data appended.")
                 else:
                     f.write("\n\n" + tempEntry)
