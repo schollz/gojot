@@ -103,6 +103,9 @@ def set_up():
     # Try to download config.json if doesn't exist
     if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'config.json')):
         server = input("Enter host@server (make sure to ssh-copy-id first): ")
+        dnsaddress = server.split('@')[1]
+        address = socket.gethostbyname(dnsaddress)
+        server = server.replace(dnsaddress, address)
         if args.local == False:
             sync_down(server)
             syncedUp = True
