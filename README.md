@@ -1,4 +1,4 @@
-# sdees
+![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
 A simple Python3 wrapper to **sync** a remote file, **decrypt** it, **edit** with vim, **encrypt** it, then **sync** it back.
 
