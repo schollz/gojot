@@ -38,13 +38,8 @@ One command instead of 6. One password instead of 3.
 # Requirements
 
 - Python3.4+
-- `gpg`, `rsync`
+- `gpg`, `rsync`, `git`, `vim` or equivalent
 - Have `someserver` that you already ran `ssh-copy-id someuser@someserver`
-
-# What does it do?
-
-You can easily edit encrypted text files and store all the changes and keep the changes
-in a server that will host copies for multiple computers to work on.
 
 # Install
 
