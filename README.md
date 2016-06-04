@@ -33,6 +33,7 @@ One command instead of 6. One password instead of 3.
 * lite version control - it keeps track of diffs (encrypted)
 * automatic date time (turn off with `--nodate`)
 * list available files
+* everything is always available locally (in `~/.sdees/`) accessed with `-l`
 
 # Requirements
 
@@ -68,16 +69,17 @@ cat files.txt | xargs rm -rf
 ```
 $ sdees --help
 sdees, version 0.X
-usage: sdees [-h] [-ls] [-l] [-n] [-e] [-u] [newfile]
+usage: sdees [-h] [-ls] [-l] [-n] [-e] [--editor EDITOR] [-u] [newfile]
 
 positional arguments:
-  newfile       work on a new file
+  newfile          work on a new file
 
 optional arguments:
-  -h, --help    show this help message and exit
-  -ls, --list   list available files
-  -l, --local   work locally
-  -n, --nodate  don't add date
-  -e, --edit    edit full document
-  -u, --update  update sdees
+  -h, --help       show this help message and exit
+  -ls, --list      list available files
+  -l, --local      work locally
+  -n, --nodate     don't add date
+  -e, --edit       edit full document
+  --editor EDITOR  change editor
+  -u, --update     update sdees
 ```

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='sdees',
-    version='0.162',
+    version='0.164',
     description='A simple wrapper to use VIM to edit GPG-protected, remotely stored files',
     author='schollz',
     url='https://github.com/schollz/sdees',
