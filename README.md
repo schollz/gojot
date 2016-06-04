@@ -61,6 +61,14 @@ cat files.txt | xargs rm -rf
 
 # Usage
 
+Start a new file with
+
+```bash
+$ sdees somefile.txt
+```
+
+More information:
+
 ```
 $ sdees --help
 sdees, version 0.X
