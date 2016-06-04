@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(
-    name='droppybox',
+    name='gpgcloudvim',
     version='0.14',
-    description='A simple wrapper to produce a GPG-protected, distributed journal log',
+    description='A simple wrapper to edit GPG-protected, remotely stored files',
     author='schollz',
-    url='https://github.com/schollz/droppybox',
+    url='https://github.com/schollz/gpgcloudvim',
     license='MIT',
-    packages=['droppybox'],
+    packages=['gpgcloudvim'],
     entry_points={'console_scripts': [
-        'z = droppybox.__main__:main', ], },
+        'z = gpgcloudvim.__main__:main', ], },
 )
