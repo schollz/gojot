@@ -29,7 +29,7 @@ cat files.txt | xargs rm -rf
 
 ```
 $ z --help
-usage: droppybox [-h] [-l] [newfile]
+usage: droppybox [-h] [-l] [-e] [newfile]
 
 positional arguments:
   newfile      work on a new file
@@ -37,4 +37,5 @@ positional arguments:
 optional arguments:
   -h, --help   show this help message and exit
   -l, --local  work locally
+  -e, --edit   edit full document
 ```

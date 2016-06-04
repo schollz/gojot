@@ -30,7 +30,7 @@ def is_connected():
 
 
 def clean_up():
-    filesToClean = ['temp', 'temp2', 'temp_copy', 'temp_diff']
+    filesToClean = ['temp', 'temp2', 'temp_copy', 'temp_diff', 'tempEntry']
     for fileToClean in filesToClean:
         if os.path.exists(os.path.join(DATA_PATH, '.droppybox', fileToClean)):
             os.remove(os.path.join(DATA_PATH, '.droppybox', fileToClean))
@@ -89,6 +89,8 @@ def set_up():
     parser = argparse.ArgumentParser(prog='droppybox')
     parser.add_argument("-l", "--local", help="work locally",
                         action="store_true")
+    parser.add_argument("-e", "--edit", help="edit full document",
+                        action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
     args = parser.parse_args()
 
@@ -135,13 +137,13 @@ def set_up():
 
     if args.local == True:
         config['server'] = None
-    return {'server': config['server'], 'file': config['files'][0]}
+    return args, {'server': config['server'], 'file': config['files'][0]}
 
 
 def main(args=None):
     password = None
     check_prereqs()
-    config = set_up()
+    args, config = set_up()
     clean_up()
 
     # If encrypted, do the decryption
@@ -171,13 +173,24 @@ def main(args=None):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
 
-    # Add new entry
-    with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
-        f.write("\n\n" + time.strftime("%Y-%m-%d %H:%M"))
-
-    # Open it in VIM to write
-    os.system("vim +100000000 +WP %s" %
-              os.path.join(DATA_PATH, '.droppybox', 'temp'))
+    if args.edit:
+        # Add new entry directly to the file
+        with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
+            f.write(time.strftime("\n\n%Y-%m-%d %H:%M  "))
+        # Open it in VIM to write
+        os.system("vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert' %s" %
+                  os.path.join(DATA_PATH, '.droppybox', 'temp'))
+    else:
+        # Add new entry in a seperate file
+        with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'a') as f:
+            f.write(time.strftime("%Y-%m-%d %H:%M  "))
+        # Open it in VIM to write
+        os.system("vim +100000000 +WP -c 'cal cursor(1,5000)' -c 'startinsert' %s" %
+                  os.path.join(DATA_PATH, '.droppybox', 'tempEntry'))
+        # append the entry to the file
+        with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
+            with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'r') as f2:
+                f.write("\n\n" + f2.read())
 
     # Write a diff
     cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.droppybox',
