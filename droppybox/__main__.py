@@ -91,6 +91,8 @@ def set_up():
                         action="store_true")
     parser.add_argument("-e", "--edit", help="edit full document",
                         action="store_true")
+    parser.add_argument("-u", "--update", help="update droppybox",
+                        action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
     args = parser.parse_args()
 
@@ -100,7 +102,16 @@ def set_up():
     if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'diffs')):
         os.makedirs(os.path.join(DATA_PATH, '.droppybox', 'diffs'))
 
-    # Try to download config.json if doesn't exist
+    if args.update:
+        os.chdir(os.path.join(DATA_PATH, '.droppybox'))
+        os.system('git clone https://github.com/schollz/droppybox.git')
+        os.chdir('droppybox')
+        os.system('python3 setup.py install')
+        os.chdir('../')
+        os.system('rm -rf droppybox')
+        sys.exit(1)
+
+        # Try to download config.json if doesn't exist
     if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'config.json')):
         server = input("Enter host@server (make sure to ssh-copy-id first): ")
         dnsaddress = server.split('@')[1]
