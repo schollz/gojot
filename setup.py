@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
     name='gpgcloudvim',
-    version='0.14',
-    description='A simple wrapper to edit GPG-protected, remotely stored files',
+    version='0.15',
+    description='A simple wrapper to use VIM to edit GPG-protected, remotely stored files',
     author='schollz',
-    url='https://github.com/schollz/gpgcloudvim',
+    url='https://github.com/schollz/sdees',
     license='MIT',
-    packages=['gpgcloudvim'],
+    packages=['sdees'],
     entry_points={'console_scripts': [
-        'z = gpgcloudvim.__main__:main', ], },
+        'sdees = sdees.__main__:main', ], },
 )

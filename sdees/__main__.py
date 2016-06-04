@@ -14,7 +14,7 @@ from pkg_resources import get_distribution
 
 __version__ = "script"
 try:
-    __version__ = get_distribution('droppybox').version
+    __version__ = get_distribution('sdees').version
 except:
     pass  # user is using as script
 
@@ -39,12 +39,12 @@ def is_connected():
 def clean_up():
     filesToClean = ['temp', 'temp2', 'temp_copy', 'temp_diff', 'tempEntry']
     for fileToClean in filesToClean:
-        if os.path.exists(os.path.join(DATA_PATH, '.droppybox', fileToClean)):
-            os.remove(os.path.join(DATA_PATH, '.droppybox', fileToClean))
+        if os.path.exists(os.path.join(DATA_PATH, '.sdees', fileToClean)):
+            os.remove(os.path.join(DATA_PATH, '.sdees', fileToClean))
 
 
 def check_prereqs():
-    prereqs = ["gpg", "rsync", "lzma"]
+    prereqs = ["gpg", "rsync"]
     for prereq in prereqs:
         command = "hash " + prereq  # the shell command
         process = subprocess.Popen(
@@ -58,8 +58,8 @@ def check_prereqs():
 def sync_down(server):
     if is_connected() and server != None:
         print("Downloading...")
-        cmd = "rsync --ignore-errors -arq --update %s:.droppybox/ %s/" % (
-            server, os.path.join(DATA_PATH, '.droppybox'))
+        cmd = "rsync --ignore-errors -arq --update %s:.sdees/ %s/" % (
+            server, os.path.join(DATA_PATH, '.sdees'))
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
@@ -69,18 +69,18 @@ def sync_up(server):
     clean_up()
     if is_connected() and server != None:
         print("Uploading...")
-        cmd = "rsync --ignore-errors -arq --update %s/ %s:.droppybox/" % (
-            os.path.join(DATA_PATH, '.droppybox'), server)
+        cmd = "rsync --ignore-errors -arq --update %s/ %s:.sdees/" % (
+            os.path.join(DATA_PATH, '.sdees'), server)
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
 
 
 def is_encrypted(dfile):
-    if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', dfile)):
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', dfile)):
         return False
     command = "file %s" % (
-        os.path.join(DATA_PATH, '.droppybox', dfile))
+        os.path.join(DATA_PATH, '.sdees', dfile))
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -93,42 +93,42 @@ def is_encrypted(dfile):
 def set_up():
     server = None
     syncedUp = False
-    parser = argparse.ArgumentParser(prog='droppybox')
+    parser = argparse.ArgumentParser(prog='sdees')
     parser.add_argument("-ls", "--list", help="list available files",
                         action="store_true")
     parser.add_argument("-l", "--local", help="work locally",
                         action="store_true")
     parser.add_argument("-e", "--edit", help="edit full document",
                         action="store_true")
-    parser.add_argument("-u", "--update", help="update droppybox",
+    parser.add_argument("-u", "--update", help="update sdees",
                         action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
     args = parser.parse_args()
 
-    if not os.path.exists(os.path.join(DATA_PATH, '.droppybox')):
-        os.makedirs(os.path.join(DATA_PATH, '.droppybox'))
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdees')):
+        os.makedirs(os.path.join(DATA_PATH, '.sdees'))
 
-    if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'diffs')):
-        os.makedirs(os.path.join(DATA_PATH, '.droppybox', 'diffs'))
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'diffs')):
+        os.makedirs(os.path.join(DATA_PATH, '.sdees', 'diffs'))
 
     if args.update:
-        os.chdir(os.path.join(DATA_PATH, '.droppybox'))
-        os.system('git clone https://github.com/schollz/droppybox.git')
-        os.chdir('droppybox')
+        os.chdir(os.path.join(DATA_PATH, '.sdees'))
+        os.system('git clone https://github.com/schollz/sdees.git')
+        os.chdir('sdees')
         os.system('python3 setup.py install')
         os.chdir('../')
-        os.system('rm -rf droppybox')
+        os.system('rm -rf sdees')
         sys.exit(1)
 
     if args.list:
-        os.chdir(os.path.join(DATA_PATH, '.droppybox'))
+        os.chdir(os.path.join(DATA_PATH, '.sdees'))
         print("\nAvailable files:")
         os.system(
             'ls -lSht | grep -v config.json | grep -v diffs | grep -v "total "')
         sys.exit(1)
 
         # Try to download config.json if doesn't exist
-    if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'config.json')):
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'config.json')):
         server = input("Enter host@server (make sure to ssh-copy-id first): ")
         dnsaddress = server.split('@')[1]
         address = socket.gethostbyname(dnsaddress)
@@ -138,19 +138,19 @@ def set_up():
             syncedUp = True
 
     # config still doesn't exist, make it
-    if not os.path.exists(os.path.join(DATA_PATH, '.droppybox', 'config.json')):
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'config.json')):
         newfile = args.newfile
         if newfile == None:
             newfile = input("Enter a new file name: ")
         files = []
         files.append(newfile)
         config = {"server": server, "files": files}
-        with open(os.path.join(DATA_PATH, '.droppybox', 'config.json'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     # Load config
     config = json.load(
-        open(os.path.join(DATA_PATH, '.droppybox', 'config.json'), 'r'))
+        open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'r'))
 
     if not syncedUp and args.local == False:
         sync_down(config['server'])
@@ -162,7 +162,7 @@ def set_up():
         except:
             pass
         config['files'] = [args.newfile] + config['files']
-        with open(os.path.join(DATA_PATH, '.droppybox', 'config.json'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     if args.local == True:
@@ -171,7 +171,7 @@ def set_up():
 
 
 def main(args=None):
-    print("droppybox, version " + __version__)
+    print("sdees, version " + __version__)
     password = None
     check_prereqs()
     args, config = set_up()
@@ -181,9 +181,9 @@ def main(args=None):
     if is_encrypted(config['file']):
         passwordNotAccepted = True
         while passwordNotAccepted:
-            password = getpass.getpass(prompt='Enter password: ')
+            password = getpass.getpass(prompt='Enter passphrase: ')
             cmd = 'gpg -q --no-use-agent --passphrase %s -d -o %s %s' % (password, os.path.join(
-                DATA_PATH, '.droppybox', 'temp'), os.path.join(DATA_PATH, '.droppybox', config['file']))
+                DATA_PATH, '.sdees', 'temp'), os.path.join(DATA_PATH, '.sdees', config['file']))
             process = subprocess.Popen(
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             output, error = process.communicate()
@@ -191,36 +191,36 @@ def main(args=None):
                 passwordNotAccepted = False
     else:
         # Copy file to temp if not encrypted
-        cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.droppybox', config['file']), os.path.join(
-            DATA_PATH, '.droppybox', 'temp'))
+        cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdees', config['file']), os.path.join(
+            DATA_PATH, '.sdees', 'temp'))
         process = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = process.communicate()
 
     # Copy file for diffing
-    cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.droppybox', 'temp'), os.path.join(
-        DATA_PATH, '.droppybox', 'temp_copy'))
+    cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdees', 'temp'), os.path.join(
+        DATA_PATH, '.sdees', 'temp_copy'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
 
     if args.edit:
         # Add new entry directly to the file
-        with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
+        with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
             f.write(time.strftime("\n\n%Y-%m-%d %H:%M  "))
         # Open it in VIM to write
         os.system("vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert' %s" %
-                  os.path.join(DATA_PATH, '.droppybox', 'temp'))
+                  os.path.join(DATA_PATH, '.sdees', 'temp'))
     else:
         # Add new entry in a seperate file
-        with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'a') as f:
+        with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'a') as f:
             f.write(time.strftime("%Y-%m-%d %H:%M  "))
         # Open it in VIM to write
         os.system("vim +100000000 +WP -c 'cal cursor(1,5000)' -c 'startinsert' %s" %
-                  os.path.join(DATA_PATH, '.droppybox', 'tempEntry'))
+                  os.path.join(DATA_PATH, '.sdees', 'tempEntry'))
         # append the entry to the file
-        with open(os.path.join(DATA_PATH, '.droppybox', 'temp'), 'a') as f:
-            with open(os.path.join(DATA_PATH, '.droppybox', 'tempEntry'), 'r') as f2:
+        with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
+            with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'r') as f2:
                 tempEntry = f2.read()
                 if len(tempEntry) < 22:
                     print("No data appended.")
@@ -228,14 +228,14 @@ def main(args=None):
                     f.write("\n\n" + tempEntry)
 
     # Write a diff
-    cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.droppybox',
-                                       'temp_copy'), os.path.join(DATA_PATH, '.droppybox', 'temp'))
+    cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.sdees',
+                                       'temp_copy'), os.path.join(DATA_PATH, '.sdees', 'temp'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
     diffFile = config['file'] + '.' + str(hashlib.sha224(output).hexdigest())
     if len(output) > 1:
-        with open(os.path.join(DATA_PATH, '.droppybox', 'temp_diff'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdees', 'temp_diff'), 'w') as f:
             f.write(output.decode())
     else:
         diffFile = ""
@@ -244,7 +244,7 @@ def main(args=None):
     if password == None:
         password = getpass.getpass(prompt='Enter password: ')
     cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-        password, os.path.join(DATA_PATH, '.droppybox', 'temp2'), os.path.join(DATA_PATH, '.droppybox', 'temp'))
+        password, os.path.join(DATA_PATH, '.sdees', 'temp2'), os.path.join(DATA_PATH, '.sdees', 'temp'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -258,7 +258,7 @@ def main(args=None):
         if password == None:
             password = getpass.getpass(prompt='Enter password: ')
         cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-            password, os.path.join(DATA_PATH, '.droppybox', 'diffs', diffFile), os.path.join(DATA_PATH, '.droppybox', 'temp_diff'))
+            password, os.path.join(DATA_PATH, '.sdees', 'diffs', diffFile), os.path.join(DATA_PATH, '.sdees', 'temp_diff'))
         process = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = process.communicate()
@@ -268,8 +268,8 @@ def main(args=None):
             sys.exit(1)
 
     # overwrite the main file
-    os.system('mv %s %s' % (os.path.join(DATA_PATH, '.droppybox', 'temp2'),
-                            os.path.join(DATA_PATH, '.droppybox', config['file'])))
+    os.system('mv %s %s' % (os.path.join(DATA_PATH, '.sdees', 'temp2'),
+                            os.path.join(DATA_PATH, '.sdees', config['file'])))
 
     sync_up(config['server'])
     clean_up()
