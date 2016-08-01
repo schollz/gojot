@@ -62,11 +62,8 @@ def split_entries(text):
     for a in text.splitlines():
         if len(a) > 10:
             if a[4] == '-' and a[7] == '-' and a[10] == ' ':
-                if len(entry.strip()) > 0:
-                    if entryTime not in entries:
-                        entries[entryTime] = entry
-                    else:
-                        entries[entryTime] += entry
+                if len(entry.strip()) > 0 and entry not in entries:
+                    entries[entryTime] = entry
                 entry = ""
                 try:
                     t = datetime.datetime.strptime(
@@ -74,14 +71,13 @@ def split_entries(text):
                     entryTime = int(
                         (t - datetime.datetime(1970, 1, 1)).total_seconds())
                 except:
-                    pass
-                try:
-                    t = datetime.datetime.strptime(
-                        ' '.join(a.split()[0:2]), "%Y-%m-%d %H:%M")
-                    entryTime = int(
-                        (t - datetime.datetime(1970, 1, 1)).total_seconds())
-                except:
-                    entryTime = -1
+                    try:
+                        t = datetime.datetime.strptime(
+                            ' '.join(a.split()[0:2]), "%Y-%m-%d %H:%M")
+                        entryTime = int(
+                            (t - datetime.datetime(1970, 1, 1)).total_seconds())
+                    except:
+                        entryTime = -1
         entry += a.strip() + "\n"
     if len(entry) > 0 and entryTime not in entries:
         entries[entryTime] = entry
@@ -402,7 +398,8 @@ def main(args=None):
     # os.system('mv %s %s' % (os.path.join(DATA_PATH, '.sdeestemp', 'temp2'),
     #                         os.path.join(DATA_PATH, '.sdeestemp', config['file'])))
     #
-    sync_up(config['server'])
+    if args.local == False:
+        sync_up(config['server'])
     clean_up()
 
 if __name__ == "__main__":
