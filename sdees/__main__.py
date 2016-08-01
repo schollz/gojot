@@ -60,7 +60,7 @@ def split_entries(text):
     entry = ""
     entryTime = -1
     for a in text.splitlines():
-        if len(a) > 11:
+        if len(a) > 10:
             if a[4] == '-' and a[7] == '-' and a[10] == ' ':
                 if len(entry.strip()) > 0:
                     if entryTime not in entries:
@@ -74,13 +74,17 @@ def split_entries(text):
                     entryTime = int(
                         (t - datetime.datetime(1970, 1, 1)).total_seconds())
                 except:
+                    pass
+                try:
+                    t = datetime.datetime.strptime(
+                        ' '.join(a.split()[0:2]), "%Y-%m-%d %H:%M")
+                    entryTime = int(
+                        (t - datetime.datetime(1970, 1, 1)).total_seconds())
+                except:
                     entryTime = -1
         entry += a.strip() + "\n"
-    if len(entry) > 0:
-        if entryTime not in entries:
-            entries[entryTime] = entry
-        else:
-            entries[entryTime] += entry
+    if len(entry) > 0 and entryTime not in entries:
+        entries[entryTime] = entry
     entryArray = []
     for entry in sorted(entries.keys()):
         entryArray.append(entries[entry])
@@ -277,8 +281,6 @@ def set_up():
     if not syncedUp and args.local == False:
         sync_down(config['server'])
 
-    if args.local == True:
-        config['server'] = None
     return args, config
 
 
