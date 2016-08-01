@@ -13,6 +13,7 @@ import argparse
 import getpass
 import subprocess
 from pkg_resources import get_distribution
+from tqdm import tqdm
 
 __version__ = "script"
 try:
@@ -331,16 +332,17 @@ def main(args=None):
         fullentry = ""
         onlyfiles = [f for f in os.listdir(
             mypath) if os.path.isfile(os.path.join(mypath, f))]
-        for f in onlyfiles:
+
+        for i in tqdm(range(len(onlyfiles))):
+            f = onlyfiles[i]
             testfile = os.path.join(
                 DATA_PATH, '.sdees2', config['working_file'], f)
-            cmd = 'gpg -q --batch --yes --no-use-agent --passphrase %s -d -o %s %s' % (password, os.path.join(
-                DATA_PATH, '.sdees2', 'temp'), testfile)
+            cmd = 'gpg -q --batch --yes --no-use-agent --passphrase %s -d %s' % (
+                password,  testfile)
             process = subprocess.Popen(
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             output, error = process.communicate()
-            fullentry += open(os.path.join(DATA_PATH,
-                                           '.sdees2', 'temp')).read() + "\n"
+            fullentry += output.decode('utf-8').strip() + "\n"
 
         entries = split_entries(fullentry)
         fullentry = ""
