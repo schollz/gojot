@@ -6,6 +6,8 @@ import shlex
 import time
 import json
 import hashlib
+import datetime
+import collections
 
 import argparse
 import getpass
@@ -37,11 +39,89 @@ def is_connected():
     return False
 
 
+def get_new_password():
+    password1 = '?'
+    password2 = '??'
+    while password1 != password2:
+        password1 = getpass.getpass(prompt='Enter password: ')
+        password2 = getpass.getpass(prompt='Enter password again: ')
+        if password1 != password2:
+            print("Passwords do not match, please try again.")
+    return password1
+
+
+def split_entries_from_file(filename):
+    text = open(filename, 'r').read() + "\n"
+    return split_entries(text)
+
+
+def split_entries(text):
+    entries = {}
+    entry = ""
+    entryTime = -1
+    for a in text.splitlines():
+        if len(a) > 11:
+            if a[4] == '-' and a[7] == '-' and a[10] == ' ':
+                if len(entry.strip()) > 0:
+                    if entryTime not in entries:
+                        entries[entryTime] = entry
+                    else:
+                        entries[entryTime] += entry
+                entry = ""
+                try:
+                    t = datetime.datetime.strptime(
+                        ' '.join(a.split()[0:2]), "%Y-%m-%d %H:%M")
+                    entryTime = int(
+                        (t - datetime.datetime(1970, 1, 1)).total_seconds())
+                except:
+                    entryTime = -1
+        entry += a.strip() + "\n"
+    if len(entry) > 0:
+        if entryTime not in entries:
+            entries[entryTime] = entry
+        else:
+            entries[entryTime] += entry
+    od = collections.OrderedDict(sorted(entries.items()))
+    entryArray = []
+    for entry in entries:
+        entryArray.append(entries[entry])
+    return entryArray
+
+
+def write_entry(filename, entry, password):
+    hashOfEntry = str(hashlib.sha224(entry.encode('utf-8')).hexdigest())
+
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdeestemp', filename)):
+        os.makedirs(os.path.join(DATA_PATH, '.sdeestemp', filename))
+
+    with open(os.path.join(DATA_PATH, '.sdeestemp', 'temp'), 'w') as f:
+        f.write(entry)
+
+    cmd = 'gpg -q --batch --yes --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
+        password, os.path.join(DATA_PATH, '.sdeestemp', filename, hashOfEntry), os.path.join(DATA_PATH, '.sdeestemp', 'temp'))
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+    if len(error) > 0:
+        print(error)
+        clean_up()
+        sys.exit(1)
+    os.remove(os.path.join(DATA_PATH, '.sdeestemp', 'temp'))
+    print("Wrote %s." % hashOfEntry)
+
+
+def import_file(filename):
+    entries = split_entries_from_file(filename)
+    password = get_new_password()
+    for entry in entries:
+        write_entry(filename, entry, password)
+
+
 def clean_up():
     filesToClean = ['temp', 'temp2', 'temp_copy', 'temp_diff', 'tempEntry']
     for fileToClean in filesToClean:
-        if os.path.exists(os.path.join(DATA_PATH, '.sdees', fileToClean)):
-            os.remove(os.path.join(DATA_PATH, '.sdees', fileToClean))
+        if os.path.exists(os.path.join(DATA_PATH, '.sdeestemp', fileToClean)):
+            os.remove(os.path.join(DATA_PATH, '.sdeestemp', fileToClean))
 
 
 def check_prereqs():
@@ -59,29 +139,31 @@ def check_prereqs():
 def sync_down(server):
     if is_connected() and server != None:
         print("Syncing down...")
-        cmd = "rsync --ignore-errors -arq --update %s:.sdees/ %s/" % (
-            server, os.path.join(DATA_PATH, '.sdees'))
+        cmd = "rsync --ignore-errors -arq --update %s:.sdeestemp/ %s/" % (
+            server, os.path.join(DATA_PATH, '.sdeestemp'))
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
+        print(stdout, nothing)
 
 
 def sync_up(server):
     clean_up()
     if is_connected() and server != None:
         print("Syncing up...")
-        cmd = "rsync --ignore-errors -arq --update %s/ %s:.sdees/" % (
-            os.path.join(DATA_PATH, '.sdees'), server)
+        cmd = "rsync --ignore-errors -arq --update %s/ %s:.sdeestemp/" % (
+            os.path.join(DATA_PATH, '.sdeestemp'), server)
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
+        print(stdout, nothing)
 
 
 def is_encrypted(dfile):
-    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', dfile)):
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdeestemp', dfile)):
         return False
     command = "file %s" % (
-        os.path.join(DATA_PATH, '.sdees', dfile))
+        os.path.join(DATA_PATH, '.sdeestemp', dfile))
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -104,19 +186,22 @@ def set_up():
     parser.add_argument("-e", "--edit", help="edit full document",
                         action="store_true")
     parser.add_argument('--editor', help='change editor')
+    parser.add_argument('--importfile', help='import file')
     parser.add_argument("-u", "--update", help="update sdees",
                         action="store_true")
     parser.add_argument('newfile', nargs='?', help='work on a new file')
     args = parser.parse_args()
 
-    if not os.path.exists(os.path.join(DATA_PATH, '.sdees')):
-        os.makedirs(os.path.join(DATA_PATH, '.sdees'))
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdeestemp')):
+        os.makedirs(os.path.join(DATA_PATH, '.sdeestemp'))
 
-    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'diffs')):
-        os.makedirs(os.path.join(DATA_PATH, '.sdees', 'diffs'))
+    if args.importfile != None:
+        print("Importing %s..." % args.importfile)
+        import_file(args.importfile)
+        sys.exit(1)
 
     if args.update:
-        os.chdir(os.path.join(DATA_PATH, '.sdees'))
+        os.chdir(os.path.join(DATA_PATH, '.sdeestemp'))
         os.system('git clone https://github.com/schollz/sdees.git')
         os.chdir('sdees')
         os.system('python3 setup.py install')
@@ -125,14 +210,14 @@ def set_up():
         sys.exit(1)
 
     if args.list:
-        os.chdir(os.path.join(DATA_PATH, '.sdees'))
+        os.chdir(os.path.join(DATA_PATH, '.sdeestemp'))
         print("\nAvailable files:")
         os.system(
-            'ls -lSht | grep -v config.json | grep -v diffs | grep -v "total "')
+            'ls -lSht | grep -v config.json | grep -v "total "')
         sys.exit(1)
 
-        # Try to download config.json if doesn't exist
-    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'config.json')):
+    # Try to download config.json if doesn't exist
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdeestemp', 'config.json')):
         server = input("Enter host@server (make sure to ssh-copy-id first): ")
         dnsaddress = server.split('@')[1]
         address = socket.gethostbyname(dnsaddress)
@@ -142,19 +227,19 @@ def set_up():
             syncedUp = True
 
     # config still doesn't exist, make it
-    if not os.path.exists(os.path.join(DATA_PATH, '.sdees', 'config.json')):
+    if not os.path.exists(os.path.join(DATA_PATH, '.sdeestemp', 'config.json')):
         newfile = args.newfile
         if newfile == None:
             newfile = input("Enter a new file name: ")
         files = []
         files.append(newfile)
         config = {"server": server, "files": files, "editor": VIM_COMMAND}
-        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     # Load config
     config = json.load(
-        open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'r'))
+        open(os.path.join(DATA_PATH, '.sdeestemp', 'config.json'), 'r'))
 
     if 'editor' not in config:
         config['editor'] = VIM_COMMAND
@@ -163,7 +248,7 @@ def set_up():
         config['editor'] = args.editor
         if 'vim' == args.editor:
             config['editor'] = VIM_COMMAND
-        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     if not syncedUp and args.local == False:
@@ -176,7 +261,7 @@ def set_up():
         except:
             pass
         config['files'] = [args.newfile] + config['files']
-        with open(os.path.join(DATA_PATH, '.sdees', 'config.json'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'config.json'), 'w') as f:
             f.write(json.dumps(config, indent=2))
 
     if args.local == True:
@@ -197,7 +282,7 @@ def main(args=None):
         while passwordNotAccepted:
             password = getpass.getpass(prompt='Enter passphrase: ')
             cmd = 'gpg -q --no-use-agent --passphrase %s -d -o %s %s' % (password, os.path.join(
-                DATA_PATH, '.sdees', 'temp'), os.path.join(DATA_PATH, '.sdees', config['file']))
+                DATA_PATH, '.sdeestemp', 'temp'), os.path.join(DATA_PATH, '.sdeestemp', config['file']))
             process = subprocess.Popen(
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             output, error = process.communicate()
@@ -205,15 +290,15 @@ def main(args=None):
                 passwordNotAccepted = False
     else:
         # Copy file to temp if not encrypted
-        cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdees', config['file']), os.path.join(
-            DATA_PATH, '.sdees', 'temp'))
+        cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdeestemp', config['file']), os.path.join(
+            DATA_PATH, '.sdeestemp', 'temp'))
         process = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = process.communicate()
 
     # Copy file for diffing
-    cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdees', 'temp'), os.path.join(
-        DATA_PATH, '.sdees', 'temp_copy'))
+    cmd = "cp %s %s" % (os.path.join(DATA_PATH, '.sdeestemp', 'temp'), os.path.join(
+        DATA_PATH, '.sdeestemp', 'temp_copy'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -223,21 +308,21 @@ def main(args=None):
         timeString = ""
     if args.edit:
         # Add new entry directly to the file
-        with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'temp'), 'a') as f:
             f.write("\n\n" + timeString)
         # Open it in editor to write
         os.system("%s %s" % (config['editor'],
-                             os.path.join(DATA_PATH, '.sdees', 'temp')))
+                             os.path.join(DATA_PATH, '.sdeestemp', 'temp')))
     else:
         # Add new entry in a seperate file
-        with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'a') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'tempEntry'), 'a') as f:
             f.write(timeString)
         # Open it in editor to write
         os.system("%s %s" % (config['editor'],
-                             os.path.join(DATA_PATH, '.sdees', 'tempEntry')))
+                             os.path.join(DATA_PATH, '.sdeestemp', 'tempEntry')))
         # append the entry to the file
-        with open(os.path.join(DATA_PATH, '.sdees', 'temp'), 'a') as f:
-            with open(os.path.join(DATA_PATH, '.sdees', 'tempEntry'), 'r') as f2:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'temp'), 'a') as f:
+            with open(os.path.join(DATA_PATH, '.sdeestemp', 'tempEntry'), 'r') as f2:
                 tempEntry = f2.read()
                 if len(tempEntry) < 22:
                     print("No data appended.")
@@ -245,23 +330,23 @@ def main(args=None):
                     f.write("\n\n" + tempEntry)
 
     # Write a diff
-    cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.sdees',
-                                       'temp_copy'), os.path.join(DATA_PATH, '.sdees', 'temp'))
+    cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.sdeestemp',
+                                       'temp_copy'), os.path.join(DATA_PATH, '.sdeestemp', 'temp'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
     diffFile = config['file'] + '.' + str(hashlib.sha224(output).hexdigest())
     if len(output) > 1:
-        with open(os.path.join(DATA_PATH, '.sdees', 'temp_diff'), 'w') as f:
+        with open(os.path.join(DATA_PATH, '.sdeestemp', 'temp_diff'), 'w') as f:
             f.write(output.decode())
     else:
         diffFile = ""
 
     # Encrypt main file
     if password == None:
-        password = getpass.getpass(prompt='Enter password: ')
+        password = get_new_password()
     cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-        password, os.path.join(DATA_PATH, '.sdees', 'temp2'), os.path.join(DATA_PATH, '.sdees', 'temp'))
+        password, os.path.join(DATA_PATH, '.sdeestemp', 'temp2'), os.path.join(DATA_PATH, '.sdeestemp', 'temp'))
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -275,7 +360,7 @@ def main(args=None):
         if password == None:
             password = getpass.getpass(prompt='Enter password: ')
         cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-            password, os.path.join(DATA_PATH, '.sdees', 'diffs', diffFile), os.path.join(DATA_PATH, '.sdees', 'temp_diff'))
+            password, os.path.join(DATA_PATH, '.sdeestemp', 'diffs', diffFile), os.path.join(DATA_PATH, '.sdeestemp', 'temp_diff'))
         process = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = process.communicate()
@@ -285,11 +370,13 @@ def main(args=None):
             sys.exit(1)
 
     # overwrite the main file
-    os.system('mv %s %s' % (os.path.join(DATA_PATH, '.sdees', 'temp2'),
-                            os.path.join(DATA_PATH, '.sdees', config['file'])))
+    os.system('mv %s %s' % (os.path.join(DATA_PATH, '.sdeestemp', 'temp2'),
+                            os.path.join(DATA_PATH, '.sdeestemp', config['file'])))
 
     sync_up(config['server'])
     clean_up()
 
 if __name__ == "__main__":
+    # import_file('test.txt')
+    clean_up()
     main()
