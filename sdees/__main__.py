@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 __version__ = "script"
 try:
-    __version__ = get_distribution('sdees').version
+    __version__ = '0.22'
 except:
     pass  # user is using as script
 
@@ -90,6 +90,9 @@ def split_entries(text):
 
 def write_entry(filename, entry, password):
     entry = entry.strip() + "\n"
+    if len(entry) < 22:
+        print("Entry too short, not added.")
+        return
     hashOfEntry = str(hashlib.sha224(entry.encode('utf-8')).hexdigest())
     if os.path.exists(os.path.join(DATA_PATH, '.sdees2', filename)):
         if os.path.exists(os.path.join(DATA_PATH, '.sdees2', filename, hashOfEntry)):
@@ -367,8 +370,8 @@ def main(args=None):
         # Open it in editor to write
         os.system("%s %s" % (config['editor'],
                              os.path.join(DATA_PATH, '.sdees2', 'tempEntry')))
-        write_entry(config['working_file'], open(os.path.join(
-            DATA_PATH, '.sdees2', 'tempEntry')).read(), password)
+        entry = open(os.path.join(DATA_PATH, '.sdees2', 'tempEntry')).read()
+        write_entry(config['working_file'], entry, password)
 
     # # Write a diff
     # cmd = "diff %s %s" % (os.path.join(DATA_PATH, '.sdees2',
