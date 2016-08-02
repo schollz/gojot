@@ -17,14 +17,14 @@ from tqdm import tqdm
 
 __version__ = "script"
 try:
-    __version__ = '0.23'
+    __version__ = '0.24'
 except:
     pass  # user is using as script
 
 REMOTE_SERVER = "www.google.com"
 VIM_COMMAND = "vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert'"
 DATA_PATH = os.path.expanduser('~')
-HOME_FOLDER = '.sdees2temp'
+HOME_FOLDER = '.sdees24'
 
 
 def is_connected():
@@ -96,7 +96,7 @@ def write_entry(filename, entry, password):
         return
     hashOfEntry = str(hashlib.sha224(entry.encode('utf-8')).hexdigest())
     if os.path.exists(os.path.join(DATA_PATH, HOME_FOLDER, filename)):
-        if os.path.exists(os.path.join(DATA_PATH, HOME_FOLDER, filename, hashOfEntry)):
+        if os.path.exists(os.path.join(DATA_PATH, HOME_FOLDER, filename, hashOfEntry + ".gpg")):
             return
     else:
         os.makedirs(os.path.join(DATA_PATH, HOME_FOLDER, filename))
@@ -128,6 +128,17 @@ def clean_up():
     for fileToClean in filesToClean:
         if os.path.exists(os.path.join(DATA_PATH, HOME_FOLDER, fileToClean)):
             os.remove(os.path.join(DATA_PATH, HOME_FOLDER, fileToClean))
+
+    if not os.path.exists(os.path.join(DATA_PATH, HOME_FOLDER)):
+        return
+    mypath = os.path.join(DATA_PATH, HOME_FOLDER)
+    onlyfiles = [f for f in os.listdir(
+        mypath) if os.path.isfile(os.path.join(mypath, f))]
+    for f in onlyfiles:
+        if 'config.json' in f or '.gpg' in f:
+            continue
+        else:
+            os.remove(os.path.join(mypath, f))
 
 
 def check_prereqs():
@@ -333,22 +344,20 @@ def main(args=None):
     mypath = os.path.join(DATA_PATH, HOME_FOLDER, config['working_file'])
     if args.edit and os.path.exists(mypath):
         fullentry = ""
+        cmd = 'gpg -q --batch --yes --no-use-agent --passphrase %s --decrypt-files %s' % (
+            password,  os.path.join(DATA_PATH, HOME_FOLDER, config['working_file'], "*.gpg"))
+        process = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output, error = process.communicate()
+
         onlyfiles = [f for f in os.listdir(
             mypath) if os.path.isfile(os.path.join(mypath, f))]
-
-        # INSTEAD:
-        # gpg -q --batch --yes --no-use-agent --passphrase  --decrypt-files
-        # *.gpg
-        for i in tqdm(range(len(onlyfiles))):
-            f = onlyfiles[i]
-            testfile = os.path.join(
-                DATA_PATH, HOME_FOLDER, config['working_file'], f)
-            cmd = 'gpg -q --batch --yes --no-use-agent --passphrase %s -d %s' % (
-                password,  testfile)
-            process = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            output, error = process.communicate()
-            fullentry += output.decode('utf-8').strip() + "\n"
+        for f in onlyfiles:
+            if 'gpg' in f:
+                continue
+            fullentry += open(os.path.join(mypath, f),
+                              'r').read().strip() + "\n"
+            os.remove(os.path.join(mypath, f))
 
         entries = split_entries(fullentry)
         fullentry = ""
@@ -376,36 +385,6 @@ def main(args=None):
         entry = open(os.path.join(DATA_PATH, HOME_FOLDER, 'tempEntry')).read()
         write_entry(config['working_file'], entry, password)
 
-    # # Write a diff
-    # cmd = "diff %s %s" % (os.path.join(DATA_PATH, HOME_FOLDER,
-    #                                    'temp_copy'), os.path.join(DATA_PATH, HOME_FOLDER, 'temp'))
-    # process = subprocess.Popen(
-    #     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    # output, error = process.communicate()
-    # diffFile = config['file'] + '.' + str(hashlib.sha224(output).hexdigest())
-    # if len(output) > 1:
-    #     with open(os.path.join(DATA_PATH, HOME_FOLDER, 'temp_diff'), 'w') as f:
-    #         f.write(output.decode())
-    # else:
-    #     diffFile = ""
-    #
-    # # Encrypt main file
-    # if password == None:
-    #     password = get_new_password()
-    # cmd = 'gpg -q --no-use-agent --passphrase %s --symmetric --cipher-algo AES256 -o %s %s' % (
-    #     password, os.path.join(DATA_PATH, HOME_FOLDER, 'temp2'), os.path.join(DATA_PATH, HOME_FOLDER, 'temp'))
-    # process = subprocess.Popen(
-    #     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    # output, error = process.communicate()
-    # if len(error) > 0:
-    #     print(error)
-    #     clean_up()
-    #     sys.exit(1)
-    #
-    # # overwrite the main file
-    # os.system('mv %s %s' % (os.path.join(DATA_PATH, HOME_FOLDER, 'temp2'),
-    #                         os.path.join(DATA_PATH, HOME_FOLDER, config['file'])))
-    #
     if args.local == False:
         sync_up(config['server'])
     clean_up()
