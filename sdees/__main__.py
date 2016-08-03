@@ -17,14 +17,14 @@ from tqdm import tqdm
 
 __version__ = "script"
 try:
-    __version__ = '0.24'
+    __version__ = '0.3'
 except:
     pass  # user is using as script
 
 REMOTE_SERVER = "www.google.com"
 VIM_COMMAND = "vim +100000000 +WP -c 'cal cursor(10000000000000,5000)' -c 'startinsert'"
 DATA_PATH = os.path.expanduser('~')
-HOME_FOLDER = '.sdees24'
+HOME_FOLDER = '.sdees3'
 
 
 def is_connected():
@@ -156,8 +156,8 @@ def check_prereqs():
 def sync_down(server):
     if is_connected() and server != None:
         print("Syncing down...")
-        cmd = "rsync --ignore-errors -arv --update %s:.sdees2/ %s/" % (
-            server, os.path.join(DATA_PATH, HOME_FOLDER))
+        cmd = "rsync --ignore-errors -arv --update %s:%s/ %s/" % (
+            server, HOME_FOLDER, os.path.join(DATA_PATH, HOME_FOLDER))
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
@@ -180,8 +180,8 @@ def sync_up(server):
     clean_up()
     if is_connected() and server != None:
         print("Syncing up...")
-        cmd = "rsync --ignore-errors -arv --update %s/ %s:.sdees2/" % (
-            os.path.join(DATA_PATH, HOME_FOLDER), server)
+        cmd = "rsync --ignore-errors -arv --update %s/ %s:%s/" % (
+            os.path.join(DATA_PATH, HOME_FOLDER), server, HOME_FOLDER)
         rsync = subprocess.Popen(
             cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, nothing = rsync.communicate()
