@@ -3,8 +3,19 @@ package main
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 )
+
+// HasInternetAccess determines whether or not the internet is accessible
+func HasInternetAccess() bool {
+	_, connectionError := http.Get("http://www.google.com/")
+	internetAccess := true
+	if connectionError != nil {
+		internetAccess = false
+	}
+	return internetAccess
+}
 
 // CopyFile copies a file from src to dst. If src and dst files exist, and are
 // the same, then return success. Otherise, attempt to create a hard link

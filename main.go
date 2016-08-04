@@ -14,9 +14,21 @@ var publicKey []byte
 var userPass string
 var userName string
 var serverName string
+
 var Version string
 var BuildTime string
 var Build string
+
+var RuntimeArgs struct {
+	HomeDir     string
+	ImportFile  string
+	ExportFile  string
+	WorkingFile string
+	EditWhole   bool
+	EditLocally bool
+	ListFiles   bool
+	UpdateSdees bool
+}
 
 func init() {
 	passphrase = []byte("")
@@ -26,10 +38,7 @@ func init() {
 }
 
 func main() {
-	var importfile, exportfile, changeToFile string
-	var editwhole, localedit, listFiles, updateSdees bool
 	fmt.Println(Version, Build, BuildTime)
-	fmt.Println(home.Dir())
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
@@ -38,38 +47,41 @@ func main() {
 		cli.StringFlag{
 			Name:        "file, f",
 			Usage:       "Work on `FILE`",
-			Destination: &changeToFile,
+			Destination: &RuntimeArgs.WorkingFile,
 		},
 		cli.StringFlag{
 			Name:        "import",
 			Usage:       "Import text from `FILE`",
-			Destination: &importfile,
+			Destination: &RuntimeArgs.ImportFile,
 		},
 		cli.StringFlag{
 			Name:        "export",
 			Usage:       "Export text from `FILE`",
-			Destination: &exportfile,
+			Destination: &RuntimeArgs.ExportFile,
 		},
 		cli.BoolFlag{
 			Name:        "edit, e",
 			Usage:       "Edit whole document",
-			Destination: &editwhole,
+			Destination: &RuntimeArgs.EditWhole,
 		},
 		cli.BoolFlag{
 			Name:        "local, l",
 			Usage:       "Work locally",
-			Destination: &localedit,
+			Destination: &RuntimeArgs.EditLocally,
 		},
 		cli.BoolFlag{
 			Name:        "update, u",
 			Usage:       "Update sdees",
-			Destination: &updateSdees,
+			Destination: &RuntimeArgs.UpdateSdees,
 		},
 		cli.BoolFlag{
 			Name:        "list, ls",
 			Usage:       "List available files",
-			Destination: &listFiles,
+			Destination: &RuntimeArgs.ListFiles,
 		},
 	}
 	app.Run(os.Args)
+	RuntimeArgs.HomeDir, _ = home.Dir()
+	fmt.Println(RuntimeArgs)
+
 }
