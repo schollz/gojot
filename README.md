@@ -27,17 +27,26 @@ $ rsync -arq --update encryptedfile user@remote:encryptedfile
 $ sdees
 ```
 
-One command instead of 6. One password instead of 3.
+One command instead of 6\. One password instead of 3.
 
 `sdees` also has cute features like:
 
-* lite version control - it keeps track of diffs (encrypted)
-* automatic date time (turn off with `--nodate`)
-* list available files
-* everything is always available locally (in `~/.sdees/`) accessed with `-l`
+- lite version control - it keeps track of diffs (encrypted)
+- automatic date time (turn off with `--nodate`)
+- list available files
+- everything is always available locally (in `~/.sdees/`) accessed with `-l`
 
 # Requirements
 
 - `vim` or equivalent
 - Have `someserver` that you already ran `ssh-copy-id someuser@someserver`
 
+# Notes
+
+You need to generate a public and private key.
+
+```
+gpg --gen-key
+gpg --export -a "Your Name" > ~/.sdeesgo/public.key
+gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key
+```

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -55,16 +56,26 @@ func encrypt() string {
 	return fileName
 }
 
-func decrypt() string {
-	toDecrypt, err := os.OpenFile("test.txt.gpg", os.O_RDONLY, 0660)
+func readAllFiles() {
+	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
+	for _, f := range files {
+		fileName := path.Join(RuntimeArgs.FullPath, f.Name())
+		fmt.Println(fileName)
+		fmt.Println(decrypt(fileName))
+	}
+}
+
+func decrypt(file string) string {
+	if len(passphrase) == 0 {
+		passphrase = []byte(getPassword())
+	}
+	toDecrypt, err := os.OpenFile(file, os.O_RDONLY, 0660)
 	if err != nil {
-		cleanUp()
 		log.Fatal(err)
 	}
 	destination := new(bytes.Buffer)
 	err = gpg.Decode(privateKey, passphrase, toDecrypt, destination)
 	if err != nil {
-		cleanUp()
 		log.Fatal(err)
 	}
 	return destination.String()

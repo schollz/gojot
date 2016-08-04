@@ -2,15 +2,11 @@ package main
 
 import (
 	"bytes"
-	"crypto/sha1"
-	"encoding/hex"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -152,93 +148,4 @@ func syncUp() {
 		}
 	}
 	logger.Info("Upload complete.")
-}
-
-func sshtest() {
-	// open an SFTP session over an existing ssh connection.
-	sshConfig := &ssh.ClientConfig{
-		User: ConfigArgs.ServerUser,
-		Auth: []ssh.AuthMethod{
-			PublicKeyFile(path.Join(RuntimeArgs.HomeDir, ".ssh", "id_rsa")),
-		},
-	}
-	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
-	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-	sftp, err := sftp.NewClient(connection)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer sftp.Close()
-
-	err = sftp.Mkdir("test")
-	if err != nil {
-		fmt.Println("Directory exists?")
-	}
-
-	// walk a directory
-	files := []string{}
-	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile
-	logger.Debug("Walking %s", dirToWalk)
-	w := sftp.Walk(dirToWalk)
-	first := true
-	for w.Step() {
-		if w.Err() != nil {
-			continue
-		}
-		if first {
-			first = !first
-			continue
-		}
-		logger.Debug(w.Path())
-		files = append(files, w.Path())
-	}
-	logger.Debug("%v", files)
-
-	// leave your mark
-	f, err := sftp.Create("test/hi.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	if _, err = f.Write([]byte("Hello world! Again")); err != nil {
-		log.Fatal(err)
-	}
-
-	// check it's there
-	fi, err := sftp.Lstat("hello.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(fi)
-
-	fp, err := sftp.Open("test/hi.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer fp.Close()
-
-	buf := bytes.NewBuffer(nil)
-	n, err := io.Copy(buf, fp)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(n)
-	s := string(buf.Bytes())
-	fmt.Println(s)
-	h := sha1.New()
-	h.Write([]byte(s))
-	sha1_hash := hex.EncodeToString(h.Sum(nil))
-
-	fmt.Println(s, sha1_hash)
-
-	encrypt()
-	start := time.Now()
-
-	for i := 0; i < 10; i++ {
-		decrypt()
-	}
-	elapsed := time.Since(start)
-	log.Printf("Binomial took %s", elapsed)
 }

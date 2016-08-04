@@ -16,9 +16,6 @@ import (
 var privateKey []byte
 var passphrase []byte
 var publicKey []byte
-var userPass string
-var userName string
-var serverName string
 
 var Version string
 var BuildTime string
@@ -165,18 +162,32 @@ func main() {
 	}
 
 	// Set public and private key
-	publicKey, _ = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "public.key"))
-	privateKey, _ = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "private.key"))
+	publicKey, err = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "public.key"))
+	if err != nil {
+		fmt.Println(`You need to generate and export GPG keys.
+gpg --gen-key
+gpg --export -a "Your Name" > ~/.sdeesgo/public.key
+gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key`)
+		os.Exit(-1)
+	}
+	privateKey, err = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "private.key"))
+	if err != nil {
+		fmt.Println(`You need to export GPG keys.
+
+gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key`)
+		os.Exit(-1)
+	}
 
 	logger.Debug("ConfigArgs: %+v", ConfigArgs)
 	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
 	logger.Info("Working on %s", ConfigArgs.WorkingFile)
 	logger.Debug("Full path: %s", RuntimeArgs.FullPath)
 
-	editfile()
+	readAllFiles()
 	// if HasInternetAccess() && !RuntimeArgs.EditLocally {
 	// 	syncDown()
 	// }
+	// editfile()
 	// syncUp()
 }
 
