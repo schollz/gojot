@@ -36,6 +36,9 @@ var publicKey []byte
 var userPass string
 var userName string
 var serverName string
+var Version string
+var BuildTime string
+var Build string
 
 func init() {
 	passphrase = []byte("")
@@ -45,6 +48,7 @@ func init() {
 }
 
 func main() {
+	fmt.Println(Version, Build, BuildTime)
 	// cmdArgs := []string{"-c", "WPCLI", "+startinsert", "new.txt"}
 	// cmd := exec.Command("vim", cmdArgs...)
 	// cmd.Stdin = os.Stdin
@@ -52,6 +56,10 @@ func main() {
 	// err := cmd.Run()
 	// fmt.Println(cmdArgs)
 	// fmt.Println(err)
+
+}
+
+func sshtest() {
 
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
