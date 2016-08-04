@@ -5,6 +5,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
+	"syscall"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/jcelliott/lumber"
 )
@@ -13,17 +17,32 @@ var logger *lumber.ConsoleLogger
 
 func init() {
 	logger = lumber.NewConsoleLogger(lumber.TRACE)
-	logger.Trace("the %s log level", "lowest")
-	logger.Debug("")
-	logger.Info("the default log level")
-	logger.Warn("")
-	logger.Error("")
-	logger.Fatal("the %s log level", "highest")
+}
+
+// getPassword gets masked password
+// from http://stackoverflow.com/questions/2137357/getpasswd-functionality-in-go
+func getPassword() string {
+	fmt.Print("Enter Password: ")
+	bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
+	password := string(bytePassword)
+	return strings.TrimSpace(password)
+}
+
+// exists returns whether the given file or directory exists or not
+// from http://stackoverflow.com/questions/10510691/how-to-check-whether-a-file-or-directory-denoted-by-a-path-exists-in-golang
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 // HasInternetAccess determines whether or not the internet is accessible
 func HasInternetAccess() bool {
-	logger.Prefix("HasInternetAccess")
 	logger.Debug("Checking internet connection...")
 	_, connectionError := http.Get("http://www.google.com/")
 	internetAccess := true

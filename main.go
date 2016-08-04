@@ -1,8 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
+	"os/user"
+	"path"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -20,15 +25,27 @@ var BuildTime string
 var Build string
 
 var RuntimeArgs struct {
-	HomeDir     string
-	ImportFile  string
-	ExportFile  string
+	HomeDir       string
+	ImportFile    string
+	ExportFile    string
+	WorkingFile   string
+	WorkingPath   string
+	FullPath      string
+	SdeesDir      string
+	ServerFileSet map[string]bool
+	Debug         bool
+	EditWhole     bool
+	EditLocally   bool
+	ListFiles     bool
+	UpdateSdees   bool
+}
+
+var ConfigArgs struct {
 	WorkingFile string
-	Debug       bool
-	EditWhole   bool
-	EditLocally bool
-	ListFiles   bool
-	UpdateSdees bool
+	ServerHost  string
+	ServerPort  string
+	ServerUser  string
+	SdeesDir    string
 }
 
 func init() {
@@ -39,17 +56,17 @@ func init() {
 }
 
 func main() {
+	RuntimeArgs.SdeesDir = ".sdeesgo"
 	fmt.Println(Version, Build, BuildTime)
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
 	app.Usage = "sync, decrypt, edit, encrypt, and sync"
+	app.Action = func(c *cli.Context) error {
+		RuntimeArgs.WorkingFile = c.Args().Get(0)
+		return nil
+	}
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:        "file, f",
-			Usage:       "Work on `FILE`",
-			Destination: &RuntimeArgs.WorkingFile,
-		},
 		cli.StringFlag{
 			Name:        "import",
 			Usage:       "Import text from `FILE`",
@@ -87,11 +104,120 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
-	RuntimeArgs.HomeDir, _ = home.Dir()
-	fmt.Println(RuntimeArgs)
+
+	// Set the log level
 	if RuntimeArgs.Debug == false {
 		logger.Level(2)
 	} else {
 		logger.Level(0)
 	}
+
+	// Set the paths
+	RuntimeArgs.HomeDir, _ = home.Dir()
+	RuntimeArgs.WorkingPath = path.Join(RuntimeArgs.HomeDir, RuntimeArgs.SdeesDir)
+
+	// Run Importing/Exporting
+	if len(RuntimeArgs.ImportFile) > 0 {
+		importFile()
+		os.Exit(1)
+	}
+	if len(RuntimeArgs.ExportFile) > 0 {
+		exportFile()
+		os.Exit(1)
+	}
+
+	// Determine if intialization is needed
+	if !exists(RuntimeArgs.WorkingPath) {
+		initialize()
+	}
+	if !exists(path.Join(RuntimeArgs.WorkingPath, "config.json")) {
+		initialize()
+	} else {
+		// Load prevoius parameters
+		jsonBlob, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "config.json"))
+		err := json.Unmarshal(jsonBlob, &ConfigArgs)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// Reset the working file if it is declared
+	if len(RuntimeArgs.WorkingFile) > 0 {
+		ConfigArgs.WorkingFile = RuntimeArgs.WorkingFile
+	}
+
+	// Save current config parameters
+	b, err := json.Marshal(ConfigArgs)
+	if err != nil {
+		log.Println(err)
+	}
+	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
+
+	logger.Debug("ConfigArgs: %+v", ConfigArgs)
+	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
+	logger.Info("Working on %s", ConfigArgs.WorkingFile)
+	RuntimeArgs.FullPath = path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile)
+	logger.Debug("Full path: %s", RuntimeArgs.FullPath)
+
+	if !exists(RuntimeArgs.FullPath) {
+		err := os.MkdirAll(RuntimeArgs.FullPath, 0711)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if HasInternetAccess() && !RuntimeArgs.EditLocally {
+		syncDown()
+	}
+	syncUp()
+}
+
+func initialize() {
+	// Make directory
+	err := os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
+	if err != nil {
+		log.Println("Error creating directory")
+		log.Println(err)
+		return
+	}
+	fmt.Print("Enter server address (default: localhost): ")
+	fmt.Scanln(&ConfigArgs.ServerHost)
+	if len(ConfigArgs.ServerHost) == 0 {
+		ConfigArgs.ServerHost = "localhost"
+	}
+
+	currentUser, _ := user.Current()
+	fmt.Printf("Enter server user (default: %s): ", currentUser.Username)
+	fmt.Scanln(&ConfigArgs.ServerUser)
+	if len(ConfigArgs.ServerUser) == 0 {
+		ConfigArgs.ServerUser = currentUser.Username
+	}
+
+	fmt.Printf("Enter server port (default: %s): ", "22")
+	fmt.Scanln(&ConfigArgs.ServerPort)
+	if len(ConfigArgs.ServerPort) == 0 {
+		ConfigArgs.ServerPort = "22"
+	}
+
+	fmt.Printf("Enter new file (default: %s): ", "notes.txt")
+	fmt.Scanln(&ConfigArgs.WorkingFile)
+	if len(ConfigArgs.WorkingFile) == 0 {
+		ConfigArgs.WorkingFile = "notes.txt"
+	}
+
+	fmt.Println("Make sure to put your keys into the directory " + RuntimeArgs.SdeesDir)
+	b, err := json.Marshal(ConfigArgs)
+	if err != nil {
+		log.Println(err)
+	}
+	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
+
+}
+
+func importFile() {
+
+}
+
+func exportFile() {
+
 }
