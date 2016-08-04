@@ -12,11 +12,13 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.Buil
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
+	go get github.com/maxwellhealth/go-gpg
+	go get github.com/pkg/sftp
 	go build ${LDFLAGS} -o ${BINARY} main.go
 
-.PHONY: install
-install:
-	go install ${LDFLAGS} ./...
+# .PHONY: install
+# install:
+# 	go install ${LDFLAGS} ./...
 
 .PHONY: clean
 clean:
