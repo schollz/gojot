@@ -1,6 +1,6 @@
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
-A simple Python3 wrapper to **sync** a remote file, **decrypt** it, **edit** it, **encrypt** it, then **sync** it back.
+A simple Go-program wrapper to **sync** a remote file, **decrypt** it, **edit** it, **encrypt** it, then **sync** it back.
 
 # About
 
@@ -23,7 +23,6 @@ $ rsync -arq --update encryptedfile user@remote:encryptedfile
 
 ```bash
 $ sdees
-Enter passphrase: *******
 ```
 
 One command instead of 6. One password instead of 3.
@@ -37,52 +36,6 @@ One command instead of 6. One password instead of 3.
 
 # Requirements
 
-- Python3.4+
-- `gpg`, `rsync`, `git`, `vim` or equivalent
+- `vim` or equivalent
 - Have `someserver` that you already ran `ssh-copy-id someuser@someserver`
 
-# Install
-
-```bash
-git clone https://github.com/schollz/sdees.git && cd sdees && sudo python3 setup.py install --record files.txt
-```
-
-Once installed, you can update with
-
-```bash
-sdees --update
-```
-
-# Uninstall
-
-```bash
-cat files.txt | xargs rm -rf
-```
-
-# Usage
-
-Start a new file with
-
-```bash
-$ sdees somefile.txt
-```
-
-More information:
-
-```
-$ sdees --help
-sdees, version 0.X
-usage: sdees [-h] [-ls] [-l] [-n] [-e] [--editor EDITOR] [-u] [newfile]
-
-positional arguments:
-  newfile          work on a new file
-
-optional arguments:
-  -h, --help       show this help message and exit
-  -ls, --list      list available files
-  -l, --local      work locally
-  -n, --nodate     don't add date
-  -e, --edit       edit full document
-  --editor EDITOR  change editor
-  -u, --update     update sdees
-```
