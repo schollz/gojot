@@ -31,6 +31,7 @@ var RuntimeArgs struct {
 	WorkingFile   string
 	WorkingPath   string
 	FullPath      string
+	TempPath      string
 	SdeesDir      string
 	ServerFileSet map[string]bool
 	Debug         bool
@@ -153,12 +154,7 @@ func main() {
 	}
 	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
 
-	logger.Debug("ConfigArgs: %+v", ConfigArgs)
-	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
-	logger.Info("Working on %s", ConfigArgs.WorkingFile)
 	RuntimeArgs.FullPath = path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile)
-	logger.Debug("Full path: %s", RuntimeArgs.FullPath)
-
 	if !exists(RuntimeArgs.FullPath) {
 		err := os.MkdirAll(RuntimeArgs.FullPath, 0711)
 		if err != nil {
@@ -166,10 +162,24 @@ func main() {
 		}
 	}
 
-	if HasInternetAccess() && !RuntimeArgs.EditLocally {
-		syncDown()
+	RuntimeArgs.TempPath = path.Join(RuntimeArgs.WorkingPath, "temp")
+	if !exists(RuntimeArgs.TempPath) {
+		err := os.MkdirAll(RuntimeArgs.TempPath, 0711)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	syncUp()
+
+	logger.Debug("ConfigArgs: %+v", ConfigArgs)
+	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
+	logger.Info("Working on %s", ConfigArgs.WorkingFile)
+	logger.Debug("Full path: %s", RuntimeArgs.FullPath)
+
+	editfile()
+	// if HasInternetAccess() && !RuntimeArgs.EditLocally {
+	// 	syncDown()
+	// }
+	// syncUp()
 }
 
 func initialize() {
