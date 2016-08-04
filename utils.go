@@ -5,14 +5,33 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/jcelliott/lumber"
 )
+
+var logger *lumber.ConsoleLogger
+
+func init() {
+	logger = lumber.NewConsoleLogger(lumber.TRACE)
+	logger.Trace("the %s log level", "lowest")
+	logger.Debug("")
+	logger.Info("the default log level")
+	logger.Warn("")
+	logger.Error("")
+	logger.Fatal("the %s log level", "highest")
+}
 
 // HasInternetAccess determines whether or not the internet is accessible
 func HasInternetAccess() bool {
+	logger.Prefix("HasInternetAccess")
+	logger.Debug("Checking internet connection...")
 	_, connectionError := http.Get("http://www.google.com/")
 	internetAccess := true
 	if connectionError != nil {
 		internetAccess = false
+		logger.Debug("...Unavailable")
+	} else {
+		logger.Debug("...OK")
 	}
 	return internetAccess
 }

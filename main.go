@@ -24,6 +24,7 @@ var RuntimeArgs struct {
 	ImportFile  string
 	ExportFile  string
 	WorkingFile string
+	Debug       bool
 	EditWhole   bool
 	EditLocally bool
 	ListFiles   bool
@@ -65,6 +66,11 @@ func main() {
 			Destination: &RuntimeArgs.EditWhole,
 		},
 		cli.BoolFlag{
+			Name:        "debug",
+			Usage:       "Turn on debug mode",
+			Destination: &RuntimeArgs.Debug,
+		},
+		cli.BoolFlag{
 			Name:        "local, l",
 			Usage:       "Work locally",
 			Destination: &RuntimeArgs.EditLocally,
@@ -83,5 +89,9 @@ func main() {
 	app.Run(os.Args)
 	RuntimeArgs.HomeDir, _ = home.Dir()
 	fmt.Println(RuntimeArgs)
-
+	if RuntimeArgs.Debug == false {
+		logger.Level(2)
+	} else {
+		logger.Level(0)
+	}
 }
