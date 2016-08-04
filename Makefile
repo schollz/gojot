@@ -14,6 +14,7 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.Buil
 $(BINARY): $(SOURCES)
 	go get github.com/maxwellhealth/go-gpg
 	go get github.com/pkg/sftp
+	go get github.com/mitchellh/go-homedir
 	go build ${LDFLAGS} -o ${BINARY} main.go
 
 # .PHONY: install
