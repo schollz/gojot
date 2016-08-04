@@ -49,14 +49,8 @@ var ConfigArgs struct {
 	SdeesDir    string
 }
 
-func init() {
-	passphrase = []byte("")
-	privateKey = []byte(``)
-	publicKey = []byte(``)
-
-}
-
 func main() {
+	defer cleanUp()
 	RuntimeArgs.SdeesDir = ".sdeesgo"
 	fmt.Println(Version, Build, BuildTime)
 	app := cli.NewApp()
@@ -169,6 +163,10 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+	// Set public and private key
+	publicKey, _ = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "public.key"))
+	privateKey, _ = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "private.key"))
 
 	logger.Debug("ConfigArgs: %+v", ConfigArgs)
 	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
