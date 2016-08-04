@@ -1,3 +1,5 @@
+![build](https://img.shields.io/badge/build-failing-red.svg)
+
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
 A simple Go-program wrapper to **sync** a remote file, **decrypt** it, **edit** it, **encrypt** it, then **sync** it back.
