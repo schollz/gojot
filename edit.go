@@ -109,7 +109,8 @@ com! WPCLI call WordProcessorModeCLI()`), 0644)
 }
 
 func writeEntry(fileContents string, forceWrite bool) {
-	if len(fileContents) < 32 && !forceWrite {
+	logger.Debug("Entry contains %d bytes.", len(fileContents))
+	if len(fileContents) < 22 && !forceWrite {
 		logger.Info("No data appended.")
 		return
 	}
