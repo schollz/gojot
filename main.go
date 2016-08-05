@@ -65,16 +65,6 @@ func main() {
 		RuntimeArgs.WorkingPath = path.Join(homeDir, RuntimeArgs.SdeesDir)
 		RuntimeArgs.SSHKey = path.Join(homeDir, ".ssh", "id_rsa")
 
-		// Run Importing/Exporting
-		if len(RuntimeArgs.ImportFile) > 0 {
-			importFile()
-			os.Exit(1)
-		}
-		if len(RuntimeArgs.ExportFile) > 0 {
-			exportFile()
-			os.Exit(1)
-		}
-
 		// Determine if intialization is needed
 		if !exists(RuntimeArgs.WorkingPath) {
 			initialize()
@@ -116,6 +106,16 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+		}
+
+		// Run Importing/Exporting
+		if len(RuntimeArgs.ImportFile) > 0 {
+			importFile(RuntimeArgs.ImportFile)
+			os.Exit(1)
+		}
+		if len(RuntimeArgs.ExportFile) > 0 {
+			exportFile()
+			os.Exit(1)
 		}
 
 		run()
@@ -199,10 +199,6 @@ func initialize() {
 		log.Println(err)
 	}
 	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
-
-}
-
-func importFile() {
 
 }
 

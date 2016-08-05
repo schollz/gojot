@@ -14,6 +14,19 @@ import (
 	"time"
 )
 
+func importFile(filename string) {
+	promptPassword()
+	fileContents, err := ioutil.ReadFile(filename)
+	if err != nil {
+		logger.Error("%v", err)
+		os.Exit(-1)
+	}
+	entries := parseEntries(string(fileContents))
+	for _, entry := range entries {
+		writeEntry(entry, true)
+	}
+}
+
 func parseEntries(text string) []string {
 	entry := ""
 	entries := make(map[int]string)
