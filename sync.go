@@ -27,6 +27,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 }
 
 func syncDown() {
+	logger.Info("Downloading from server...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -102,10 +103,11 @@ func syncDown() {
 
 	}
 
-	logger.Info("Download complete.")
+	logger.Info("...complete.")
 }
 
 func syncUp() {
+	logger.Info("Uploading to server...")
 	filesToSync := []string{}
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
 	for _, f := range files {
@@ -147,5 +149,5 @@ func syncUp() {
 			log.Fatal(err)
 		}
 	}
-	logger.Info("Upload complete.")
+	logger.Info("...complete.")
 }

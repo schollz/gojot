@@ -6,13 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"os/user"
 	"path"
-	"strings"
-	"syscall"
-
-	"golang.org/x/crypto/ssh/terminal"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -49,63 +44,6 @@ var ConfigArgs struct {
 	ServerPort  string
 	ServerUser  string
 	SdeesDir    string
-}
-
-func start() {
-	// Check if VIM exists
-	_, err := exec.Command("vim", "--version").Output()
-	if err != nil {
-		fmt.Println(`You need to download vim. If your using Unix:
-
-	apt-get install vim
-
-If you're using Windows:
-
-	wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
-	unzip vim74w32.zip
-	mv vim/vim74/vim.exe ./
-`)
-		os.Exit(-1)
-	}
-
-	// Get password for working file
-	passwordAccepted := false
-	for passwordAccepted == false {
-		fmt.Printf("\nEnter password for editing '%s': ", ConfigArgs.WorkingFile)
-		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-		password := strings.TrimSpace(string(bytePassword))
-		RuntimeArgs.Passphrase = password
-		if exists(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass")) {
-			// Check old password
-			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"))
-			err := CheckPasswordHash(string(fileContents), password)
-			if err == nil {
-				passwordAccepted = true
-			} else {
-				fmt.Println("\nPasswords do not match.")
-			}
-		} else {
-			// Generate new passwrod
-			fmt.Printf("\nEnter password again: ")
-			bytePassword2, _ := terminal.ReadPassword(int(syscall.Stdin))
-			password2 := strings.TrimSpace(string(bytePassword2))
-			if password == password2 {
-				// Write password to file
-				passwordAccepted = true
-				passwordHashed, _ := HashPassword(password)
-				err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"), passwordHashed, 0644)
-				if err != nil {
-					log.Fatal("Could not write to file.")
-				}
-			} else {
-				fmt.Println("\nPasswords do not match.")
-			}
-		}
-	}
-	fmt.Println("")
-
-	writeEntry(editEntry(), false)
-
 }
 
 func main() {
@@ -180,7 +118,7 @@ func main() {
 			}
 		}
 
-		start()
+		run()
 		return nil
 	}
 	app.Flags = []cli.Flag{
@@ -256,7 +194,6 @@ func initialize() {
 		ConfigArgs.WorkingFile = "notes.txt"
 	}
 
-	fmt.Println("Make sure to put your keys into the directory " + RuntimeArgs.SdeesDir)
 	b, err := json.Marshal(ConfigArgs)
 	if err != nil {
 		log.Println(err)

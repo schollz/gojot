@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
@@ -78,10 +77,20 @@ func decrypt(file string) string {
 	return decrypted
 }
 
-func readAllFiles() {
+func readAllFiles() []string {
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
+	fileNames := []string{}
 	for _, f := range files {
-		fileName := path.Join(RuntimeArgs.FullPath, f.Name())
-		fmt.Println(fileName)
+		fileNames = append(fileNames, path.Join(RuntimeArgs.FullPath, f.Name()))
 	}
+	return fileNames
+}
+
+func decryptAll() string {
+	allFiles := readAllFiles()
+	allText := ""
+	for _, file := range allFiles {
+		allText += decrypt(file) + "\n"
+	}
+	return allText
 }
