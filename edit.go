@@ -52,7 +52,7 @@ com! WPCLI call WordProcessorModeCLI()`), 0644)
 	}
 
 	t := time.Now()
-	dateString := string(t.Format(time.RFC3339)) + "   "
+	dateString := string(t.Format("2006-01-02 15:04:05")) + "   "
 	err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(dateString), 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -68,9 +68,10 @@ com! WPCLI call WordProcessorModeCLI()`), 0644)
 	return string(fileContents)
 }
 
-func writeEntry(fileContents string, forceWrite bool) string {
+func writeEntry(fileContents string, forceWrite bool) {
 	if len(fileContents) < 32 && !forceWrite {
-		return ""
+		logger.Info("No data appended.")
+		return
 	}
 	// Hash contents to get filename
 	h := sha1.New()
@@ -78,10 +79,10 @@ func writeEntry(fileContents string, forceWrite bool) string {
 	sha1_hash := hex.EncodeToString(h.Sum(nil))
 	fileName := string(sha1_hash) + ".gpg"
 
-	encryptedText := encryptString(string(fileContents), getPassword())
+	encryptedText := encryptString(string(fileContents), RuntimeArgs.Passphrase)
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), []byte(encryptedText), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return fileName
+	logger.Info("Wrote %s.", fileName)
 }

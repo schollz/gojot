@@ -52,7 +52,8 @@ var ConfigArgs struct {
 }
 
 func start() {
-	out, err := exec.Command("vim", "--version").Output()
+	// Check if VIM exists
+	_, err := exec.Command("vim", "--version").Output()
 	if err != nil {
 		fmt.Println(`You need to download vim. If your using Unix:
 
@@ -66,17 +67,17 @@ If you're using Windows:
 `)
 		os.Exit(-1)
 	}
-	fmt.Printf("The date is %s\n", out)
 
+	// Get password for working file
 	passwordAccepted := false
 	for passwordAccepted == false {
 		fmt.Printf("\nEnter password for editing '%s': ", ConfigArgs.WorkingFile)
 		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 		password := strings.TrimSpace(string(bytePassword))
 		RuntimeArgs.Passphrase = password
-		if exists(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass")) {
+		if exists(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass")) {
 			// Check old password
-			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass"))
+			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"))
 			err := CheckPasswordHash(string(fileContents), password)
 			if err == nil {
 				passwordAccepted = true
@@ -92,7 +93,7 @@ If you're using Windows:
 				// Write password to file
 				passwordAccepted = true
 				passwordHashed, _ := HashPassword(password)
-				err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass"), passwordHashed, 0644)
+				err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"), passwordHashed, 0644)
 				if err != nil {
 					log.Fatal("Could not write to file.")
 				}
@@ -102,6 +103,8 @@ If you're using Windows:
 		}
 	}
 	fmt.Println("")
+
+	writeEntry(editEntry(), false)
 
 }
 
