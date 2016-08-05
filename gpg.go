@@ -78,7 +78,8 @@ func encrypt(fileContents string) string {
 
 func decrypt(file string) string {
 	fileContents, _ := ioutil.ReadFile(file)
-	return decryptString(string(fileContents), getPassword())
+	decrypted, _ := decryptString(string(fileContents), getPassword())
+	return decrypted
 }
 
 func readAllFiles() {

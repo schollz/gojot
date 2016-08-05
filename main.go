@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"os/user"
 	"path"
 	"strings"
@@ -51,11 +52,28 @@ var ConfigArgs struct {
 }
 
 func start() {
+	out, err := exec.Command("vim", "--version").Output()
+	if err != nil {
+		fmt.Println(`You need to download vim. If your using Unix:
+
+	apt-get install vim
+
+If you're using Windows:
+
+	wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
+	unzip vim74w32.zip
+	mv vim/vim74/vim.exe ./
+`)
+		os.Exit(-1)
+	}
+	fmt.Printf("The date is %s\n", out)
+
 	passwordAccepted := false
 	for passwordAccepted == false {
 		fmt.Printf("\nEnter password for editing '%s': ", ConfigArgs.WorkingFile)
 		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 		password := strings.TrimSpace(string(bytePassword))
+		RuntimeArgs.Passphrase = password
 		if exists(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass")) {
 			// Check old password
 			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass"))
@@ -84,7 +102,7 @@ func start() {
 		}
 	}
 	fmt.Println("")
-	RuntimeArgs.Passphrase = password
+
 }
 
 func main() {

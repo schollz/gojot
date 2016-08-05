@@ -69,16 +69,19 @@ com! WPCLI call WordProcessorModeCLI()`), 0644)
 }
 
 func writeEntry(fileContents string, forceWrite bool) string {
-	if len(fileContents) < 32 && !forceWite {
+	if len(fileContents) < 32 && !forceWrite {
 		return ""
 	}
 	// Hash contents to get filename
 	h := sha1.New()
-	h.Write(fileContents)
+	h.Write([]byte(fileContents))
 	sha1_hash := hex.EncodeToString(h.Sum(nil))
 	fileName := string(sha1_hash) + ".gpg"
 
 	encryptedText := encryptString(string(fileContents), getPassword())
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), []byte(encryptedText), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return fileName
 }
