@@ -118,6 +118,15 @@ func main() {
 			os.Exit(1)
 		}
 
+		if RuntimeArgs.ListFiles {
+			fmt.Println("Available files:\n")
+			for i, f := range listFiles() {
+				fmt.Printf("%d) %s\n", i, f)
+			}
+			fmt.Print("\n")
+			os.Exit(1)
+		}
+		// run main app (run.go)
 		run()
 		return nil
 	}
