@@ -1,8 +1,12 @@
-![build](https://img.shields.io/badge/build-failing-red.svg)
+![build](https://img.shields.io/badge/build-passing-green.svg)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
-A simple Go-program wrapper to **sync** a remote file, **decrypt** it, **edit** it, **encrypt** it, then **sync** it back.
+**SDEES** is for **syncing** remote files, **decrypting**, **editing**, **encrypting**, then **syncing** back.
+
+However, **SDEES** is also a program that allows **serverless decentralized editing of encrypted stuff**.
+
+That is, you can use it offline/online and never fear of losing data or having trouble merging encrypted edits.
 
 # About
 
@@ -21,32 +25,38 @@ $ rm file
 $ rsync -arq --update encryptedfile user@remote:encryptedfile
 ```
 
-`sdees` lets you do this:
+**SDEES** lets you do this:
 
 ```bash
 $ sdees
+Enter password for editing: ******
 ```
 
 One command instead of 6\. One password instead of 3.
-
-`sdees` also has cute features like:
-
-- lite version control - it keeps track of diffs (encrypted)
-- automatic date time (turn off with `--nodate`)
-- list available files
-- everything is always available locally (in `~/.sdees/`) accessed with `-l`
 
 # Requirements
 
 - `vim` or equivalent
 - Have `someserver` that you already ran `ssh-copy-id someuser@someserver`
 
-# Notes
+# Install
 
-You need to generate a public and private key.
+To install, you must install Go 1.6+.
 
 ```
-gpg --gen-key
-gpg --export -a "Your Name" > ~/.sdeesgo/public.key
-gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key
+make
+```
+
+# Run
+
+To run, just use
+
+```
+./sdees
+```
+
+For more information use
+
+```
+./sdees --help
 ```
