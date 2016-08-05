@@ -22,6 +22,9 @@ func init() {
 // getPassword gets masked password
 // from http://stackoverflow.com/questions/2137357/getpasswd-functionality-in-go
 func getPassword() string {
+	if len(passphrase) > 0 {
+		return string(passphrase)
+	}
 	fmt.Print("Enter Password: ")
 	bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
 	password := string(bytePassword)

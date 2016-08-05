@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"os"
@@ -31,9 +33,8 @@ func cleanUp() error {
 	return nil
 }
 
-func editfile() {
+func editEntry() string {
 	logger.Debug("Editing file")
-
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "vimrc"), []byte(`func! WordProcessorModeCLI()
     setlocal formatoptions=t1
     setlocal textwidth=80
@@ -62,12 +63,22 @@ com! WPCLI call WordProcessorModeCLI()`), 0644)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()
-
-	fileName := encrypt()
-	if len(fileName) == 0 {
-		logger.Info("No data appended.")
-	} else {
-		logger.Info("Wrote %s.", fileName)
-	}
+	fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.TempPath, "temp"))
 	cleanUp()
+	return string(fileContents)
+}
+
+func writeEntry(fileContents string, forceWrite bool) string {
+	if len(fileContents) < 32 && !forceWite {
+		return ""
+	}
+	// Hash contents to get filename
+	h := sha1.New()
+	h.Write(fileContents)
+	sha1_hash := hex.EncodeToString(h.Sum(nil))
+	fileName := string(sha1_hash) + ".gpg"
+
+	encryptedText := encryptString(string(fileContents), getPassword())
+	err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), []byte(encryptedText), 0644)
+	return fileName
 }

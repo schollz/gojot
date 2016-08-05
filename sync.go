@@ -31,7 +31,7 @@ func syncDown() {
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
 		Auth: []ssh.AuthMethod{
-			PublicKeyFile(path.Join(RuntimeArgs.HomeDir, ".ssh", "id_rsa")),
+			PublicKeyFile(RuntimeArgs.SSHKey),
 		},
 	}
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
@@ -118,7 +118,7 @@ func syncUp() {
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
 		Auth: []ssh.AuthMethod{
-			PublicKeyFile(path.Join(RuntimeArgs.HomeDir, ".ssh", "id_rsa")),
+			PublicKeyFile(RuntimeArgs.SSHKey),
 		},
 	}
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)

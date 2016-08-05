@@ -8,6 +8,10 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"strings"
+	"syscall"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -22,14 +26,14 @@ var BuildTime string
 var Build string
 
 var RuntimeArgs struct {
-	HomeDir       string
+	Passphrase    string
 	ImportFile    string
 	ExportFile    string
-	WorkingFile   string
-	WorkingPath   string
-	FullPath      string
-	TempPath      string
-	SdeesDir      string
+	SSHKey        string // path to key, usually "~/.ssh/id_rsa"
+	WorkingPath   string // main path, usually "~/.sdees/"
+	FullPath      string // path with working file, usuallly "~/.sdees/notes.txt/"
+	TempPath      string // usually "~/.sdees/temp/"
+	SdeesDir      string // name of sdees dir, like ".sdees"
 	ServerFileSet map[string]bool
 	Debug         bool
 	EditWhole     bool
@@ -46,8 +50,44 @@ var ConfigArgs struct {
 	SdeesDir    string
 }
 
+func start() {
+	passwordAccepted := false
+	for passwordAccepted == false {
+		fmt.Printf("\nEnter password for editing '%s': ", ConfigArgs.WorkingFile)
+		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+		password := strings.TrimSpace(string(bytePassword))
+		if exists(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass")) {
+			// Check old password
+			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass"))
+			err := CheckPasswordHash(string(fileContents), password)
+			if err == nil {
+				passwordAccepted = true
+			} else {
+				fmt.Println("\nPasswords do not match.")
+			}
+		} else {
+			// Generate new passwrod
+			fmt.Printf("\nEnter password again: ")
+			bytePassword2, _ := terminal.ReadPassword(int(syscall.Stdin))
+			password2 := strings.TrimSpace(string(bytePassword2))
+			if password == password2 {
+				// Write password to file
+				passwordAccepted = true
+				passwordHashed, _ := HashPassword(password)
+				err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".pass"), passwordHashed, 0644)
+				if err != nil {
+					log.Fatal("Could not write to file.")
+				}
+			} else {
+				fmt.Println("\nPasswords do not match.")
+			}
+		}
+	}
+	fmt.Println("")
+	RuntimeArgs.Passphrase = password
+}
+
 func main() {
-	defer cleanUp()
 	RuntimeArgs.SdeesDir = ".sdeesgo"
 	fmt.Println(Version, Build, BuildTime)
 	app := cli.NewApp()
@@ -55,7 +95,71 @@ func main() {
 	app.Version = Version + " " + Build + " " + BuildTime
 	app.Usage = "sync, decrypt, edit, encrypt, and sync"
 	app.Action = func(c *cli.Context) error {
-		RuntimeArgs.WorkingFile = c.Args().Get(0)
+		// Set the log level
+		if RuntimeArgs.Debug == false {
+			logger.Level(2)
+		} else {
+			logger.Level(0)
+		}
+		// Set the paths
+		homeDir, _ := home.Dir()
+		RuntimeArgs.WorkingPath = path.Join(homeDir, RuntimeArgs.SdeesDir)
+		RuntimeArgs.SSHKey = path.Join(homeDir, ".ssh", "id_rsa")
+
+		// Run Importing/Exporting
+		if len(RuntimeArgs.ImportFile) > 0 {
+			importFile()
+			os.Exit(1)
+		}
+		if len(RuntimeArgs.ExportFile) > 0 {
+			exportFile()
+			os.Exit(1)
+		}
+
+		// Determine if intialization is needed
+		if !exists(RuntimeArgs.WorkingPath) {
+			initialize()
+		}
+		if !exists(path.Join(RuntimeArgs.WorkingPath, "config.json")) {
+			initialize()
+		} else {
+			// Load prevoius parameters
+			jsonBlob, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "config.json"))
+			err := json.Unmarshal(jsonBlob, &ConfigArgs)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		workingFile := c.Args().Get(0)
+		if len(workingFile) > 0 {
+			ConfigArgs.WorkingFile = workingFile
+		}
+
+		// Save current config parameters
+		b, err := json.Marshal(ConfigArgs)
+		if err != nil {
+			log.Println(err)
+		}
+		ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
+
+		RuntimeArgs.FullPath = path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile)
+		if !exists(RuntimeArgs.FullPath) {
+			err := os.MkdirAll(RuntimeArgs.FullPath, 0711)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		RuntimeArgs.TempPath = path.Join(RuntimeArgs.WorkingPath, "temp")
+		if !exists(RuntimeArgs.TempPath) {
+			err := os.MkdirAll(RuntimeArgs.TempPath, 0711)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		start()
 		return nil
 	}
 	app.Flags = []cli.Flag{
@@ -96,99 +200,6 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
-
-	// Set the log level
-	if RuntimeArgs.Debug == false {
-		logger.Level(2)
-	} else {
-		logger.Level(0)
-	}
-
-	// Set the paths
-	RuntimeArgs.HomeDir, _ = home.Dir()
-	RuntimeArgs.WorkingPath = path.Join(RuntimeArgs.HomeDir, RuntimeArgs.SdeesDir)
-
-	// Run Importing/Exporting
-	if len(RuntimeArgs.ImportFile) > 0 {
-		importFile()
-		os.Exit(1)
-	}
-	if len(RuntimeArgs.ExportFile) > 0 {
-		exportFile()
-		os.Exit(1)
-	}
-
-	// Determine if intialization is needed
-	if !exists(RuntimeArgs.WorkingPath) {
-		initialize()
-	}
-	if !exists(path.Join(RuntimeArgs.WorkingPath, "config.json")) {
-		initialize()
-	} else {
-		// Load prevoius parameters
-		jsonBlob, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "config.json"))
-		err := json.Unmarshal(jsonBlob, &ConfigArgs)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	// Reset the working file if it is declared
-	if len(RuntimeArgs.WorkingFile) > 0 {
-		ConfigArgs.WorkingFile = RuntimeArgs.WorkingFile
-	}
-
-	// Save current config parameters
-	b, err := json.Marshal(ConfigArgs)
-	if err != nil {
-		log.Println(err)
-	}
-	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
-
-	RuntimeArgs.FullPath = path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile)
-	if !exists(RuntimeArgs.FullPath) {
-		err := os.MkdirAll(RuntimeArgs.FullPath, 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	RuntimeArgs.TempPath = path.Join(RuntimeArgs.WorkingPath, "temp")
-	if !exists(RuntimeArgs.TempPath) {
-		err := os.MkdirAll(RuntimeArgs.TempPath, 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	// Set public and private key
-	publicKey, err = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "public.key"))
-	if err != nil {
-		fmt.Println(`You need to generate and export GPG keys.
-gpg --gen-key
-gpg --export -a "Your Name" > ~/.sdeesgo/public.key
-gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key`)
-		os.Exit(-1)
-	}
-	privateKey, err = ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, "private.key"))
-	if err != nil {
-		fmt.Println(`You need to export GPG keys.
-
-gpg --export-secret-keys -a "Your Name" > ~/.sdeesgo/private.key`)
-		os.Exit(-1)
-	}
-
-	logger.Debug("ConfigArgs: %+v", ConfigArgs)
-	logger.Debug("RuntimeArgs: %+v", RuntimeArgs)
-	logger.Info("Working on %s", ConfigArgs.WorkingFile)
-	logger.Debug("Full path: %s", RuntimeArgs.FullPath)
-
-	readAllFiles()
-	// if HasInternetAccess() && !RuntimeArgs.EditLocally {
-	// 	syncDown()
-	// }
-	// editfile()
-	// syncUp()
 }
 
 func initialize() {
