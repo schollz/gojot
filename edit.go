@@ -25,6 +25,18 @@ func importFile(filename string) {
 	for _, entry := range entries {
 		writeEntry(entry, true)
 	}
+	logger.Info("Imported '%s' to %s.", filename, ConfigArgs.WorkingFile)
+}
+
+func exportFile(filename string) {
+	promptPassword()
+	fullText := getFullEntry()
+	err := ioutil.WriteFile(filename, []byte(fullText), 0644)
+	if err != nil {
+		logger.Error("%v", err)
+		os.Exit(-1)
+	}
+	logger.Info("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
 }
 
 func parseEntries(text string) []string {

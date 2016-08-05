@@ -114,7 +114,7 @@ func main() {
 			os.Exit(1)
 		}
 		if len(RuntimeArgs.ExportFile) > 0 {
-			exportFile()
+			exportFile(RuntimeArgs.ExportFile)
 			os.Exit(1)
 		}
 
@@ -199,9 +199,5 @@ func initialize() {
 		log.Println(err)
 	}
 	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
-
-}
-
-func exportFile() {
 
 }
