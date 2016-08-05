@@ -76,23 +76,25 @@ func syncDown() {
 	}
 
 	for _, file := range files {
-		fp, err := sftp.Open(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		buf := bytes.NewBuffer(nil)
-		_, err = io.Copy(buf, fp)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fp.Close()
-
 		fileNameSplit := strings.Split(file, "/")
 		fileName := fileNameSplit[len(fileNameSplit)-1]
 		RuntimeArgs.ServerFileSet[fileName] = true
+
 		if !exists(path.Join(RuntimeArgs.FullPath, fileName)) {
 			logger.Info("Syncing %s.", fileName)
+
+			fp, err := sftp.Open(file)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			buf := bytes.NewBuffer(nil)
+			_, err = io.Copy(buf, fp)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fp.Close()
+
 			err = ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), buf.Bytes(), 0644)
 			if err != nil {
 				log.Fatal(err)
@@ -139,7 +141,7 @@ func syncUp() {
 	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile
 
 	for _, file := range filesToSync {
-		logger.Info("Writing %s.", file)
+		logger.Info("Syncing %s.", file)
 		f, err := sftp.Create(path.Join(dirToWalk, file))
 		if err != nil {
 			log.Fatal(err)
