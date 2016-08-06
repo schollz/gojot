@@ -1,4 +1,4 @@
-package sdees
+package main
 
 import (
 	"crypto/sha1"
