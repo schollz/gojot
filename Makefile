@@ -31,3 +31,4 @@ binaries:
 	rm -rf binaries
 	mkdir binaries
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
+	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
