@@ -22,20 +22,21 @@ var BuildTime string
 var Build string
 
 var RuntimeArgs struct {
-	Passphrase    string
-	ImportFile    string
-	ExportFile    string
-	SSHKey        string // path to key, usually "~/.ssh/id_rsa"
-	WorkingPath   string // main path, usually "~/.sdees/"
-	FullPath      string // path with working file, usuallly "~/.sdees/notes.txt/"
-	TempPath      string // usually "~/.sdees/temp/"
-	SdeesDir      string // name of sdees dir, like ".sdees"
-	ServerFileSet map[string]bool
-	Debug         bool
-	EditWhole     bool
-	EditLocally   bool
-	ListFiles     bool
-	UpdateSdees   bool
+	Passphrase       string
+	ServerPassphrase string
+	ImportFile       string
+	ExportFile       string
+	SSHKey           string // path to key, usually "~/.ssh/id_rsa"
+	WorkingPath      string // main path, usually "~/.sdees/"
+	FullPath         string // path with working file, usuallly "~/.sdees/notes.txt/"
+	TempPath         string // usually "~/.sdees/temp/"
+	SdeesDir         string // name of sdees dir, like ".sdees"
+	ServerFileSet    map[string]bool
+	Debug            bool
+	EditWhole        bool
+	EditLocally      bool
+	ListFiles        bool
+	UpdateSdees      bool
 }
 
 var ConfigArgs struct {

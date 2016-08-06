@@ -2,14 +2,17 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"strings"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 func PublicKeyFile(file string) ssh.AuthMethod {
@@ -38,7 +41,19 @@ func syncDown() {
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
+		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+		RuntimeArgs.ServerPassphrase = strings.TrimSpace(string(bytePassword))
+		sshConfig = &ssh.ClientConfig{
+			User: ConfigArgs.ServerUser,
+			Auth: []ssh.AuthMethod{
+				ssh.Password(RuntimeArgs.ServerPassphrase),
+			},
+		}
+		connection, err = ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	defer connection.Close()
 
@@ -128,7 +143,16 @@ func syncUp() {
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
-		log.Fatal(err)
+		sshConfig = &ssh.ClientConfig{
+			User: ConfigArgs.ServerUser,
+			Auth: []ssh.AuthMethod{
+				ssh.Password(RuntimeArgs.ServerPassphrase),
+			},
+		}
+		connection, err = ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	defer connection.Close()
 
