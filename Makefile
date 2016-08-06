@@ -25,3 +25,9 @@ install:
 .PHONY: clean
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+
+.PHONY: binaries
+binaries:
+	rm -rf binaries
+	mkdir binaries
+	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
