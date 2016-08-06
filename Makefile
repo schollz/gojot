@@ -18,9 +18,9 @@ $(BINARY): $(SOURCES)
 	go get github.com/jcelliott/lumber
 	go build ${LDFLAGS} -o ${BINARY} ${SOURCES}
 
-# .PHONY: install
-# install:
-# 	go install ${LDFLAGS} ./...
+.PHONY: install
+install:
+	go install ${LDFLAGS} ./...
 
 .PHONY: clean
 clean:
