@@ -26,6 +26,7 @@ var RuntimeArgs struct {
 	ServerPassphrase string
 	ImportFile       string
 	ExportFile       string
+	HomePath         string // home path, usually "~/"
 	SSHKey           string // path to key, usually "~/.ssh/id_rsa"
 	WorkingPath      string // main path, usually "~/.sdees/"
 	FullPath         string // path with working file, usuallly "~/.sdees/notes.txt/"
@@ -63,6 +64,7 @@ func main() {
 		}
 		// Set the paths
 		homeDir, _ := home.Dir()
+		RuntimeArgs.HomePath = homeDir
 		RuntimeArgs.WorkingPath = path.Join(homeDir, RuntimeArgs.SdeesDir)
 		RuntimeArgs.SSHKey = path.Join(homeDir, ".ssh", "id_rsa")
 

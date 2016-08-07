@@ -99,11 +99,11 @@ If you're using Windows:
 		os.Exit(-1)
 	}
 
-	promptPassword()
-
 	if !RuntimeArgs.EditLocally && HasInternetAccess() {
 		syncDown()
 	}
+
+	promptPassword()
 
 	fullEntry := ""
 	if RuntimeArgs.EditWhole {

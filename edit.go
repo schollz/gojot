@@ -107,27 +107,53 @@ func cleanUp() error {
 
 func editEntry() string {
 	logger.Debug("Editing file")
-	err := ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "vimrc"), []byte(`func! WordProcessorModeCLI()
-    setlocal formatoptions=t1
-    setlocal textwidth=80
-    map j gj
-    map k gk
-    set formatprg=par
-    setlocal wrap
-    setlocal linebreak
-    setlocal noexpandtab
-    normal G$
+	vimrc := `func! WordProcessorModeCLI()
+		setlocal formatoptions=t1
+		setlocal textwidth=80
+		map j gj
+		map k gk
+		set formatprg=par
+		setlocal wrap
+		setlocal linebreak
+		setlocal noexpandtab
+		normal G$
 endfu
-com! WPCLI call WordProcessorModeCLI()`), 0644)
-	if err != nil {
-		log.Fatal(err)
+com! WPCLI call WordProcessorModeCLI()`
+	// Append to .vimrc file
+	if exists(path.Join(RuntimeArgs.HomePath, ".vimrc")) {
+		// Check if .vimrc file contains code
+		logger.Debug("Found .vimrc.")
+		fileContents, err := ioutil.ReadFile(path.Join(RuntimeArgs.HomePath, ".vimrc"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		if !strings.Contains(string(fileContents), "com! WPCLI call WordProcessorModeCLI") {
+			// Append to fileContents
+			logger.Debug("WPCLI not found in .vimrc, adding it...")
+			newvimrc := string(fileContents) + "\n" + vimrc
+			err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(newvimrc), 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			logger.Debug("WPCLI found in .vimrc.")
+		}
+	} else {
+		logger.Debug("Can not find .vimrc, creating new .vimrc...")
+		err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(vimrc), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	cmdArgs := []string{"-u", path.Join(RuntimeArgs.TempPath, "vimrc"), "-c", "WPCLI", "+startinsert", path.Join(RuntimeArgs.TempPath, "temp")}
+	cmdArgs := []string{"-c", "WPCLI", "+startinsert", path.Join(RuntimeArgs.TempPath, "temp")}
 	cmd := exec.Command("vim", cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	err = cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 	fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.TempPath, "temp"))
 	cleanUp()
 	return string(fileContents)

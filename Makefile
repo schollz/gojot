@@ -3,7 +3,7 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
 
 BINARY=sdees
 
-VERSION=1.0.1
+VERSION=1.0.2
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 
@@ -25,10 +25,21 @@ install:
 .PHONY: clean
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+	rm -rf binaries
 
 .PHONY: binaries
 binaries:
 	rm -rf binaries
 	mkdir binaries
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
+	rm binaries/sdees
+	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_arm.zip binaries/sdees
+	rm binaries/sdees
+	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_arm64.zip binaries/sdees
+	rm binaries/sdees
 	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
+	zip -j binaries/sdees_windows_amd64.zip binaries/sdees.exe
+	rm binaries/sdees.exe
