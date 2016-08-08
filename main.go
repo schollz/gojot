@@ -32,12 +32,14 @@ var RuntimeArgs struct {
 	FullPath         string // path with working file, usuallly "~/.sdees/notes.txt/"
 	TempPath         string // usually "~/.sdees/temp/"
 	SdeesDir         string // name of sdees dir, like ".sdees"
+	NumberToShow     string
 	ServerFileSet    map[string]bool
 	Debug            bool
 	EditWhole        bool
 	EditLocally      bool
 	ListFiles        bool
 	UpdateSdees      bool
+	Summarize        bool
 }
 
 var ConfigArgs struct {
@@ -129,6 +131,7 @@ func main() {
 			fmt.Print("\n")
 			os.Exit(1)
 		}
+
 		// run main app (run.go)
 		run()
 		return nil
@@ -148,6 +151,16 @@ func main() {
 			Name:        "edit, e",
 			Usage:       "Edit whole document",
 			Destination: &RuntimeArgs.EditWhole,
+		},
+		cli.BoolFlag{
+			Name:        "summary, s",
+			Usage:       "Summarize",
+			Destination: &RuntimeArgs.Summarize,
+		},
+		cli.StringFlag{
+			Name:        "number, n",
+			Usage:       "Limit number shown",
+			Destination: &RuntimeArgs.NumberToShow,
 		},
 		cli.BoolFlag{
 			Name:        "debug",

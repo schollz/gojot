@@ -30,7 +30,7 @@ func importFile(filename string) {
 
 func exportFile(filename string) {
 	promptPassword()
-	fullText := getFullEntry()
+	fullText, _ := getFullEntry()
 	err := ioutil.WriteFile(filename, []byte(fullText), 0644)
 	if err != nil {
 		logger.Error("%v", err)

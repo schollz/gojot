@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -33,7 +34,7 @@ func listFiles() []string {
 	return fileNames
 }
 
-func getFullEntry() string {
+func getFullEntry() (string, []string) {
 	defer timeTrack(time.Now(), "Got full entry")
 	type CachedDoc struct {
 		Files      []string
@@ -114,7 +115,7 @@ func getFullEntry() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return strings.TrimSpace(fullEntry)
+	return strings.TrimSpace(fullEntry), cache.Entries
 
 }
 
@@ -181,9 +182,26 @@ If you're using Windows:
 
 	promptPassword()
 
+	if RuntimeArgs.Summarize {
+		_, entries := getFullEntry()
+		totalEntries := len(entries)
+		numberToShow := totalEntries
+		if len(RuntimeArgs.NumberToShow) > 0 {
+			numberToShow, _ = strconv.Atoi(RuntimeArgs.NumberToShow)
+		}
+		for i, entry := range entries {
+			if i > totalEntries-numberToShow {
+				lines := strings.Split(entry, "\n")
+				fmt.Println(lines[0])
+			}
+		}
+		cleanUp()
+		os.Exit(1)
+	}
+
 	fullEntry := ""
 	if RuntimeArgs.EditWhole {
-		fullEntry = getFullEntry()
+		fullEntry, _ = getFullEntry()
 		if len(fullEntry) > 0 {
 			fullEntry += "\n\n"
 		}
