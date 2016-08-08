@@ -46,5 +46,5 @@ binaries:
 	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
 	zip -j binaries/sdees_windows_amd64.zip binaries/sdees.exe binaries/vim.exe
 	rm -rf binaries/vim.exe
-	rm -rf binaries/vim/
+	rm -rf ./vim/
 	rm binaries/sdees.exe
