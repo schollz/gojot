@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 
 	"golang.org/x/crypto/bcrypt"
@@ -14,7 +15,7 @@ import (
 
 // HashPassword generates a bcrypt hash of the password using work factor 14.
 func HashPassword(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte("alskdjcoimecalks3234kj"+password), 13)
+	return bcrypt.GenerateFromPassword([]byte("alskdjcoimecalks3234kj"+password), 12)
 }
 
 // CheckPassword securely compares a bcrypt hashed password with its possible
@@ -34,6 +35,7 @@ func decryptString(decryptionString string, encryptionPassphraseString string) (
 	alreadyPrompted := false
 	md, err := openpgp.ReadMessage(result.Body, nil, func(keys []openpgp.Key, symmetric bool) ([]byte, error) {
 		if alreadyPrompted {
+			os.Remove(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"))
 			return nil, errors.New("Could not decrypt using passphrase")
 		} else {
 			alreadyPrompted = true

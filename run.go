@@ -25,7 +25,7 @@ func listFiles() []string {
 	for _, f := range files {
 		fileNameSplit := strings.Split(f.Name(), "/")
 		fileName := fileNameSplit[len(fileNameSplit)-1]
-		if fileName == "config.json" || fileName == "temp" {
+		if fileName == "config.json" || fileName == "temp" || strings.Contains(fileName, ".cache") {
 			continue
 		}
 		fileNames = append(fileNames, fileName)
