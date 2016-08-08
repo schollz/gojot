@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -17,6 +18,11 @@ var logger *lumber.ConsoleLogger
 
 func init() {
 	logger = lumber.NewConsoleLogger(lumber.TRACE)
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	logger.Debug("%s took %s.", name, elapsed)
 }
 
 // getPassword gets masked password

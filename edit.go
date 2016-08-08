@@ -40,6 +40,7 @@ func exportFile(filename string) {
 }
 
 func parseEntries(text string) ([]string, []int) {
+	defer timeTrack(time.Now(), "Parsing entries")
 	entry := ""
 	entries := make(map[int]string)
 	var gt int
@@ -92,11 +93,6 @@ func sortEntries(entries map[int]string) ([]string, []int) {
 	}
 	logger.Debug("Sorted %d entries.", len(entriesInOrder))
 	return entriesInOrder, gtsInOrder
-}
-
-//
-func parseEntriesFromCache(text string) {
-
 }
 
 func cleanUp() error {
@@ -175,7 +171,7 @@ com! WPCLI call WordProcessorModeCLI()`
 }
 
 func writeEntry(fileContents string, forceWrite bool) {
-	logger.Debug("Entry contains %d bytes.", len(fileContents))
+	// logger.Debug("Entry contains %d bytes.", len(fileContents))
 	if len(fileContents) < 22 && !forceWrite {
 		logger.Info("No data appended.")
 		return

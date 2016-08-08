@@ -41,30 +41,66 @@ func getFullEntry() string {
 	}
 
 	fullEntry := ""
-	// if cache does not exist
 	cache := CachedDoc{[]string{}, []string{}, []int{}}
+	allEntries := []string{}
+	gts := []int{}
 	allFiles := readAllFiles()
-	wholeText := ""
-	for _, file := range allFiles {
-		wholeText += decrypt(file) + "\n"
-		cache.Files = append(cache.Files, file)
+	// if cache does not exist
+	if !exists(path.Join(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))) {
+		logger.Debug("No cache.")
+		wholeText := ""
+		for _, file := range allFiles {
+			wholeText += decrypt(file) + "\n"
+			cache.Files = append(cache.Files, file)
+		}
+		allEntries, gts = parseEntries(wholeText)
+	} else {
+		logger.Debug("Using cache.")
+		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))
+		decryptedFileContents, err := decryptString(string(fileContents), RuntimeArgs.Passphrase)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Unmarshal JSON
+		err = json.Unmarshal([]byte(decryptedFileContents), &cache)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Make set of files
+		hasFile := make(map[string]bool)
+		for _, file := range cache.Files {
+			hasFile[file] = true
+		}
+
+		// If file doesn't exist, add it
+		cache.Files = []string{}
+		for _, file := range allFiles {
+			cache.Files = append(cache.Files, file)
+			if _, ok := hasFile[file]; !ok {
+				logger.Debug("New entry %s.", file)
+				newEntry, _ := ioutil.ReadFile(file)
+				newEntryDecoded, err := decryptString(string(newEntry), RuntimeArgs.Passphrase)
+				if err != nil {
+					log.Fatal(err)
+				}
+				text, gt := parseEntries(newEntryDecoded)
+				cache.Entries = append(cache.Entries, text...)
+				cache.Timestamps = append(cache.Timestamps, gt...)
+			}
+		}
+
+		entries := make(map[int]string)
+		for i, entry := range cache.Entries {
+			entries[cache.Timestamps[i]] = entry
+		}
+		allEntries, gts = sortEntries(entries)
+
 	}
-	allEntries, gts := parseEntries(wholeText)
 
-	// if cache exists
-	// cached := getCache()
-	// allFiles := readAllFiles()
-	// for _, file := range allFiles {
-	// 	if _, ok :=cached.HasFile[file]; !ok {
-	// 		fileContents := decryptOne()
-	// 		gt, text := parseSingleEntry(fileContents)
-	// 		cached.HasFile[file] = true
-	// 		cached.Entries[gt] = text
-	// 	}
-	// }
-	// saveCache()
-	// allEntries, _ := sortEntries(cached.Entries)
-
+	cache.Entries = []string{}
+	cache.Timestamps = []int{}
 	for i, entry := range allEntries {
 		fullEntry += entry + "\n\n"
 		cache.Entries = append(cache.Entries, entry)
@@ -72,7 +108,6 @@ func getFullEntry() string {
 	}
 
 	cacheJson, _ := json.Marshal(cache)
-	fmt.Printf("%v", cache)
 	encryptedCacheJson := encryptString(string(cacheJson), RuntimeArgs.Passphrase)
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"), []byte(encryptedCacheJson), 0644)
 	if err != nil {
@@ -147,7 +182,9 @@ If you're using Windows:
 
 	fullEntry := ""
 	if RuntimeArgs.EditWhole {
+		start := time.Now()
 		fullEntry = getFullEntry()
+		logger.Info("Full entry loaded in %s.", time.Since(start))
 		if len(fullEntry) > 0 {
 			fullEntry += "\n\n"
 		}
