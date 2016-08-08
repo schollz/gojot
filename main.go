@@ -33,6 +33,7 @@ var RuntimeArgs struct {
 	TempPath         string // usually "~/.sdees/temp/"
 	SdeesDir         string // name of sdees dir, like ".sdees"
 	NumberToShow     string
+	TextSearch       string
 	ServerFileSet    map[string]bool
 	Debug            bool
 	EditWhole        bool
@@ -153,7 +154,7 @@ func main() {
 			Destination: &RuntimeArgs.EditWhole,
 		},
 		cli.BoolFlag{
-			Name:        "summary, s",
+			Name:        "summary",
 			Usage:       "Summarize",
 			Destination: &RuntimeArgs.Summarize,
 		},
@@ -161,6 +162,11 @@ func main() {
 			Name:        "number, n",
 			Usage:       "Limit number shown",
 			Destination: &RuntimeArgs.NumberToShow,
+		},
+		cli.StringFlag{
+			Name:        "search, s",
+			Usage:       "Search for text",
+			Destination: &RuntimeArgs.TextSearch,
 		},
 		cli.BoolFlag{
 			Name:        "debug",

@@ -200,10 +200,29 @@ If you're using Windows:
 	}
 
 	fullEntry := ""
-	if RuntimeArgs.EditWhole {
+	if len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole {
 		fullEntry, _ = getFullEntry()
 		if len(fullEntry) > 0 {
 			fullEntry += "\n\n"
+		}
+	} else if len(RuntimeArgs.TextSearch) > 0 {
+		searchTerms := strings.Split(RuntimeArgs.TextSearch, " ")
+		for i := range searchTerms {
+			searchTerms[i] = " " + searchTerms[i]
+		}
+		logger.Debug("Search terms: %v", searchTerms)
+		_, entries := getFullEntry()
+		for _, entry := range entries {
+			shouldAdd := true
+			for _, term := range searchTerms {
+				if !strings.Contains(strings.ToLower(entry), strings.ToLower(term)) {
+					shouldAdd = false
+					break
+				}
+			}
+			if shouldAdd {
+				fullEntry += entry + "\n\n"
+			}
 		}
 	}
 

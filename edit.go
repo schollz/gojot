@@ -158,6 +158,10 @@ com! WPCLI call WordProcessorModeCLI()`
 	}
 
 	cmdArgs := []string{"-c", "WPCLI", "+startinsert", path.Join(RuntimeArgs.TempPath, "temp")}
+	if len(RuntimeArgs.TextSearch) > 0 {
+		searchTerms := strings.Split(RuntimeArgs.TextSearch, " ")
+		cmdArgs = append([]string{"-c", "2match Keyword /\\c\\v(" + strings.Join(searchTerms, "|") + ")/"}, cmdArgs...)
+	}
 	cmd := exec.Command("vim", cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
