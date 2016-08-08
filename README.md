@@ -1,4 +1,4 @@
-![build](https://img.shields.io/badge/build-passing-green.svg)
+![build](https://img.shields.io/badge/build-failing-red.svg)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 

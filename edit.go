@@ -21,7 +21,7 @@ func importFile(filename string) {
 		logger.Error("%v", err)
 		os.Exit(-1)
 	}
-	entries := parseEntries(string(fileContents))
+	entries, _ := parseEntries(string(fileContents))
 	for _, entry := range entries {
 		writeEntry(entry, true)
 	}
@@ -39,7 +39,7 @@ func exportFile(filename string) {
 	logger.Info("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
 }
 
-func parseEntries(text string) []string {
+func parseEntries(text string) ([]string, []int) {
 	entry := ""
 	entries := make(map[int]string)
 	var gt int
@@ -68,7 +68,15 @@ func parseEntries(text string) []string {
 	if len(entry) > 0 {
 		entries[gt] = strings.TrimSpace(entry)
 	}
+	if len(entries) == 1 {
+		return append([]string{}, entries[gt]), append([]int{}, gt)
+	}
 
+	entriesInOrder, gtsInOrder := sortEntries(entries)
+	return entriesInOrder, gtsInOrder
+}
+
+func sortEntries(entries map[int]string) ([]string, []int) {
 	// Sort the entries in order
 	var keys []int
 	for k := range entries {
@@ -77,11 +85,18 @@ func parseEntries(text string) []string {
 	sort.Ints(keys)
 
 	entriesInOrder := []string{}
+	gtsInOrder := []int{}
 	for _, k := range keys {
 		entriesInOrder = append(entriesInOrder, entries[k])
+		gtsInOrder = append(gtsInOrder, k)
 	}
-	logger.Debug("Parsed %d entries.", len(entriesInOrder))
-	return entriesInOrder
+	logger.Debug("Sorted %d entries.", len(entriesInOrder))
+	return entriesInOrder, gtsInOrder
+}
+
+//
+func parseEntriesFromCache(text string) {
+
 }
 
 func cleanUp() error {

@@ -34,12 +34,33 @@ func listFiles() []string {
 
 func getFullEntry() string {
 	fullEntry := ""
+	// if cache does not exist
 	wholeText := decryptAll()
-	allEntries := parseEntries(wholeText)
+	allEntries, _ := parseEntries(wholeText)
+
+	// if cache exists
+	// type CachedDoc struct {
+	// 	HasFile map[string]bool
+	// 	Entries map[int]string
+	// }
+	// cached := getCache()
+	// allFiles := readAllFiles()
+	// for _, file := range allFiles {
+	// 	if _, ok :=cached.HasFile[file]; !ok {
+	// 		fileContents := decryptOne()
+	// 		gt, text := parseSingleEntry(fileContents)
+	// 		cached.HasFile[file] = true
+	// 		cached.Entries[gt] = text
+	// 	}
+	// }
+	// saveCache()
+	// allEntries, _ := sortEntries(cached.Entries)
+
 	for _, entry := range allEntries {
 		fullEntry += entry + "\n\n"
 	}
 	return strings.TrimSpace(fullEntry)
+
 }
 
 func promptPassword() {
@@ -121,7 +142,7 @@ If you're using Windows:
 	}
 
 	newEntry := editEntry()
-	entries := parseEntries(newEntry)
+	entries, _ := parseEntries(newEntry)
 	for _, entry := range entries {
 		writeEntry(entry, false)
 	}
