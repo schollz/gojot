@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -33,16 +34,24 @@ func listFiles() []string {
 }
 
 func getFullEntry() string {
+	type CachedDoc struct {
+		Files      []string
+		Entries    []string
+		Timestamps []int
+	}
+
 	fullEntry := ""
 	// if cache does not exist
-	wholeText := decryptAll()
-	allEntries, _ := parseEntries(wholeText)
+	cache := CachedDoc{[]string{}, []string{}, []int{}}
+	allFiles := readAllFiles()
+	wholeText := ""
+	for _, file := range allFiles {
+		wholeText += decrypt(file) + "\n"
+		cache.Files = append(cache.Files, file)
+	}
+	allEntries, gts := parseEntries(wholeText)
 
 	// if cache exists
-	// type CachedDoc struct {
-	// 	HasFile map[string]bool
-	// 	Entries map[int]string
-	// }
 	// cached := getCache()
 	// allFiles := readAllFiles()
 	// for _, file := range allFiles {
@@ -56,8 +65,18 @@ func getFullEntry() string {
 	// saveCache()
 	// allEntries, _ := sortEntries(cached.Entries)
 
-	for _, entry := range allEntries {
+	for i, entry := range allEntries {
 		fullEntry += entry + "\n\n"
+		cache.Entries = append(cache.Entries, entry)
+		cache.Timestamps = append(cache.Timestamps, gts[i])
+	}
+
+	cacheJson, _ := json.Marshal(cache)
+	fmt.Printf("%v", cache)
+	encryptedCacheJson := encryptString(string(cacheJson), RuntimeArgs.Passphrase)
+	err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"), []byte(encryptedCacheJson), 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 	return strings.TrimSpace(fullEntry)
 

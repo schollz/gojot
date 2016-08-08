@@ -85,12 +85,3 @@ func readAllFiles() []string {
 	}
 	return fileNames
 }
-
-func decryptAll() string {
-	allFiles := readAllFiles()
-	allText := ""
-	for _, file := range allFiles {
-		allText += decrypt(file) + "\n"
-	}
-	return allText
-}
