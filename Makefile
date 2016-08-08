@@ -3,7 +3,7 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
 
 BINARY=sdees
 
-VERSION=1.0.2
+VERSION=1.0.3
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 
