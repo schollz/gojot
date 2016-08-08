@@ -34,6 +34,7 @@ func listFiles() []string {
 }
 
 func getFullEntry() string {
+	defer timeTrack(time.Now(), "Got full entry")
 	type CachedDoc struct {
 		Files      []string
 		Entries    []string
@@ -182,9 +183,7 @@ If you're using Windows:
 
 	fullEntry := ""
 	if RuntimeArgs.EditWhole {
-		start := time.Now()
 		fullEntry = getFullEntry()
-		logger.Info("Full entry loaded in %s.", time.Since(start))
 		if len(fullEntry) > 0 {
 			fullEntry += "\n\n"
 		}
