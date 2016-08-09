@@ -207,13 +207,8 @@ func main() {
 			Destination: &RuntimeArgs.Debug,
 		},
 		cli.BoolFlag{
-			Name:        "local, l",
-			Usage:       "Work locally",
-			Destination: &RuntimeArgs.EditLocally,
-		},
-		cli.BoolFlag{
 			Name:        "update, u",
-			Usage:       "Update sdees",
+			Usage:       "Update sdees (requires Linux, Go1.6+)",
 			Destination: &RuntimeArgs.UpdateSdees,
 		},
 		cli.BoolFlag{
