@@ -105,6 +105,8 @@ func main() {
 				logger.Info("No internet.")
 			}
 			os.Exit(1)
+		} else {
+			logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
 		}
 
 		// Save current config parameters
