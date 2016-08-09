@@ -267,6 +267,11 @@ func initialize() {
 }
 
 func update() {
+	out, err := exec.Command("sdees", "--version").Output()
+	if err == nil {
+		fmt.Println("Current version:")
+		fmt.Println(string(out))
+	}
 	fullCommand := strings.Split("git clone https://github.com/schollz/sdees.git tempsdees", " ")
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -286,6 +291,12 @@ func update() {
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+
+	out, err = exec.Command("sdees", "--version").Output()
+	if err == nil {
+		fmt.Println("Updated to version:")
+		fmt.Println(string(out))
 	}
 
 }
