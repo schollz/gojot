@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"os/user"
 	"path"
+	"strings"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -147,6 +149,12 @@ func main() {
 			os.Exit(1)
 		}
 
+		// Updating
+		if RuntimeArgs.UpdateSdees {
+			update()
+			os.Exit(1)
+		}
+
 		if RuntimeArgs.ListFiles {
 			fmt.Println("Available files:\n")
 			for i, f := range listFiles() {
@@ -253,5 +261,29 @@ func initialize() {
 		log.Println(err)
 	}
 	ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
+
+}
+
+func update() {
+	fullCommand := strings.Split("git clone https://github.com/schollz/sdees.git tempsdees", " ")
+	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	os.Chdir("./tempsdees")
+
+	fullCommand = strings.Split("make install", " ")
+	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	os.Chdir("../")
+	fullCommand = strings.Split("rm -rf tempsdees", " ")
+	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 }

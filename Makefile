@@ -22,7 +22,7 @@ $(BINARY): $(SOURCES)
 install:
 	$(MAKE) clean
 	$(MAKE)
-	sudo cp sdees /usr/local/bin/
+	sudo mv sdees /usr/local/bin/
 
 .PHONY: clean
 clean:
