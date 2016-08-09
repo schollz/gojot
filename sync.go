@@ -41,9 +41,12 @@ func syncDown() {
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
-		fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
-		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-		RuntimeArgs.ServerPassphrase = strings.TrimSpace(string(bytePassword))
+		if len(RuntimeArgs.ServerPassphrase) == 0 {
+			fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			fmt.Printf("\n")
+			RuntimeArgs.ServerPassphrase = strings.TrimSpace(string(bytePassword))
+		}
 		sshConfig = &ssh.ClientConfig{
 			User: ConfigArgs.ServerUser,
 			Auth: []ssh.AuthMethod{
@@ -143,6 +146,12 @@ func syncUp() {
 	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
+		if len(RuntimeArgs.ServerPassphrase) == 0 {
+			fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			fmt.Printf("\n")
+			RuntimeArgs.ServerPassphrase = strings.TrimSpace(string(bytePassword))
+		}
 		sshConfig = &ssh.ClientConfig{
 			User: ConfigArgs.ServerUser,
 			Auth: []ssh.AuthMethod{

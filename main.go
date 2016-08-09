@@ -91,6 +91,22 @@ func main() {
 			ConfigArgs.WorkingFile = workingFile
 		}
 
+		if workingFile == "pull" {
+			if HasInternetAccess() {
+				syncDown()
+			} else {
+				logger.Info("No internet.")
+			}
+			os.Exit(1)
+		} else if workingFile == "push" {
+			if HasInternetAccess() {
+				syncUp()
+			} else {
+				logger.Info("No internet.")
+			}
+			os.Exit(1)
+		}
+
 		// Save current config parameters
 		b, err := json.Marshal(ConfigArgs)
 		if err != nil {

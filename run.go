@@ -176,9 +176,9 @@ If you're using Windows:
 		os.Exit(-1)
 	}
 
-	if !RuntimeArgs.EditLocally && HasInternetAccess() {
-		syncDown()
-	}
+	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
+	// 	syncDown()
+	// }
 
 	promptPassword()
 
@@ -239,8 +239,8 @@ If you're using Windows:
 		writeEntry(entry, false)
 	}
 
-	if !RuntimeArgs.EditLocally && HasInternetAccess() {
-		syncUp()
-	}
+	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
+	// 	syncUp()
+	// }
 
 }
