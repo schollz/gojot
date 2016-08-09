@@ -78,7 +78,7 @@ func syncDown() {
 	// walk a directory
 	RuntimeArgs.ServerFileSet = make(map[string]bool)
 	files := []string{}
-	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile
+	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir
 	logger.Debug("Walking %s", dirToWalk)
 	w := sftp.Walk(dirToWalk)
 	first := true
@@ -96,10 +96,27 @@ func syncDown() {
 	for _, file := range files {
 		fileNameSplit := strings.Split(file, "/")
 		fileName := fileNameSplit[len(fileNameSplit)-1]
+		if !strings.Contains(fileName, ".gpg") && !strings.Contains(fileName, ".pass") {
+			continue
+		}
+		folderName := ""
+		for i, s := range fileNameSplit {
+			if s == RuntimeArgs.SdeesDir {
+				folderName = fileNameSplit[i+1]
+				break
+			}
+		}
 		RuntimeArgs.ServerFileSet[fileName] = true
 
-		if !exists(path.Join(RuntimeArgs.FullPath, fileName)) {
-			logger.Info("Syncing %s.", fileName)
+		if !exists(path.Join(RuntimeArgs.WorkingPath, folderName, fileName)) {
+			if !exists(path.Join(RuntimeArgs.WorkingPath, folderName)) {
+				logger.Debug("Creating directory %s", folderName)
+				err := os.MkdirAll(path.Join(RuntimeArgs.WorkingPath, folderName), 0711)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			logger.Info("Syncing %s/%s.", folderName, fileName)
 
 			fp, err := sftp.Open(file)
 			if err != nil {
@@ -113,12 +130,12 @@ func syncDown() {
 			}
 			fp.Close()
 
-			err = ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), buf.Bytes(), 0644)
+			err = ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, folderName, fileName), buf.Bytes(), 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
 		} else {
-			logger.Debug("Skipping %s", fileName)
+			// logger.Debug("Skipping %s", fileName)
 		}
 
 	}
