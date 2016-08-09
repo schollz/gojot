@@ -60,13 +60,14 @@ func main() {
 	} else {
 		Build = Build[0:7]
 	}
-	fmt.Printf("sdees version %s (%s)\n", Version, Build)
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
 	app.Usage = "sync, decrypt, edit, encrypt, and sync"
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
+		fmt.Printf("sdees version %s (%s)\n", Version, Build)
+
 		if RuntimeArgs.Debug == false {
 			logger.Level(2)
 		} else {
@@ -280,7 +281,7 @@ func update() {
 	}
 
 	os.Chdir("../")
-	fullCommand = strings.Split("rm -rf tempsdees", " ")
+	fullCommand = strings.Split("rm -rf ./tempsdees", " ")
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

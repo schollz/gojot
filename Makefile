@@ -28,6 +28,7 @@ install:
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf binaries
+	rm -rf tempsdees
 
 .PHONY: binaries
 binaries:
