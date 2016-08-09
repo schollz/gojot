@@ -20,7 +20,9 @@ $(BINARY): $(SOURCES)
 
 .PHONY: install
 install:
-	go install ${LDFLAGS} ./...
+	$(MAKE) clean
+	$(MAKE)
+	sudo cp sdees /usr/local/bin/
 
 .PHONY: clean
 clean:

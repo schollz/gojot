@@ -53,7 +53,12 @@ var ConfigArgs struct {
 
 func main() {
 	RuntimeArgs.SdeesDir = ".sdeesgo"
-	fmt.Println(Version, Build, BuildTime)
+	if len(Build) == 0 {
+		Build = "devdevdevdevdev"
+	} else {
+		Build = Build[0:7]
+	}
+	fmt.Printf("sdees version %s (%s)\n", Version, Build)
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
