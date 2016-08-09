@@ -145,14 +145,6 @@ func syncDown() {
 
 func syncUp() {
 	logger.Info("Uploading to server...")
-	filesToSync := []string{}
-	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
-	for _, f := range files {
-		if _, ok := RuntimeArgs.ServerFileSet[f.Name()]; !ok {
-			filesToSync = append(filesToSync, f.Name())
-		}
-	}
-
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -188,18 +180,59 @@ func syncUp() {
 	}
 	defer sftp.Close()
 
-	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile
+	for _, folder := range listFiles() {
 
-	for _, file := range filesToSync {
-		logger.Info("Syncing %s.", file)
-		f, err := sftp.Create(path.Join(dirToWalk, file))
-		if err != nil {
-			log.Fatal(err)
+		// Collect names of files on Server
+		RuntimeArgs.ServerFileSet = make(map[string]bool)
+		files := []string{}
+		dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + folder
+		logger.Debug("Walking %s", dirToWalk)
+		w := sftp.Walk(dirToWalk)
+		first := true
+		for w.Step() {
+			if w.Err() != nil {
+				continue
+			}
+			if first {
+				first = !first
+				continue
+			}
+			files = append(files, w.Path())
 		}
-		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.FullPath, file))
-		if _, err = f.Write(fileContents); err != nil {
-			log.Fatal(err)
+		filesToSync := []string{}
+		for _, file := range files {
+			fileNameSplit := strings.Split(file, "/")
+			fileName := fileNameSplit[len(fileNameSplit)-1]
+			if !strings.Contains(fileName, ".gpg") && !strings.Contains(fileName, ".pass") {
+				continue
+			}
+			RuntimeArgs.ServerFileSet[fileName] = true
 		}
+
+		// Collect local files and check if they are on server
+		localFiles, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, folder))
+		for _, f := range localFiles {
+			if _, ok := RuntimeArgs.ServerFileSet[f.Name()]; !ok {
+				filesToSync = append(filesToSync, f.Name())
+			} else {
+				// logger.Debug("Skipping %s.", f.Name())
+			}
+		}
+
+		// Sync any local files to server
+		for _, file := range filesToSync {
+			logger.Info("Syncing %s/%s.", folder, file)
+			f, err := sftp.Create(path.Join(dirToWalk, file))
+			if err != nil {
+				log.Fatal(err)
+			}
+			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, folder, file))
+			if _, err = f.Write(fileContents); err != nil {
+				log.Fatal(err)
+			}
+		}
+
 	}
 	logger.Info("...complete.")
+
 }
