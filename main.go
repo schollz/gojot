@@ -60,6 +60,7 @@ func main() {
 	} else {
 		Build = Build[0:7]
 	}
+
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
