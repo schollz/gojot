@@ -44,7 +44,13 @@ One command instead of 6\. One password instead of 3.
 To install, you must install Go 1.6+.
 
 ```
-make
+git clone https://github.com/schollz/sdees.git && cd sdees && make
+```
+
+Or if your in Linux just use:
+
+```
+git clone https://github.com/schollz/sdees.git && cd sdees && make install && cd ../ && rm -rf ./sdees
 ```
 
 # Run
