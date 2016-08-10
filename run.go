@@ -185,9 +185,13 @@ If you're using Windows:
 		return
 	}
 
-	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
-	// 	syncDown()
-	// }
+	if RuntimeArgs.Pull {
+		if HasInternetAccess() {
+			syncDown()
+		} else {
+			logger.Info("Unable to pull, no internet access.")
+		}
+	}
 
 	promptPassword()
 
@@ -250,14 +254,19 @@ If you're using Windows:
 			totalNewWords = totalNewWords + len(strings.Split(entry, " ")) - 2
 		}
 	}
-	if totalWords > 0 {
+	if totalWords > 1 {
 		logger.Info("+%d words. %d total.", totalNewWords, totalWords)
-	} else {
+	} else if totalNewWords > 0 {
 		logger.Info("+%d words.", totalNewWords)
 	}
-	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
-	// 	syncUp()
-	// }
+
+	if RuntimeArgs.Push {
+		if HasInternetAccess() {
+			syncUp()
+		} else {
+			logger.Info("Unable to push, no internet access.")
+		}
+	}
 	return
 
 }

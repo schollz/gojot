@@ -39,6 +39,8 @@ var RuntimeArgs struct {
 	NumberToShow     string
 	TextSearch       string
 	ServerFileSet    map[string]bool
+	Push             bool
+	Pull             bool
 	Debug            bool
 	EditWhole        bool
 	EditLocally      bool
@@ -111,24 +113,7 @@ func main() {
 		if len(workingFile) > 0 {
 			ConfigArgs.WorkingFile = workingFile
 		}
-
-		if workingFile == "pull" {
-			if HasInternetAccess() {
-				syncDown()
-			} else {
-				logger.Info("No internet.")
-			}
-			return nil
-		} else if workingFile == "push" {
-			if HasInternetAccess() {
-				syncUp()
-			} else {
-				logger.Info("No internet.")
-			}
-			return nil
-		} else {
-			logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
-		}
+		logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
 
 		// Save current config parameters
 		b, err := json.Marshal(ConfigArgs)
@@ -179,15 +164,15 @@ func main() {
 		return nil
 	}
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:        "import",
-			Usage:       "Import text from `FILE`",
-			Destination: &RuntimeArgs.ImportFile,
+		cli.BoolFlag{
+			Name:        "push, p",
+			Usage:       "Push to server after editing",
+			Destination: &RuntimeArgs.Push,
 		},
-		cli.StringFlag{
-			Name:        "export",
-			Usage:       "Export text from `FILE`",
-			Destination: &RuntimeArgs.ExportFile,
+		cli.BoolFlag{
+			Name:        "pull, u",
+			Usage:       "Pull from server before editing",
+			Destination: &RuntimeArgs.Pull,
 		},
 		cli.BoolFlag{
 			Name:        "edit, e",
@@ -215,7 +200,7 @@ func main() {
 			Destination: &RuntimeArgs.Debug,
 		},
 		cli.BoolFlag{
-			Name:        "update, u",
+			Name:        "update",
 			Usage:       "Update sdees (requires Linux, Go1.6+)",
 			Destination: &RuntimeArgs.UpdateSdees,
 		},
@@ -223,6 +208,16 @@ func main() {
 			Name:        "list, ls",
 			Usage:       "List available files",
 			Destination: &RuntimeArgs.ListFiles,
+		},
+		cli.StringFlag{
+			Name:        "import",
+			Usage:       "Import text from `FILE`",
+			Destination: &RuntimeArgs.ImportFile,
+		},
+		cli.StringFlag{
+			Name:        "export",
+			Usage:       "Export text from `FILE`",
+			Destination: &RuntimeArgs.ExportFile,
 		},
 	}
 	app.Run(os.Args)
