@@ -254,7 +254,7 @@ If you're using Windows:
 			totalNewWords = totalNewWords + len(strings.Split(entry, " ")) - 2
 		}
 	}
-	if totalWords > 1 {
+	if totalWords > 1 && totalNewWords > 0 {
 		logger.Info("+%d words. %d total.", totalNewWords, totalWords)
 	} else if totalNewWords > 0 {
 		logger.Info("+%d words.", totalNewWords)
