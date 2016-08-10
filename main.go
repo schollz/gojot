@@ -7,9 +7,11 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"os/user"
 	"path"
 	"strings"
+	"syscall"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -54,6 +56,16 @@ var ConfigArgs struct {
 }
 
 func main() {
+
+	// Handle Ctl+C from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		cleanUp()
+		os.Exit(1)
+	}()
+
 	defer cleanUp()
 	RuntimeArgs.SdeesDir = ".sdeesgo"
 	if len(Build) == 0 {
