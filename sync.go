@@ -30,7 +30,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 }
 
 func syncDown() {
-	logger.Info("Pulling from server...")
+	logger.Info("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -144,7 +144,7 @@ func syncDown() {
 }
 
 func syncUp() {
-	logger.Info("Pushing to server...")
+	logger.Info("Pushing to remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,

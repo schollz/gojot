@@ -39,6 +39,7 @@ var RuntimeArgs struct {
 	NumberToShow     string
 	TextSearch       string
 	ServerFileSet    map[string]bool
+	DontSync         bool
 	Push             bool
 	Pull             bool
 	Debug            bool
@@ -47,6 +48,7 @@ var RuntimeArgs struct {
 	ListFiles        bool
 	UpdateSdees      bool
 	Summarize        bool
+	ConfigAgain      bool
 }
 
 var ConfigArgs struct {
@@ -79,7 +81,12 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
-	app.Usage = "sync, decrypt, edit, encrypt, and sync"
+	app.Usage = `SDEES is a program that allows Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote files, Decrypting, Editing, Encrypting, then Syncing back.
+
+EXAMPLE USAGE:
+   sdees new.txt # edit a new document, new.txt
+   sdees --summary -n 5 # list a summary of last five entries
+   sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
 		fmt.Printf("sdees version %s (%s)\n", Version, Build)
@@ -148,6 +155,12 @@ func main() {
 			return nil
 		}
 
+		// Re-initializing
+		if RuntimeArgs.ConfigAgain {
+			initialize()
+			return nil
+		}
+
 		// Updating
 		if RuntimeArgs.UpdateSdees {
 			update()
@@ -165,14 +178,9 @@ func main() {
 	}
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:        "push, p",
-			Usage:       "Push to server after editing",
-			Destination: &RuntimeArgs.Push,
-		},
-		cli.BoolFlag{
-			Name:        "pull, u",
-			Usage:       "Pull from server before editing",
-			Destination: &RuntimeArgs.Pull,
+			Name:        "nosync, d",
+			Usage:       "Prevent syncing",
+			Destination: &RuntimeArgs.DontSync,
 		},
 		cli.BoolFlag{
 			Name:        "edit, e",
@@ -191,13 +199,18 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:        "search, s",
-			Usage:       "Search for text",
+			Usage:       "View only entries that contain `TEXT`",
 			Destination: &RuntimeArgs.TextSearch,
 		},
 		cli.BoolFlag{
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
 			Destination: &RuntimeArgs.Debug,
+		},
+		cli.BoolFlag{
+			Name:        "config",
+			Usage:       "Edit configuration parameters",
+			Destination: &RuntimeArgs.ConfigAgain,
 		},
 		cli.BoolFlag{
 			Name:        "update",
@@ -231,29 +244,32 @@ func initialize() {
 		log.Println(err)
 		return
 	}
-	fmt.Print("Enter server address (default: localhost): ")
+	fmt.Println("sdees has capability to SSH tunnel to a remote host in order to \nkeep files synced across devices. If this is not needed, just use defaults.")
+	fmt.Print("Enter remote address (default: localhost): ")
 	fmt.Scanln(&ConfigArgs.ServerHost)
 	if len(ConfigArgs.ServerHost) == 0 {
 		ConfigArgs.ServerHost = "localhost"
 	}
 
 	currentUser, _ := user.Current()
-	fmt.Printf("Enter server user (default: %s): ", currentUser.Username)
+	fmt.Printf("Enter remote user (default: %s): ", currentUser.Username)
 	fmt.Scanln(&ConfigArgs.ServerUser)
 	if len(ConfigArgs.ServerUser) == 0 {
 		ConfigArgs.ServerUser = currentUser.Username
 	}
 
-	fmt.Printf("Enter server port (default: %s): ", "22")
+	fmt.Printf("Enter remote port (default: %s): ", "22")
 	fmt.Scanln(&ConfigArgs.ServerPort)
 	if len(ConfigArgs.ServerPort) == 0 {
 		ConfigArgs.ServerPort = "22"
 	}
 
-	fmt.Printf("Enter new file (default: %s): ", "notes.txt")
-	fmt.Scanln(&ConfigArgs.WorkingFile)
 	if len(ConfigArgs.WorkingFile) == 0 {
-		ConfigArgs.WorkingFile = "notes.txt"
+		fmt.Printf("Enter new file (default: %s): ", "notes.txt")
+		fmt.Scanln(&ConfigArgs.WorkingFile)
+		if len(ConfigArgs.WorkingFile) == 0 {
+			ConfigArgs.WorkingFile = "notes.txt"
+		}
 	}
 
 	b, err := json.Marshal(ConfigArgs)

@@ -185,7 +185,7 @@ If you're using Windows:
 		return
 	}
 
-	if RuntimeArgs.Pull {
+	if !RuntimeArgs.DontSync {
 		if HasInternetAccess() {
 			syncDown()
 		} else {
@@ -260,7 +260,7 @@ If you're using Windows:
 		logger.Info("+%d words.", totalNewWords)
 	}
 
-	if RuntimeArgs.Push {
+	if !RuntimeArgs.DontSync {
 		if HasInternetAccess() {
 			syncUp()
 		} else {

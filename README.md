@@ -2,27 +2,28 @@
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
-**SDEES** is for **syncing** remote files, **decrypting**, **editing**, **encrypting**, then **syncing** back.
+# SDEES
 
-However, **SDEES** is also a program that allows **serverless decentralized editing of encrypted stuff**.
+- ...is a program that allows **Serverless Decentralized Editing of Encrypted Stuff**.
+- ...is for **Syncing** remote files, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
 
-That is, you can use it offline/online and never fear of losing data or having trouble merging encrypted edits.
+Who am I kidding? **SDEES** is a really just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document in sync remotely. Since all changes are stored individually they can easily be merged. That means that you can edit your document offline on multiple computers without worrying about merging those changes later.
 
 # About
 
 Instead of doing this:
 
 ```
-$ rsync -arq --update user@remote:encryptedfile encryptedfile
-$ gpg -d encryptedfile > file
+$ rsync -arq --update user@remote:encrypted_notes encrypted_notes
+$ gpg -d encrypted_notes > notes
 Enter passphrase: *******
-$ vim file
-$ gpg --symmetric file -o encryptedfile
+$ vim notes
+$ gpg --symmetric notes -o encrypted_notes
 Enter passphrase: *******
 Repeat passphrase: *******
-File `encryptedfile' exists. Overwrite? (y/N) y
-$ rm file
-$ rsync -arq --update encryptedfile user@remote:encryptedfile
+File `encrypted_notes' exists. Overwrite? (y/N) y
+$ rm notes
+$ rsync -arq --update encrypted_notes user@remote:encrypted_notes
 ```
 
 **SDEES** lets you do this:
@@ -32,37 +33,32 @@ $ sdees
 Enter password for editing: ******
 ```
 
-One command instead of 6\. One password instead of 3.
+One command instead of 6\. One password instead of 3\. And no worries about overwriting and losing data.
 
-# Requirements
+## Features
 
-- `vim` or equivalent
-- Have `someserver` that you already ran `ssh-copy-id someuser@someserver`
+- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!)
+- GPG-based encryption
+- Builtin remote file transfer
+- Searching and summarizing
+- Cross-compatibility (Windows/Linux/OS X)
 
 # Install
 
-To install, you must install Go 1.6+.
+The simplest way to install is to just download the [latest release](https://github.com/schollz/sdees/releases/latest). To install from source you must install Go 1.6+.
 
 ```
-git clone https://github.com/schollz/sdees.git && cd sdees && make
+git clone https://github.com/schollz/sdees.git
+cd sdees
+make install
 ```
 
-Or if your in Linux just use:
+# Usage
 
-```
-git clone https://github.com/schollz/sdees.git && cd sdees && make install && cd ../ && rm -rf ./sdees
-```
+The first time you run you can configure your remote system.
 
-# Run
-
-To run, just use
-
-```
-./sdees
-```
-
-For more information use
-
-```
-./sdees --help
+```bash
+sdees new.txt # edit a new document, new.txt
+sdees --summary -n 5 # list a summary of last five entries
+sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 ```
