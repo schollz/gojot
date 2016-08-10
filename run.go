@@ -233,6 +233,7 @@ If you're using Windows:
 			}
 		}
 	}
+	totalWords := len(strings.Split(fullEntry, " "))
 
 	t := time.Now()
 	fullEntry += string(t.Format("2006-01-02 15:04:05")) + "  "
@@ -243,10 +244,17 @@ If you're using Windows:
 
 	newEntry := editEntry()
 	entries, _ := parseEntries(newEntry)
+	totalNewWords := 0
 	for _, entry := range entries {
-		writeEntry(entry, false)
+		if writeEntry(entry, false) {
+			totalNewWords = totalNewWords + len(strings.Split(entry, " ")) - 2
+		}
 	}
-
+	if totalWords > 0 {
+		logger.Info("+%d words. %d total.", totalNewWords, totalWords)
+	} else {
+		logger.Info("+%d words.", totalNewWords)
+	}
 	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
 	// 	syncUp()
 	// }

@@ -182,19 +182,20 @@ com! WPCLI call WordProcessorModeCLI()`
 	return string(fileContents)
 }
 
-func writeEntry(fileContents string, forceWrite bool) {
-	// logger.Debug("Entry contains %d bytes.", len(fileContents))
-	if len(fileContents) < 22 && !forceWrite {
-		logger.Info("No data appended.")
-		return
-	}
+func writeEntry(fileContents string, forceWrite bool) bool {
 	// Hash contents to get filename
 	h := sha1.New()
 	h.Write([]byte(fileContents))
 	sha1_hash := hex.EncodeToString(h.Sum(nil))
 	fileName := string(sha1_hash) + ".gpg"
 	if exists(path.Join(RuntimeArgs.FullPath, fileName)) {
-		return
+		return false
+	}
+
+	// logger.Debug("Entry contains %d bytes.", len(fileContents))
+	if len(fileContents) < 22 && !forceWrite {
+		logger.Info("No data appended.")
+		return false
 	}
 
 	encryptedText := encryptString(string(fileContents), RuntimeArgs.Passphrase)
@@ -203,4 +204,5 @@ func writeEntry(fileContents string, forceWrite bool) {
 		log.Fatal(err)
 	}
 	logger.Info("Wrote %s.", fileName)
+	return true
 }
