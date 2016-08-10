@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -113,6 +114,11 @@ func cleanUp() error {
 			return err
 		}
 	}
+
+	for i, f := range listFiles() {
+		fmt.Printf("%d) %s\n", i, f)
+	}
+
 	return nil
 }
 

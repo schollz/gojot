@@ -54,6 +54,7 @@ var ConfigArgs struct {
 }
 
 func main() {
+	defer cleanUp()
 	RuntimeArgs.SdeesDir = ".sdeesgo"
 	if len(Build) == 0 {
 		Build = "devdevdevdevdev"
@@ -68,7 +69,6 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
 		fmt.Printf("sdees version %s (%s)\n", Version, Build)
-
 		if RuntimeArgs.Debug == false {
 			logger.Level(2)
 		} else {
@@ -106,14 +106,14 @@ func main() {
 			} else {
 				logger.Info("No internet.")
 			}
-			os.Exit(1)
+			return nil
 		} else if workingFile == "push" {
 			if HasInternetAccess() {
 				syncUp()
 			} else {
 				logger.Info("No internet.")
 			}
-			os.Exit(1)
+			return nil
 		} else {
 			logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
 		}
@@ -144,17 +144,17 @@ func main() {
 		// Run Importing/Exporting
 		if len(RuntimeArgs.ImportFile) > 0 {
 			importFile(RuntimeArgs.ImportFile)
-			os.Exit(1)
+			return nil
 		}
 		if len(RuntimeArgs.ExportFile) > 0 {
 			exportFile(RuntimeArgs.ExportFile)
-			os.Exit(1)
+			return nil
 		}
 
 		// Updating
 		if RuntimeArgs.UpdateSdees {
 			update()
-			os.Exit(1)
+			return nil
 		}
 
 		if RuntimeArgs.ListFiles {
@@ -163,7 +163,7 @@ func main() {
 				fmt.Printf("%d) %s\n", i, f)
 			}
 			fmt.Print("\n")
-			os.Exit(1)
+			return nil
 		}
 
 		// run main app (run.go)
