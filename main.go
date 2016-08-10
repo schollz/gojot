@@ -270,6 +270,10 @@ func initialize() {
 }
 
 func update() {
+	if !HasInternetAccess() {
+		fmt.Println("Cannot access internet to update.")
+		return
+	}
 	out, err := exec.Command("sdees", "--version").Output()
 	if err == nil {
 		fmt.Println("Current version:")
