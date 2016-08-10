@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -115,8 +114,12 @@ func cleanUp() error {
 		}
 	}
 
-	for i, f := range listFiles() {
-		fmt.Printf("%d) %s\n", i, f)
+	for _, f := range listFiles() {
+		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
+		if len(files) < 2 {
+			logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f))
+			os.Remove(path.Join(RuntimeArgs.WorkingPath, f))
+		}
 	}
 
 	return nil

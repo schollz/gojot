@@ -20,6 +20,15 @@ func test() {
 
 }
 
+func printFileList() {
+	fmt.Println("Available documents:\n")
+	for i, f := range listFiles() {
+		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
+		fmt.Printf("[%d] %s (%d entries)\n", i, f, len(files))
+	}
+	fmt.Print("\n")
+}
+
 func listFiles() []string {
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath))
 	fileNames := []string{}
@@ -173,7 +182,7 @@ If you're using Windows:
 	unzip vim74w32.zip
 	mv vim/vim74/vim.exe ./
 `)
-		os.Exit(-1)
+		return
 	}
 
 	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
@@ -195,8 +204,7 @@ If you're using Windows:
 				fmt.Println(lines[0])
 			}
 		}
-		cleanUp()
-		os.Exit(1)
+		return
 	}
 
 	fullEntry := ""
@@ -242,5 +250,6 @@ If you're using Windows:
 	// if !RuntimeArgs.EditLocally && HasInternetAccess() {
 	// 	syncUp()
 	// }
+	return
 
 }

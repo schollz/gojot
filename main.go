@@ -158,11 +158,7 @@ func main() {
 		}
 
 		if RuntimeArgs.ListFiles {
-			fmt.Println("Available files:\n")
-			for i, f := range listFiles() {
-				fmt.Printf("%d) %s\n", i, f)
-			}
-			fmt.Print("\n")
+			printFileList()
 			return nil
 		}
 
