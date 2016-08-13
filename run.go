@@ -197,22 +197,6 @@ If you're using Windows:
 
 	promptPassword()
 
-	if RuntimeArgs.Summarize {
-		_, entries := getFullEntry()
-		totalEntries := len(entries)
-		numberToShow := totalEntries
-		if len(RuntimeArgs.NumberToShow) > 0 {
-			numberToShow, _ = strconv.Atoi(RuntimeArgs.NumberToShow)
-		}
-		for i, entry := range entries {
-			if i > totalEntries-numberToShow {
-				lines := strings.Split(entry, "\n")
-				fmt.Println(lines[0])
-			}
-		}
-		return
-	}
-
 	fullEntry := ""
 	if len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole {
 		fullEntry, _ = getFullEntry()
@@ -241,25 +225,42 @@ If you're using Windows:
 	}
 	totalWords := len(strings.Split(fullEntry, " "))
 
-	t := time.Now()
-	fullEntry += string(t.Format("2006-01-02 15:04:05")) + "  "
+	if RuntimeArgs.Summarize {
+		_, entries := getFullEntry()
+		totalEntries := len(entries)
+		numberToShow := totalEntries
+		if len(RuntimeArgs.NumberToShow) > 0 {
+			numberToShow, _ = strconv.Atoi(RuntimeArgs.NumberToShow)
+		}
+		for i, entry := range entries {
+			if i > totalEntries-numberToShow {
+				lines := strings.Split(entry, "\n")
+				fullEntry += lines[0] + "\n"
+			}
+		}
+	} else {
+		t := time.Now()
+		fullEntry += string(t.Format("2006-01-02 15:04:05")) + "  "
+	}
 	err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(fullEntry), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	newEntry := editEntry()
-	entries, _ := parseEntries(newEntry)
-	totalNewWords := 0
-	for _, entry := range entries {
-		if writeEntry(entry, false) {
-			totalNewWords = totalNewWords + len(strings.Split(entry, " ")) - 2
+	if !RuntimeArgs.Summarize {
+		entries, _ := parseEntries(newEntry)
+		totalNewWords := 0
+		for _, entry := range entries {
+			if writeEntry(entry, false) {
+				totalNewWords = totalNewWords + len(strings.Split(entry, " ")) - 2
+			}
 		}
-	}
-	if totalWords > 1 && totalNewWords > 0 {
-		logger.Info("+%d words. %d total.", totalNewWords, totalWords)
-	} else if totalNewWords > 0 {
-		logger.Info("+%d words.", totalNewWords)
+		if totalWords > 1 && totalNewWords > 0 {
+			logger.Info("+%d words. %d total.", totalNewWords, totalWords)
+		} else if totalNewWords > 0 {
+			logger.Info("+%d words.", totalNewWords)
+		}
 	}
 
 	if !RuntimeArgs.DontSync {
