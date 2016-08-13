@@ -53,7 +53,11 @@ func exists(path string) bool {
 // HasInternetAccess determines whether or not the internet is accessible
 func HasInternetAccess() bool {
 	logger.Debug("Checking internet connection...")
-	_, connectionError := http.Get("http://www.google.com/")
+	timeout := time.Duration(2 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	_, connectionError := client.Get("http://www.google.com/")
 	internetAccess := true
 	if connectionError != nil {
 		internetAccess = false
