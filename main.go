@@ -17,10 +17,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-var privateKey []byte
-var passphrase []byte
-var publicKey []byte
-
 var Version string
 var BuildTime string
 var Build string

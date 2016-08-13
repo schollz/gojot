@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -113,11 +114,40 @@ func cleanUp() error {
 		}
 	}
 
-	for _, f := range listFiles() {
+	fileList := listFiles()
+	for i, f := range fileList {
 		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
 		if len(files) < 2 {
+			for _, file := range files {
+				logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
+				err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
 			logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f))
-			os.Remove(path.Join(RuntimeArgs.WorkingPath, f))
+			err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f))
+			if err != nil {
+				log.Fatal(err)
+			}
+			if ConfigArgs.WorkingFile == f {
+				if len(fileList) < 2 {
+					ConfigArgs.WorkingFile = "notes.txt"
+				} else {
+					if i != 0 {
+						ConfigArgs.WorkingFile = fileList[0]
+					} else {
+						ConfigArgs.WorkingFile = fileList[1]
+					}
+				}
+				// Save current config parameters
+				b, err := json.Marshal(ConfigArgs)
+				if err != nil {
+					log.Println(err)
+				}
+				ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
+
+			}
 		}
 	}
 

@@ -24,7 +24,9 @@ func printFileList() {
 	fmt.Println("Available documents:\n")
 	for i, f := range listFiles() {
 		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
-		fmt.Printf("[%d] %s (%d entries)\n", i, f, len(files))
+		if len(files) > 0 {
+			fmt.Printf("[%d] %s (%d entries)\n", i, f, len(files))
+		}
 	}
 	fmt.Print("\n")
 }

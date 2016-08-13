@@ -28,8 +28,8 @@ func timeTrack(start time.Time, name string) {
 // getPassword gets masked password
 // from http://stackoverflow.com/questions/2137357/getpasswd-functionality-in-go
 func getPassword() string {
-	if len(passphrase) > 0 {
-		return string(passphrase)
+	if len(RuntimeArgs.Passphrase) > 0 {
+		return string(RuntimeArgs.Passphrase)
 	}
 	fmt.Print("Enter Password: ")
 	bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
