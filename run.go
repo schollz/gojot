@@ -187,7 +187,7 @@ If you're using Windows:
 		return
 	}
 
-	if !RuntimeArgs.DontSync {
+	if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush {
 		if HasInternetAccess() {
 			syncDown()
 		} else {
@@ -263,7 +263,7 @@ If you're using Windows:
 		}
 	}
 
-	if !RuntimeArgs.DontSync {
+	if !RuntimeArgs.DontSync || RuntimeArgs.OnlyPush {
 		if HasInternetAccess() {
 			syncUp()
 		} else {

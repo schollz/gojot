@@ -36,6 +36,7 @@ var RuntimeArgs struct {
 	TextSearch       string
 	ServerFileSet    map[string]bool
 	DontSync         bool
+	OnlyPush         bool
 	Push             bool
 	Pull             bool
 	Debug            bool
@@ -177,6 +178,11 @@ EXAMPLE USAGE:
 			Name:        "nosync, d",
 			Usage:       "Prevent syncing",
 			Destination: &RuntimeArgs.DontSync,
+		},
+		cli.BoolFlag{
+			Name:        "push, p",
+			Usage:       "Only push",
+			Destination: &RuntimeArgs.OnlyPush,
 		},
 		cli.BoolFlag{
 			Name:        "edit, e",
