@@ -257,7 +257,7 @@ If you're using Windows:
 			}
 		}
 		if totalWords > 1 && totalNewWords > 0 {
-			logger.Info("+%d words. %d total.", totalNewWords, totalWords)
+			logger.Info("+%d words. %s total.", totalNewWords, Comma(int64(totalWords)))
 		} else if totalNewWords > 0 {
 			logger.Info("+%d words.", totalNewWords)
 		}
