@@ -181,7 +181,7 @@ EXAMPLE USAGE:
 		},
 		cli.BoolFlag{
 			Name:        "push, p",
-			Usage:       "Only push",
+			Usage:       "Only push, prevents pulling",
 			Destination: &RuntimeArgs.OnlyPush,
 		},
 		cli.BoolFlag{
