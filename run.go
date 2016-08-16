@@ -20,6 +20,17 @@ func test() {
 
 }
 
+func getFileList() map[int]string {
+	filesIndexed := make(map[int]string)
+	for i, f := range listFiles() {
+		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
+		if len(files) > 0 {
+			filesIndexed[i] = f
+		}
+	}
+	return filesIndexed
+}
+
 func printFileList() {
 	fmt.Println("Available documents:\n")
 	for i, f := range listFiles() {

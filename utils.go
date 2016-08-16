@@ -26,6 +26,14 @@ func timeTrack(start time.Time, name string) {
 	logger.Debug("%s took %s.", name, elapsed)
 }
 
+func isNumber(s string) (int, bool) {
+	num, err := strconv.ParseInt(s, 10, 8)
+	if err == nil {
+		return int(num), true
+	}
+	return -1, false
+}
+
 // getPassword gets masked password
 // from http://stackoverflow.com/questions/2137357/getpasswd-functionality-in-go
 func getPassword() string {

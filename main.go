@@ -115,6 +115,11 @@ EXAMPLE USAGE:
 
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
+			num, isNum := isNumber(workingFile)
+			if isNum {
+				allFiles := getFileList()
+				workingFile = allFiles[num]
+			}
 			ConfigArgs.WorkingFile = workingFile
 		}
 		logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
