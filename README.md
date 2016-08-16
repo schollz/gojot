@@ -1,4 +1,4 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.0.8](https://img.shields.io/badge/version-1.0.8-brightgreen.svg?version=flat-square)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 

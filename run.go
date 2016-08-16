@@ -32,7 +32,7 @@ func getFileList() map[int]string {
 }
 
 func printFileList() {
-	fmt.Println("Available documents:\n")
+	fmt.Println("Available documents (access using `sdees NUM`):\n")
 	for i, f := range listFiles() {
 		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
 		if len(files) > 0 {
