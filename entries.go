@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+// Gets the whole document, using the latest version of each entry
+// Defaults to cache if available
 func getFullEntry() (string, []string) {
 	defer timeTrack(time.Now(), "Got full entry")
 	type CachedDoc struct {
@@ -74,7 +76,8 @@ func getFullEntry() (string, []string) {
 			hasFile[file] = true
 		}
 
-		// If file doesn't exist, add it
+		// If file doesn't exist in cache, add it
+		// and then determine all individual entries
 		cache.Files = []string{}
 		for _, file := range allFiles {
 			if strings.Contains(file, ".pass") {
@@ -93,15 +96,14 @@ func getFullEntry() (string, []string) {
 				cache.Timestamps = append(cache.Timestamps, gt...)
 			}
 		}
-
 		entries := make(map[int]string)
 		for i, entry := range cache.Entries {
 			entries[cache.Timestamps[i]] = entry
 		}
 		allEntries, gts = sortEntries(entries)
-
 	}
 
+	// Cache the entries for next time
 	cache.Entries = []string{}
 	cache.Timestamps = []int{}
 	for i, entry := range allEntries {
@@ -109,13 +111,14 @@ func getFullEntry() (string, []string) {
 		cache.Entries = append(cache.Entries, entry)
 		cache.Timestamps = append(cache.Timestamps, gts[i])
 	}
-
 	cacheJson, _ := json.Marshal(cache)
 	encryptedCacheJson := encryptString(string(cacheJson), RuntimeArgs.Passphrase)
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"), []byte(encryptedCacheJson), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Return the full Entry and the individual entries
 	return strings.TrimSpace(fullEntry), cache.Entries
 
 }

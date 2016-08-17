@@ -15,6 +15,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+// Imports a file into a document, flag --import
 func importFile(filename string) {
 	promptPassword()
 	fileContents, err := ioutil.ReadFile(filename)
@@ -29,6 +30,7 @@ func importFile(filename string) {
 	logger.Info("Imported '%s' to %s.", filename, ConfigArgs.WorkingFile)
 }
 
+// Exports a file into a document, flag --export
 func exportFile(filename string) {
 	promptPassword()
 	fullText, _ := getFullEntry()
@@ -40,8 +42,8 @@ func exportFile(filename string) {
 	logger.Info("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
 }
 
+// Prompt for password (cross-compatiable, except cygwin)
 func promptPassword() {
-	// Get password for working file
 	passwordAccepted := false
 	for passwordAccepted == false {
 		fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
@@ -78,6 +80,7 @@ func promptPassword() {
 	fmt.Println("")
 }
 
+// Run the Syncing, and Editing
 func run() {
 	logger.Debug("Available files: %s", strings.Join(listFiles(), ", "))
 
@@ -97,6 +100,7 @@ If you're using Windows:
 		return
 	}
 
+	// Pull latest copies
 	if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush {
 		if HasInternetAccess() {
 			syncDown()
@@ -105,8 +109,10 @@ If you're using Windows:
 		}
 	}
 
+	// Get password for access
 	promptPassword()
 
+	// Get current entry if needed
 	fullEntry := ""
 	if len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole {
 		fullEntry, _ = getFullEntry()

@@ -170,12 +170,15 @@ EXAMPLE USAGE:
 			return nil
 		}
 
+		// List files if needed
 		if RuntimeArgs.ListFiles {
 			printFileList()
 			return nil
 		}
 
+		// Get current file list
 		RuntimeArgs.CurrentFileList = getEntryList()
+
 		// run main app (run.go)
 		run()
 		return nil
