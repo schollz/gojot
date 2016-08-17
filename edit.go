@@ -1,15 +1,11 @@
 package main
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
 	"sort"
 	"strings"
 	"time"
@@ -48,21 +44,17 @@ func parseEntries(text string) ([]string, []int) {
 	for _, line := range strings.Split(text, "\n") {
 		entryWords := strings.Split(strings.TrimSpace(line), " ")
 		if len(entryWords) > 1 {
-			t1, e1 := time.Parse("2006-01-02 15:04:05", entryWords[0]+" "+entryWords[1])
-			t2, e2 := time.Parse("2006-01-02 15:04", entryWords[0]+" "+entryWords[1])
-			if e1 == nil || e2 == nil {
+			isDate, new_gt := parseDate(entryWords[0] + " " + entryWords[1])
+			if isDate {
 				if len(entry) > 0 {
 					if _, ok := entries[gt]; ok {
-						logger.Warn("Duplicate entry for %s", entryWords[0]+" "+entryWords[1])
+						logger.Debug("Duplicate entry for %s", entryWords[0]+" "+entryWords[1])
+					} else {
+						entries[gt] = strings.TrimSpace(entry)
 					}
-					entries[gt] = strings.TrimSpace(entry)
 				}
 				entry = ""
-				if e1 == nil {
-					gt = int(t1.Unix())
-				} else {
-					gt = int(t2.Unix())
-				}
+				gt = new_gt
 			}
 		}
 		entry += strings.TrimRight(line, " ") + "\n"
@@ -94,65 +86,6 @@ func sortEntries(entries map[int]string) ([]string, []int) {
 	}
 	logger.Debug("Sorted %d entries.", len(entriesInOrder))
 	return entriesInOrder, gtsInOrder
-}
-
-func cleanUp() error {
-	logger.Debug("Cleaning..")
-	dir := RuntimeArgs.TempPath
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
-		if err != nil {
-			return err
-		}
-	}
-
-	fileList := listFiles()
-	for i, f := range fileList {
-		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
-		if len(files) < 2 {
-			for _, file := range files {
-				logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
-				err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-			logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f))
-			err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f))
-			if err != nil {
-				log.Fatal(err)
-			}
-			if ConfigArgs.WorkingFile == f {
-				if len(fileList) < 2 {
-					ConfigArgs.WorkingFile = "notes.txt"
-				} else {
-					if i != 0 {
-						ConfigArgs.WorkingFile = fileList[0]
-					} else {
-						ConfigArgs.WorkingFile = fileList[1]
-					}
-				}
-				// Save current config parameters
-				b, err := json.Marshal(ConfigArgs)
-				if err != nil {
-					log.Println(err)
-				}
-				ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
-
-			}
-		}
-	}
-
-	return nil
 }
 
 func editEntry() string {
@@ -213,21 +146,30 @@ com! WPCLI call WordProcessorModeCLI()`
 }
 
 func writeEntry(fileContents string, forceWrite bool) bool {
-	// Hash contents to get filename
-	h := sha1.New()
-	h.Write([]byte(fileContents))
-	sha1_hash := hex.EncodeToString(h.Sum(nil))
-	fileName := string(sha1_hash) + ".gpg"
-	if exists(path.Join(RuntimeArgs.FullPath, fileName)) {
-		return false
-	}
-
 	// logger.Debug("Entry contains %d bytes.", len(fileContents))
 	if len(fileContents) < 22 && !forceWrite {
 		logger.Info("No data appended.")
 		return false
 	}
 
+	// Hash date to get fileName
+	dateString := ""
+	for _, line := range strings.Split(fileContents, "\n") {
+		s := strings.Split(line, " ")
+		dateString = s[0] + " " + s[1]
+		break
+	}
+	_, dateVal := parseDate(dateString)
+	fileNameFrontMatter := encodeNumber(dateVal) + "." + hashString(fileContents)
+	for _, file := range RuntimeArgs.CurrentFileList {
+		if strings.Contains(file, fileNameFrontMatter) {
+			// File already exists
+			return false
+		}
+	}
+
+	_, dateVal = parseDate(time.Now().Format("2006-01-02 15:04:05"))
+	fileName := fileNameFrontMatter + "." + encodeNumber(dateVal) + ".gpg"
 	encryptedText := encryptString(string(fileContents), RuntimeArgs.Passphrase)
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, fileName), []byte(encryptedText), 0644)
 	if err != nil {

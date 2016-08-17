@@ -34,6 +34,7 @@ var RuntimeArgs struct {
 	SdeesDir         string // name of sdees dir, like ".sdees"
 	NumberToShow     string
 	TextSearch       string
+	CurrentFileList  []string
 	ServerFileSet    map[string]bool
 	DontSync         bool
 	OnlyPush         bool
@@ -174,6 +175,8 @@ EXAMPLE USAGE:
 			return nil
 		}
 
+		RuntimeArgs.CurrentFileList = getEntryList()
+		logger.Debug("Entrylist: %v", RuntimeArgs.CurrentFileList)
 		// run main app (run.go)
 		run()
 		return nil

@@ -20,42 +20,6 @@ func test() {
 
 }
 
-func getFileList() map[int]string {
-	filesIndexed := make(map[int]string)
-	for i, f := range listFiles() {
-		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
-		if len(files) > 0 {
-			filesIndexed[i] = f
-		}
-	}
-	return filesIndexed
-}
-
-func printFileList() {
-	fmt.Println("Available documents (access using `sdees NUM`):\n")
-	for i, f := range listFiles() {
-		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
-		if len(files) > 0 {
-			fmt.Printf("[%d] %s (%d entries)\n", i, f, len(files))
-		}
-	}
-	fmt.Print("\n")
-}
-
-func listFiles() []string {
-	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath))
-	fileNames := []string{}
-	for _, f := range files {
-		fileNameSplit := strings.Split(f.Name(), "/")
-		fileName := fileNameSplit[len(fileNameSplit)-1]
-		if fileName == "config.json" || fileName == "temp" || strings.Contains(fileName, ".cache") {
-			continue
-		}
-		fileNames = append(fileNames, fileName)
-	}
-	return fileNames
-}
-
 func getFullEntry() (string, []string) {
 	defer timeTrack(time.Now(), "Got full entry")
 	type CachedDoc struct {
@@ -71,11 +35,31 @@ func getFullEntry() (string, []string) {
 	allFiles := readAllFiles()
 	// if cache does not exist
 	if !exists(path.Join(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))) {
+		entryModifiedDates := make(map[string]int)
+		entryStrings := make(map[string]string)
 		logger.Debug("No cache.")
-		wholeText := ""
 		for _, file := range allFiles {
-			wholeText += decrypt(file) + "\n"
+			if strings.Contains(file, ".pass") {
+				continue
+			}
+			foo := strings.Split(file, "/")
+			fileName := foo[len(foo)-1]
+			info := strings.Split(fileName, ".")
+			modifiedTimestamp := decodeNumber(info[2])
+			if val, ok := entryModifiedDates[info[0]]; ok {
+				if modifiedTimestamp > val {
+					entryModifiedDates[info[0]] = modifiedTimestamp
+					entryStrings[info[0]] = decrypt(file) + "\n"
+				}
+			} else {
+				entryModifiedDates[info[0]] = modifiedTimestamp
+				entryStrings[info[0]] = decrypt(file) + "\n"
+			}
 			cache.Files = append(cache.Files, file)
+		}
+		wholeText := ""
+		for key := range entryStrings {
+			wholeText += entryStrings[key]
 		}
 		allEntries, gts = parseEntries(wholeText)
 	} else {
@@ -101,6 +85,9 @@ func getFullEntry() (string, []string) {
 		// If file doesn't exist, add it
 		cache.Files = []string{}
 		for _, file := range allFiles {
+			if strings.Contains(file, ".pass") {
+				continue
+			}
 			cache.Files = append(cache.Files, file)
 			if _, ok := hasFile[file]; !ok {
 				logger.Debug("New entry %s.", file)
