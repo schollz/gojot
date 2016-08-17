@@ -97,6 +97,7 @@ func sortEntries(entries map[int]string) ([]string, []int) {
 }
 
 func cleanUp() error {
+	logger.Debug("Cleaning..")
 	dir := RuntimeArgs.TempPath
 	d, err := os.Open(dir)
 	if err != nil {
@@ -208,7 +209,6 @@ com! WPCLI call WordProcessorModeCLI()`
 		log.Fatal(err)
 	}
 	fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.TempPath, "temp"))
-	cleanUp()
 	return string(fileContents)
 }
 
