@@ -1,3 +1,43 @@
+// -------------------------------
+// Overview of SDEES
+// -------------------------------
+//
+// main.go:
+// - Program entry
+// - Processes flags
+// - Initiates cleanup on close
+// - Run program -> run() (run.go)
+//
+// run.go:
+// - Handles importing/exporting
+// - Pulls latest copy from server
+// - Prompts for password
+// - Starts new entry -> editEntry() (entries.go)
+// - Pushes latest to server
+//
+// entries.go
+// -  editEntry() opens vim, encrypts after saving and writes new entry
+//
+// -------------------------------
+// Naming conventions
+// -------------------------------
+//
+// Files are encrypted using GPG. The name of the files contain information
+// about the date entry, the file contents, and the modification date. A typical
+// filename is:
+//
+// yAkbAnL.onLBFi.dew9E6W.gpg
+//    ^      ^      ^
+//    |------------------- reversible hash-id of the date in the entry
+//           |------------ 6-letter irreversible hash of the file contents
+//                  |----- reversible hash-id of the modification date
+//
+// Multiple edits of the same entry will result in the same reversible hash-id of the date in the entry.
+// A edit is determined when the 6-letter irreversible hash
+// of the file contents changes. Upon this change, a new modification date is
+// determined, which can be later used to sort the entries so that only the newest
+// is displayed.
+
 package main
 
 import (
