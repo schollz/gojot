@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,116 +15,29 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func test() {
-
+func importFile(filename string) {
+	promptPassword()
+	fileContents, err := ioutil.ReadFile(filename)
+	if err != nil {
+		logger.Error("%v", err)
+		os.Exit(-1)
+	}
+	entries, _ := parseEntries(string(fileContents))
+	for _, entry := range entries {
+		writeEntry(entry, true)
+	}
+	logger.Info("Imported '%s' to %s.", filename, ConfigArgs.WorkingFile)
 }
 
-func getFullEntry() (string, []string) {
-	defer timeTrack(time.Now(), "Got full entry")
-	type CachedDoc struct {
-		Files      []string
-		Entries    []string
-		Timestamps []int
-	}
-
-	fullEntry := ""
-	cache := CachedDoc{[]string{}, []string{}, []int{}}
-	allEntries := []string{}
-	gts := []int{}
-	allFiles := readAllFiles()
-	// if cache does not exist
-	if !exists(path.Join(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))) {
-		entryModifiedDates := make(map[string]int)
-		entryStrings := make(map[string]string)
-		logger.Debug("No cache.")
-		for _, file := range allFiles {
-			if strings.Contains(file, ".pass") {
-				continue
-			}
-			foo := strings.Split(file, "/")
-			fileName := foo[len(foo)-1]
-			info := strings.Split(fileName, ".")
-			modifiedTimestamp := decodeNumber(info[2])
-			if val, ok := entryModifiedDates[info[0]]; ok {
-				if modifiedTimestamp > val {
-					entryModifiedDates[info[0]] = modifiedTimestamp
-					entryStrings[info[0]] = decrypt(file) + "\n"
-				}
-			} else {
-				entryModifiedDates[info[0]] = modifiedTimestamp
-				entryStrings[info[0]] = decrypt(file) + "\n"
-			}
-			cache.Files = append(cache.Files, file)
-		}
-		wholeText := ""
-		for key := range entryStrings {
-			wholeText += entryStrings[key]
-		}
-		allEntries, gts = parseEntries(wholeText)
-	} else {
-		logger.Debug("Using cache.")
-		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))
-		decryptedFileContents, err := decryptString(string(fileContents), RuntimeArgs.Passphrase)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Unmarshal JSON
-		err = json.Unmarshal([]byte(decryptedFileContents), &cache)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Make set of files
-		hasFile := make(map[string]bool)
-		for _, file := range cache.Files {
-			hasFile[file] = true
-		}
-
-		// If file doesn't exist, add it
-		cache.Files = []string{}
-		for _, file := range allFiles {
-			if strings.Contains(file, ".pass") {
-				continue
-			}
-			cache.Files = append(cache.Files, file)
-			if _, ok := hasFile[file]; !ok {
-				logger.Debug("New entry %s.", file)
-				newEntry, _ := ioutil.ReadFile(file)
-				newEntryDecoded, err := decryptString(string(newEntry), RuntimeArgs.Passphrase)
-				if err != nil {
-					log.Fatal(err)
-				}
-				text, gt := parseEntries(newEntryDecoded)
-				cache.Entries = append(cache.Entries, text...)
-				cache.Timestamps = append(cache.Timestamps, gt...)
-			}
-		}
-
-		entries := make(map[int]string)
-		for i, entry := range cache.Entries {
-			entries[cache.Timestamps[i]] = entry
-		}
-		allEntries, gts = sortEntries(entries)
-
-	}
-
-	cache.Entries = []string{}
-	cache.Timestamps = []int{}
-	for i, entry := range allEntries {
-		fullEntry += entry + "\n\n"
-		cache.Entries = append(cache.Entries, entry)
-		cache.Timestamps = append(cache.Timestamps, gts[i])
-	}
-
-	cacheJson, _ := json.Marshal(cache)
-	encryptedCacheJson := encryptString(string(cacheJson), RuntimeArgs.Passphrase)
-	err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"), []byte(encryptedCacheJson), 0644)
+func exportFile(filename string) {
+	promptPassword()
+	fullText, _ := getFullEntry()
+	err := ioutil.WriteFile(filename, []byte(fullText), 0644)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("%v", err)
+		os.Exit(-1)
 	}
-	return strings.TrimSpace(fullEntry), cache.Entries
-
+	logger.Info("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
 }
 
 func promptPassword() {
