@@ -176,7 +176,6 @@ EXAMPLE USAGE:
 		}
 
 		RuntimeArgs.CurrentFileList = getEntryList()
-		logger.Debug("Entrylist: %v", RuntimeArgs.CurrentFileList)
 		// run main app (run.go)
 		run()
 		return nil

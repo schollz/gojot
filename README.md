@@ -1,4 +1,4 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.0.8](https://img.shields.io/badge/version-1.1.0-brightgreen.svg?version=flat-square)
+![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-brightgreen.svg?version=flat-square)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
@@ -38,6 +38,7 @@ Enter password for editing: ******
 - Encryption, compatible with `gpg`
 - Remote file transfer
 - Searching and summarizing
+- Version control (all versions are saved, but only newest is shown)
 
 # Install
 
