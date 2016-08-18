@@ -36,7 +36,7 @@ Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
 Pushing to remote...done.
 ```
 
-More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L39).
+More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L50).
 
 ## Features
 

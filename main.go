@@ -1,5 +1,5 @@
 // -------------------------------
-//       Overview of SDEES
+//       SDEES code structure
 // -------------------------------
 //
 // main() (main.go):
@@ -21,16 +21,18 @@
 // - Writes new entry
 //
 // -------------------------------
-//        Document storage
+//        SDEES documents
 // -------------------------------
 //
-// Documents are encrypted using GPG in the folder ~/.sdeesgo/
-// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/
-// Only things in the document folder is stored remotely.
-// Passwords are stored using bcrypt in the document folder ~/.sdeesgo/X.txt/X.txt.pass
+// Documents are encrypted with symmetric GPG-encryption.
+// All configuration files an documents are stored in the folder ~/.sdeesgo/.
+// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/.
+// Only things in the document folder are synced remotely.
+// Passwords for GPG-encryption are hashed with bcrypt and then stored
+// in the document folder ~/.sdeesgo/X.txt/X.txt.pass.
 //
-// Individual entires in a document are stored as GPG encoded files.
-// Entries are always made in a temporary file that is instantly deleted upon exit.
+// Individual entries for a document are stored as GPG encoded files.
+// Entries are edited in a temporary file that is always deleted upon exit.
 //
 // The name of the files contain information about the date entry,
 // the file contents, and the modification date. A typical filename is:
@@ -41,11 +43,11 @@
 //           |------------ 6-letter irreversible hash of the file contents
 //                  |----- reversible hash-id of the modification date
 //
-// Multiple edits of the same entry will result in the same reversible hash-id of the date in the entry.
-// A edit is determined when the 6-letter irreversible hash
-// of the file contents changes. Upon this change, a new modification date is
-// determined, which can be later used to sort the entries so that only the newest
-// is displayed.
+// Multiple edits of the same entry will result in the same reversible hash-id
+// of the date in the entry. A change in the file contents is determined when
+// when the 6-letter irreversible hash of the file contents changes.
+// In these cases, the modification date (the third hash) is used to sort
+// the entries so that only the newest is displayed.
 
 package main
 
