@@ -144,7 +144,7 @@ If you're using Windows:
 	if RuntimeArgs.Summarize {
 		_, entries := getFullEntry()
 		totalEntries := len(entries)
-		numberToShow := totalEntries
+		numberToShow := totalEntries + 10
 		if len(RuntimeArgs.NumberToShow) > 0 {
 			numberToShow, _ = strconv.Atoi(RuntimeArgs.NumberToShow)
 		}
