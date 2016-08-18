@@ -105,7 +105,7 @@ If you're using Windows:
 		if HasInternetAccess() {
 			syncDown()
 		} else {
-			fmt.Printf("Unable to pull, no internet access.")
+			fmt.Println("Unable to pull, no internet access.")
 		}
 	}
 
