@@ -18,7 +18,7 @@ import (
 var logger *lumber.ConsoleLogger
 
 func init() {
-	logger = lumber.NewConsoleLogger(lumber.TRACE)
+	logger = lumber.NewConsoleLogger(lumber.INFO)
 }
 
 func timeTrack(start time.Time, name string) {
