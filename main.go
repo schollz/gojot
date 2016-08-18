@@ -10,10 +10,10 @@
 // in the document folder ~/.sdeesgo/X.txt/X.txt.pass.
 //
 // Individual entries for a document are stored as GPG encoded files.
-// Entries are edited in a temporary file that is always deleted upon exit,
-// so entries never leave a trace.
+// Entries are edited in a temporary file that is always deleted upon exiting,
+// which ensures that entries never leave a trace on disk or terminal.
 //
-// The name of the files contain information about the date entry,
+// The name of the files for each document contain information about the entry date,
 // the file contents, and the modification date. A typical filename is:
 //
 // yAkbAnL.onLBFi.dew9E6W.gpg
@@ -23,10 +23,10 @@
 //                  |----- reversible hash-id of the modification date
 //
 // Multiple edits of the same entry will result in the same reversible hash-id
-// of the date in the entry. A change in the file contents is determined when
+// of the entry date. A change in the file contents is determined when
 // when the 6-letter irreversible hash of the file contents changes.
-// In these cases, the modification date (the third hash) is used to sort
-// the entries so that only the newest is displayed.
+// In this cases, the modification date (the third hash) is used to sort
+// the entries so that only the newest is displayed when loading the full document.
 
 // -----------------------------------------------------------------------------
 //                           SDEES code structure
@@ -71,10 +71,12 @@ import (
 	"github.com/urfave/cli"
 )
 
+// App parameters
 var Version string
 var BuildTime string
 var Build string
 
+// Global parameters
 var RuntimeArgs struct {
 	Passphrase       string
 	ServerPassphrase string
@@ -106,6 +108,7 @@ var RuntimeArgs struct {
 	Lines            int
 }
 
+// Permanent global parameters
 var ConfigArgs struct {
 	WorkingFile string
 	ServerHost  string
@@ -117,7 +120,10 @@ var ConfigArgs struct {
 
 func main() {
 
-	// Handle Ctl+C from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
+	// Delete temp files upon exit
+	defer cleanUp()
+	// Handle Ctl+C for cleanUp
+	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
@@ -126,8 +132,12 @@ func main() {
 		os.Exit(1)
 	}()
 
-	defer cleanUp()
+	// Default directory to store temp files, config, and document
 	RuntimeArgs.SdeesDir = ".sdeesgo"
+
+	// App information
+	app := cli.NewApp()
+	app.Name = "sdees"
 	if len(Build) == 0 {
 		Build = "dev"
 		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
@@ -141,9 +151,6 @@ func main() {
 	} else {
 		Build = Build[0:7]
 	}
-
-	app := cli.NewApp()
-	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
 	app.Usage = `Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote documents, Decrypting, Editing, Encrypting, then Syncing back.
 
@@ -152,20 +159,24 @@ EXAMPLE USAGE:
    sdees --summary -n 5 # list a summary of last five entries
    sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 	app.Action = func(c *cli.Context) error {
+		// ----------------------
+		// Process flags from CLI
+		// ----------------------
+
 		// Set the log level
-		// fmt.Printf("sdees version %s (%s)\n", Version, Build)
 		if RuntimeArgs.Debug == false {
 			logger.Level(2)
 		} else {
 			logger.Level(0)
 		}
+
 		// Set the paths
 		homeDir, _ := home.Dir()
 		RuntimeArgs.HomePath = homeDir
 		RuntimeArgs.WorkingPath = path.Join(homeDir, RuntimeArgs.SdeesDir)
 		RuntimeArgs.SSHKey = path.Join(homeDir, ".ssh", "id_rsa")
 
-		// Determine if intialization is needed
+		// Get configuration parameters, or initialize if they don't exist
 		if !exists(RuntimeArgs.WorkingPath) {
 			initialize()
 		}
@@ -180,6 +191,7 @@ EXAMPLE USAGE:
 			}
 		}
 
+		// Determine the current document to work on - the "working file"
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
 			num, isNum := isNumber(workingFile)
@@ -191,13 +203,14 @@ EXAMPLE USAGE:
 		}
 		logger.Debug("Working file: %s", ConfigArgs.WorkingFile)
 
-		// Save current config parameters
+		// Save current config parameters for next time
 		b, err := json.Marshal(ConfigArgs)
 		if err != nil {
 			log.Println(err)
 		}
 		ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, "config.json"), b, 0644)
 
+		// Create the path to the document if it doesn't exist
 		RuntimeArgs.FullPath = path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile)
 		if !exists(RuntimeArgs.FullPath) {
 			err := os.MkdirAll(RuntimeArgs.FullPath, 0711)
@@ -206,6 +219,7 @@ EXAMPLE USAGE:
 			}
 		}
 
+		// Create the path to the tepm storage if it doesn't exist
 		RuntimeArgs.TempPath = path.Join(RuntimeArgs.WorkingPath, "temp")
 		if !exists(RuntimeArgs.TempPath) {
 			err := os.MkdirAll(RuntimeArgs.TempPath, 0711)
@@ -246,19 +260,19 @@ EXAMPLE USAGE:
 			return nil
 		}
 
-		// Re-initializing
+		// Run Re-initialization
 		if RuntimeArgs.ConfigAgain {
 			initialize()
 			return nil
 		}
 
-		// Updating
+		// Run updating
 		if RuntimeArgs.UpdateSdees {
 			update()
 			return nil
 		}
 
-		// List files if needed
+		// Run list files
 		if RuntimeArgs.ListFiles {
 			printFileList()
 			return nil
@@ -267,8 +281,10 @@ EXAMPLE USAGE:
 		// Get current file list
 		RuntimeArgs.CurrentFileList = getEntryList()
 
-		// run main app (run.go)
+		// Run main app (run.go)
 		run()
+
+		// Exit
 		return nil
 	}
 	app.Flags = []cli.Flag{
@@ -341,6 +357,8 @@ EXAMPLE USAGE:
 	app.Run(os.Args)
 }
 
+// initialize asks the user for the remote user and server and the editor preference
+// and saves these parameters to ~/.sdeesgo/config.json
 func initialize() {
 	// Make directory
 	err := os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
@@ -396,6 +414,8 @@ func initialize() {
 
 }
 
+// update does `git pull` to collect the latest version of sdees, and does a
+// make install to copy the new version into the local directory
 func update() {
 	if !HasInternetAccess() {
 		fmt.Println("Cannot access internet to update.")

@@ -8,9 +8,9 @@
 
 ...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
 
-But, really, **SDEES** is just a fancy wrapper for `vim`/`nano` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
+But, really, **SDEES** is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
 
-This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`:
+This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`:
 
 ```
 $ rsync -arq --update user@remote:encrypted_notes encrypted_notes
@@ -41,7 +41,7 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 ## Features
 
 - Cross-compatibility (Windows/Linux/OS X).
-- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!) or `nano`
+- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!), `nano`, or `emacs`.
 - Encryption, compatible with `gpg`.
 - Remote document transfer.
 - Searching and summarizing,
@@ -65,21 +65,22 @@ sdees --update
 
 # Usage
 
-The first time you run you can configure your remote system.
+The first time you run you can configure your remote system and editor.
 
 ```bash
 sdees new.txt # edit a new document, new.txt
 sdees --summary -n 5 # list a summary of last five entries
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
+sdees --help # for more information
 ```
 
 ![sdees usage](/branding/help2.gif)
 
 # Acknowledgements
 
-Logo design by [logodust](http://logodust.com)
+Logo graphic from [logodust](http://logodust.com).
 
-Inspiration from [jrnl](http://jrnl.sh/)
+Inspiration from [jrnl](http://jrnl.sh/).
 
 # License
 
