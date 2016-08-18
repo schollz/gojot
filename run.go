@@ -23,7 +23,7 @@ func importFile(filename string) {
 		logger.Error("%v", err)
 		os.Exit(-1)
 	}
-	entries, _ := parseEntries(string(fileContents))
+	entries, _ := parseEntries(string(time.Now().Format("2006-01-02 15:04:05")) + "\n" + string(fileContents))
 	for _, entry := range entries {
 		writeEntry(entry, true)
 	}
