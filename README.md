@@ -8,9 +8,9 @@
 
 ...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
 
-But, really, **SDEES** is just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
+But, really, **SDEES** is just a fancy wrapper for `vim`/`nano` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
 
-This program grew out of constant utilization of `gpg`, `rsync`, and `vim`:
+This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`:
 
 ```
 $ rsync -arq --update user@remote:encrypted_notes encrypted_notes
@@ -41,7 +41,7 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 ## Features
 
 - Cross-compatibility (Windows/Linux/OS X).
-- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!).
+- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!) or `nano`
 - Encryption, compatible with `gpg`.
 - Remote document transfer.
 - Searching and summarizing,
@@ -79,7 +79,7 @@ sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 
 Logo design by [logodust](http://logodust.com)
 
-Inspiration from [jrnl]
+Inspiration from [jrnl](http://jrnl.sh/)
 
 # License
 

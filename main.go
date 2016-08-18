@@ -369,11 +369,13 @@ func initialize() {
 		ConfigArgs.ServerPort = "22"
 	}
 
-	fmt.Printf("Do you want to use vim (if no, defaults to nano)? (y/n) ")
+	fmt.Printf("Which editor do you want to use: vim (default), nano, or emacs? ")
 	var yesno string
 	fmt.Scanln(&yesno)
-	if strings.TrimSpace(yesno) == "n" {
+	if strings.TrimSpace(strings.ToLower(yesno)) == "nano" {
 		ConfigArgs.Editor = "nano"
+	} else if strings.TrimSpace(strings.ToLower(yesno)) == "emacs" {
+		ConfigArgs.Editor = "emacs"
 	} else {
 		ConfigArgs.Editor = "vim"
 	}
