@@ -1,11 +1,11 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-brightgreen.svg?version=flat-square)
+![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.1.1](https://img.shields.io/badge/version-1.1.1-brightgreen.svg?version=flat-square)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
 # SDEES
 
 - ...is a program that allows **Serverless Decentralized Editing of Encrypted Stuff**.
-- ...is for **Syncing** remote files, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
+- ...is for **Syncing** remote documents, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
 
 But really, **SDEES** is just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document in sync remotely. Since all changes are stored individually they can easily be merged, which means that you can edit your document offline on multiple computers without worrying about merging or overwriting.
 
@@ -36,7 +36,7 @@ Enter password for editing: ******
 - Cross-compatibility (Windows/Linux/OS X)
 - _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!)
 - Encryption, compatible with `gpg`
-- Remote file transfer
+- Remote document transfer
 - Searching and summarizing
 - Version control (all versions are saved, but only newest is shown)
 

@@ -22,7 +22,7 @@
 // Naming conventions
 // -------------------------------
 //
-// Files are encrypted using GPG. The name of the files contain information
+// Documents are encrypted using GPG. The name of the files contain information
 // about the date entry, the file contents, and the modification date. A typical
 // filename is:
 //
@@ -120,7 +120,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
-	app.Usage = `SDEES is a program that allows Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote files, Decrypting, Editing, Encrypting, then Syncing back.
+	app.Usage = `SDEES is a program that allows Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote documents, Decrypting, Editing, Encrypting, then Syncing back.
 
 EXAMPLE USAGE:
    sdees new.txt # edit a new document, new.txt
@@ -301,12 +301,12 @@ EXAMPLE USAGE:
 		},
 		cli.StringFlag{
 			Name:        "export",
-			Usage:       "Export text from `FILE`",
+			Usage:       "Export text from a `DOCUMENT`",
 			Destination: &RuntimeArgs.ExportFile,
 		},
 		cli.StringFlag{
 			Name:        "delete",
-			Usage:       "Delete a directory",
+			Usage:       "Delete a `DOCUMENT`",
 			Destination: &RuntimeArgs.DeleteDirectory,
 		},
 	}
@@ -321,7 +321,7 @@ func initialize() {
 		log.Println(err)
 		return
 	}
-	fmt.Println("sdees has capability to SSH tunnel to a remote host in order to \nkeep files synced across devices. If this is not needed, just use defaults.")
+	fmt.Println("sdees has capability to SSH tunnel to a remote host in order to \nkeep documents synced across devices. If this is not needed, just use defaults.")
 	fmt.Print("Enter remote address (default: localhost): ")
 	fmt.Scanln(&ConfigArgs.ServerHost)
 	if len(ConfigArgs.ServerHost) == 0 {
@@ -342,7 +342,7 @@ func initialize() {
 	}
 
 	if len(ConfigArgs.WorkingFile) == 0 {
-		fmt.Printf("Enter new file (default: %s): ", "notes.txt")
+		fmt.Printf("Enter new document name (default: %s): ", "notes.txt")
 		fmt.Scanln(&ConfigArgs.WorkingFile)
 		if len(ConfigArgs.WorkingFile) == 0 {
 			ConfigArgs.WorkingFile = "notes.txt"
