@@ -4,11 +4,11 @@
 
 # SDEES
 
-...is for **Syncing** remote documents, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
+...is for **Syncing**, **Decrypting**, **Editing**, **Encrypting**, and **Syncing** a document.
 
 ...is a program that allows **Serverless Decentralized Editing of Encrypted Stuff**.
 
-But really, **SDEES** is just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document in sync remotely. Since all changes are stored individually they can easily be merged, which means that you can edit your document offline on multiple computers without worrying about merging or overwriting.
+But really, **SDEES** is just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. All edits are stored individually so they can be easily merged, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
 
 This program grew out of constant utilization of `gpg`, `rsync`, and `vim`:
 
@@ -36,16 +36,16 @@ Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
 Pushing to remote...done.
 ```
 
-More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L50).
+More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L29).
 
 ## Features
 
-- Cross-compatibility (Windows/Linux/OS X)
-- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!)
-- Encryption, compatible with `gpg`
-- Remote document transfer
-- Searching and summarizing
-- Version control (all versions are saved, but only newest is shown)
+- Cross-compatibility (Windows/Linux/OS X).
+- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!).
+- Encryption, compatible with `gpg`.
+- Remote document transfer.
+- Searching and summarizing,
+- Version control (all versions are saved, but only newest is shown).
 
 # Install
 

@@ -1,6 +1,36 @@
-// -------------------------------
-//       SDEES code structure
-// -------------------------------
+// -----------------------------------------------------------------------------
+//                           SDEES information
+// -----------------------------------------------------------------------------
+//
+// All configuration files an documents are stored in the folder ~/.sdeesgo/.
+// Documents are encrypted with symmetric GPG-encryption.
+// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/.
+// Only files in the document folder are synced remotely.
+// Passwords for GPG-encryption are hashed with bcrypt and then stored
+// in the document folder ~/.sdeesgo/X.txt/X.txt.pass.
+//
+// Individual entries for a document are stored as GPG encoded files.
+// Entries are edited in a temporary file that is always deleted upon exit,
+// so entries never leave a trace.
+//
+// The name of the files contain information about the date entry,
+// the file contents, and the modification date. A typical filename is:
+//
+// yAkbAnL.onLBFi.dew9E6W.gpg
+//    ^      ^      ^
+//    |------------------- reversible hash-id of the entry date
+//           |------------ irreversible hash of the file contents
+//                  |----- reversible hash-id of the modification date
+//
+// Multiple edits of the same entry will result in the same reversible hash-id
+// of the date in the entry. A change in the file contents is determined when
+// when the 6-letter irreversible hash of the file contents changes.
+// In these cases, the modification date (the third hash) is used to sort
+// the entries so that only the newest is displayed.
+
+// -----------------------------------------------------------------------------
+//                           SDEES code structure
+// -----------------------------------------------------------------------------
 //
 // main() (main.go):
 // - Program entry
@@ -20,34 +50,6 @@
 // - Encrypts
 // - Writes new entry
 //
-// -------------------------------
-//        SDEES documents
-// -------------------------------
-//
-// Documents are encrypted with symmetric GPG-encryption.
-// All configuration files an documents are stored in the folder ~/.sdeesgo/.
-// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/.
-// Only things in the document folder are synced remotely.
-// Passwords for GPG-encryption are hashed with bcrypt and then stored
-// in the document folder ~/.sdeesgo/X.txt/X.txt.pass.
-//
-// Individual entries for a document are stored as GPG encoded files.
-// Entries are edited in a temporary file that is always deleted upon exit.
-//
-// The name of the files contain information about the date entry,
-// the file contents, and the modification date. A typical filename is:
-//
-// yAkbAnL.onLBFi.dew9E6W.gpg
-//    ^      ^      ^
-//    |------------------- reversible hash-id of the date in the entry
-//           |------------ 6-letter irreversible hash of the file contents
-//                  |----- reversible hash-id of the modification date
-//
-// Multiple edits of the same entry will result in the same reversible hash-id
-// of the date in the entry. A change in the file contents is determined when
-// when the 6-letter irreversible hash of the file contents changes.
-// In these cases, the modification date (the third hash) is used to sort
-// the entries so that only the newest is displayed.
 
 package main
 
