@@ -72,6 +72,8 @@ sdees --summary -n 5 # list a summary of last five entries
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 ```
 
+![sdees usage](/branding/help1.gif)
+
 # Acknowledgements
 
 Logo design by [logodust](http://logodust.com)
