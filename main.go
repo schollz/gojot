@@ -1,30 +1,39 @@
 // -------------------------------
-// Overview of SDEES
+//       Overview of SDEES
 // -------------------------------
 //
-// main.go:
+// main() (main.go):
 // - Program entry
 // - Processes flags
 // - Initiates cleanup on close
-// - Run program -> run() (run.go)
+// - Run program -> run()
 //
-// run.go:
+// run() (run.go):
 // - Handles importing/exporting
 // - Pulls latest copy from server
 // - Prompts for password
 // - Starts new entry -> editEntry() (entries.go)
 // - Pushes latest to server
 //
-// entries.go
-// -  editEntry() opens vim, encrypts after saving and writes new entry
+// editEntry() (entries.go):
+// - Edits with vim
+// - Encrypts
+// - Writes new entry
 //
 // -------------------------------
-// Naming conventions
+//        Document storage
 // -------------------------------
 //
-// Documents are encrypted using GPG. The name of the files contain information
-// about the date entry, the file contents, and the modification date. A typical
-// filename is:
+// Documents are encrypted using GPG in the folder ~/.sdeesgo/
+// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/
+// Only things in the document folder is stored remotely.
+// Passwords are stored using bcrypt in the document folder ~/.sdeesgo/X.txt/X.txt.pass
+//
+// Individual entires in a document are stored as GPG encoded files.
+// Entries are always made in a temporary file that is instantly deleted upon exit.
+//
+// The name of the files contain information about the date entry,
+// the file contents, and the modification date. A typical filename is:
 //
 // yAkbAnL.onLBFi.dew9E6W.gpg
 //    ^      ^      ^

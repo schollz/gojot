@@ -28,15 +28,14 @@ which **SDEES** now combines into the single command (with `gpg` and `rsync` cap
 
 ```bash
 $ sdees
-2016-08-18 10:35:46 INFO  Pulling from remote...
-2016-08-18 10:35:51 INFO  ...complete.
-Enter password for editing 'notes.txt': *******
-2016-08-18 10:35:56 INFO  Wrote 7KAzRE5.rOSLep.omM3Gxv.gpg.
-2016-08-18 10:35:56 INFO  +210 words.
-2016-08-18 10:35:56 INFO  Pushing to remote...
-2016-08-18 10:35:59 INFO  Syncing notes.txt/7KAzRE5.rOSLep.omM3Gxv.gpg.
-2016-08-18 10:35:59 INFO  ...complete.
+Pulling from remote...done.
+Enter password for editing 'notes.txt': ******
+Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
++410 words.
+Pushing to remote...done.
 ```
+
+More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L48).
 
 ## Features
 
