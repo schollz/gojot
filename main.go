@@ -52,6 +52,7 @@ import (
 	"path"
 	"strings"
 	"syscall"
+	"time"
 
 	home "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
@@ -112,7 +113,15 @@ func main() {
 	defer cleanUp()
 	RuntimeArgs.SdeesDir = ".sdeesgo"
 	if len(Build) == 0 {
-		Build = "devdevdevdevdev"
+		Build = "dev"
+		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+		bString := string(out)
+		Build = bString[0:7]
+		Version = "dev"
+		BuildTime = time.Now().String()
 	} else {
 		Build = Build[0:7]
 	}
