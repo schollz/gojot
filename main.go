@@ -152,12 +152,15 @@ func main() {
 		Build = Build[0:7]
 	}
 	app.Version = Version + " " + Build + " " + BuildTime
-	app.Usage = `Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote documents, Decrypting, Editing, Encrypting, then Syncing back.
+	app.Usage = `Serverless Decentralized Editing of Encrypted Stuff
+
+	 https://github.com/schollz/sdees
 
 EXAMPLE USAGE:
    sdees new.txt # edit a new document, new.txt
    sdees --summary -n 5 # list a summary of last five entries
-   sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
+   sdees --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
+
 	app.Action = func(c *cli.Context) error {
 		// ----------------------
 		// Process flags from CLI
