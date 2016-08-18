@@ -225,8 +225,8 @@ EXAMPLE USAGE:
 	}
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:        "nosync, d",
-			Usage:       "Prevent syncing",
+			Name:        "local, l",
+			Usage:       "Local editing (no syncing)",
 			Destination: &RuntimeArgs.DontSync,
 		},
 		cli.BoolFlag{
