@@ -236,3 +236,76 @@ func syncUp() {
 	logger.Info("...complete.")
 
 }
+
+func deleteRemote(folderToDelete string) {
+	logger.Info("Deleting from remote...")
+	// open an SFTP session over an existing ssh connection.
+	sshConfig := &ssh.ClientConfig{
+		User: ConfigArgs.ServerUser,
+		Auth: []ssh.AuthMethod{
+			PublicKeyFile(RuntimeArgs.SSHKey),
+		},
+	}
+	logger.Debug("Connecting to %s...", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort)
+	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
+	if err != nil {
+		if len(RuntimeArgs.ServerPassphrase) == 0 {
+			fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			fmt.Printf("\n")
+			RuntimeArgs.ServerPassphrase = strings.TrimSpace(string(bytePassword))
+		}
+		sshConfig = &ssh.ClientConfig{
+			User: ConfigArgs.ServerUser,
+			Auth: []ssh.AuthMethod{
+				ssh.Password(RuntimeArgs.ServerPassphrase),
+			},
+		}
+		connection, err = ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer connection.Close()
+
+	sftp, err := sftp.NewClient(connection)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sftp.Close()
+
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir)
+	if err != nil {
+		// has directory
+	}
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile)
+	if err != nil {
+		// has directory
+	}
+
+	// walk a directory
+	RuntimeArgs.ServerFileSet = make(map[string]bool)
+	files := []string{}
+	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + folderToDelete
+	logger.Debug("Walking %s", dirToWalk)
+	w := sftp.Walk(dirToWalk)
+	first := true
+	for w.Step() {
+		if w.Err() != nil {
+			continue
+		}
+		if first {
+			first = !first
+			continue
+		}
+		files = append(files, w.Path())
+	}
+
+	for _, file := range files {
+		logger.Debug(file)
+		sftp.Remove(file)
+	}
+	sftp.Remove(dirToWalk)
+
+	logger.Info("...complete.")
+}

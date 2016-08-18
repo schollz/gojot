@@ -74,6 +74,7 @@ var RuntimeArgs struct {
 	SdeesDir         string // name of sdees dir, like ".sdees"
 	NumberToShow     string
 	TextSearch       string
+	DeleteDirectory  string
 	CurrentFileList  []string
 	ServerFileSet    map[string]bool
 	DontSync         bool
@@ -127,7 +128,7 @@ EXAMPLE USAGE:
    sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
-		fmt.Printf("sdees version %s (%s)\n", Version, Build)
+		// fmt.Printf("sdees version %s (%s)\n", Version, Build)
 		if RuntimeArgs.Debug == false {
 			logger.Level(2)
 		} else {
@@ -198,6 +199,25 @@ EXAMPLE USAGE:
 			return nil
 		}
 
+		// Run deletion
+		if len(RuntimeArgs.DeleteDirectory) > 0 {
+			logger.Debug("Removing %s", path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory))
+			var yesno string
+			fmt.Printf("Are you sure you want to delete '%s'? (y/n): ", RuntimeArgs.DeleteDirectory)
+			fmt.Scanln(&yesno)
+			if yesno == "y" || yesno == "yes" {
+				logger.Info("Deleting locally...")
+				logger.Info("...complete.")
+				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory))
+				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory+".cache.json"))
+				deleteRemote(RuntimeArgs.DeleteDirectory)
+				logger.Info("Deleted %s.", RuntimeArgs.DeleteDirectory)
+			} else {
+				logger.Info("Did not delete %s.", RuntimeArgs.DeleteDirectory)
+			}
+			return nil
+		}
+
 		// Re-initializing
 		if RuntimeArgs.ConfigAgain {
 			initialize()
@@ -230,14 +250,14 @@ EXAMPLE USAGE:
 			Destination: &RuntimeArgs.DontSync,
 		},
 		cli.BoolFlag{
+			Name:        "all, a",
+			Usage:       "Edit all, loads whole document",
+			Destination: &RuntimeArgs.EditWhole,
+		},
+		cli.BoolFlag{
 			Name:        "push, p",
 			Usage:       "Only push, prevents pulling",
 			Destination: &RuntimeArgs.OnlyPush,
-		},
-		cli.BoolFlag{
-			Name:        "edit, e",
-			Usage:       "Edit whole document",
-			Destination: &RuntimeArgs.EditWhole,
 		},
 		cli.BoolFlag{
 			Name:        "summary",
@@ -283,6 +303,11 @@ EXAMPLE USAGE:
 			Name:        "export",
 			Usage:       "Export text from `FILE`",
 			Destination: &RuntimeArgs.ExportFile,
+		},
+		cli.StringFlag{
+			Name:        "delete",
+			Usage:       "Delete a directory",
+			Destination: &RuntimeArgs.DeleteDirectory,
 		},
 	}
 	app.Run(os.Args)
