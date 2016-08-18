@@ -223,6 +223,7 @@ com! WPCLI call WordProcessorModeCLI()`
 		cmdArgs = append([]string{"-c", "2match Keyword /\\c\\v(" + strings.Join(searchTerms, "|") + ")/"}, cmdArgs...)
 	}
 	cmd := exec.Command("vim", cmdArgs...)
+	// cmd := exec.Command("nano", []string{"--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
