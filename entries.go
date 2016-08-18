@@ -180,10 +180,9 @@ func sortEntries(entries map[int]string) ([]string, []int) {
 func editEntry() string {
 	logger.Debug("Editing file")
 
-	RuntimeArgs.Editor = "nano"
 	var cmdArgs []string
 
-	if RuntimeArgs.Editor == "vim" {
+	if ConfigArgs.Editor == "vim" {
 		// Setup vim
 		vimrc := `func! WordProcessorModeCLI()
 			setlocal formatoptions=t1
@@ -230,13 +229,13 @@ func editEntry() string {
 			cmdArgs = append([]string{"-c", "2match Keyword /\\c\\v(" + strings.Join(searchTerms, "|") + ")/"}, cmdArgs...)
 		}
 
-	} else if RuntimeArgs.Editor == "nano" {
+	} else if ConfigArgs.Editor == "nano" {
 		lines := strconv.Itoa(RuntimeArgs.Lines)
 		cmdArgs = []string{"+" + lines + ",1000000", "--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}
 	}
 
 	// Run the editor
-	cmd := exec.Command(RuntimeArgs.Editor, cmdArgs...)
+	cmd := exec.Command(ConfigArgs.Editor, cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()

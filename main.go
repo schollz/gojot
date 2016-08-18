@@ -112,6 +112,7 @@ var ConfigArgs struct {
 	ServerPort  string
 	ServerUser  string
 	SdeesDir    string
+	Editor      string
 }
 
 func main() {
@@ -366,6 +367,15 @@ func initialize() {
 	fmt.Scanln(&ConfigArgs.ServerPort)
 	if len(ConfigArgs.ServerPort) == 0 {
 		ConfigArgs.ServerPort = "22"
+	}
+
+	fmt.Printf("Do you want to use vim (if no, defaults to nano)? (y/n) ")
+	var yesno string
+	fmt.Scanln(&yesno)
+	if strings.TrimSpace(yesno) == "n" {
+		ConfigArgs.Editor = "nano"
+	} else {
+		ConfigArgs.Editor = "vim"
 	}
 
 	if len(ConfigArgs.WorkingFile) == 0 {

@@ -158,7 +158,7 @@ If you're using Windows:
 	} else {
 		t := time.Now()
 		fullEntry += string(t.Format("2006-01-02 15:04:05")) + " "
-		if RuntimeArgs.Editor == "vim" {
+		if ConfigArgs.Editor == "vim" {
 			fullEntry += " "
 		}
 	}
