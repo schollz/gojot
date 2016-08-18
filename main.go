@@ -215,14 +215,14 @@ EXAMPLE USAGE:
 			fmt.Printf("Are you sure you want to delete '%s'? (y/n): ", RuntimeArgs.DeleteDirectory)
 			fmt.Scanln(&yesno)
 			if yesno == "y" || yesno == "yes" {
-				logger.Info("Deleting locally...")
-				logger.Info("...complete.")
+				fmt.Printf("Deleting locally...")
+				fmt.Println("done.")
 				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory))
 				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory+".cache.json"))
 				deleteRemote(RuntimeArgs.DeleteDirectory)
-				logger.Info("Deleted %s.", RuntimeArgs.DeleteDirectory)
+				fmt.Printf("Deleted %s.\n", RuntimeArgs.DeleteDirectory)
 			} else {
-				logger.Info("Did not delete %s.", RuntimeArgs.DeleteDirectory)
+				fmt.Printf("Did not delete %s.\n", RuntimeArgs.DeleteDirectory)
 			}
 			return nil
 		}

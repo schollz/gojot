@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -235,7 +236,7 @@ com! WPCLI call WordProcessorModeCLI()`
 func writeEntry(fileContents string, forceWrite bool) bool {
 	// logger.Debug("Entry contains %d bytes.", len(fileContents))
 	if len(fileContents) < 22 && !forceWrite {
-		logger.Info("No data appended.")
+		fmt.Println("No data appended.")
 		return false
 	}
 
@@ -262,6 +263,6 @@ func writeEntry(fileContents string, forceWrite bool) bool {
 	if err != nil {
 		log.Fatal(err)
 	}
-	logger.Info("Wrote %s.", fileName)
+	fmt.Printf("Wrote %s.\n", fileName)
 	return true
 }

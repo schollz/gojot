@@ -30,7 +30,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 }
 
 func syncDown() {
-	logger.Info("Pulling from remote...")
+	fmt.Printf("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -116,7 +116,7 @@ func syncDown() {
 					log.Fatal(err)
 				}
 			}
-			logger.Info("Syncing %s/%s.", folderName, fileName)
+			logger.Debug("Syncing %s/%s.", folderName, fileName)
 
 			fp, err := sftp.Open(file)
 			if err != nil {
@@ -143,11 +143,11 @@ func syncDown() {
 
 	}
 
-	logger.Info("...complete.")
+	fmt.Println("done.")
 }
 
 func syncUp() {
-	logger.Info("Pushing to remote...")
+	fmt.Printf("Pushing to remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -233,7 +233,7 @@ func syncUp() {
 
 		// Sync any local files to server
 		for _, file := range filesToSync {
-			logger.Info("Syncing %s/%s.", folder, file)
+			logger.Debug("Syncing %s/%s.", folder, file)
 			f, err := sftp.Create(path.Join(dirToWalk, file))
 			if err != nil {
 				logger.Error("Could not create %s", file)
@@ -247,12 +247,12 @@ func syncUp() {
 		}
 
 	}
-	logger.Info("...complete.")
+	fmt.Println("done.")
 
 }
 
 func deleteRemote(folderToDelete string) {
-	logger.Info("Deleting from remote...")
+	fmt.Printf("Deleting from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -321,5 +321,5 @@ func deleteRemote(folderToDelete string) {
 	}
 	sftp.Remove(dirToWalk)
 
-	logger.Info("...complete.")
+	fmt.Println("done.")
 }

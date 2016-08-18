@@ -27,7 +27,7 @@ func importFile(filename string) {
 	for _, entry := range entries {
 		writeEntry(entry, true)
 	}
-	logger.Info("Imported '%s' to %s.", filename, ConfigArgs.WorkingFile)
+	fmt.Printf("Imported '%s' to %s.", filename, ConfigArgs.WorkingFile)
 }
 
 // Exports a file into a document, flag --export
@@ -39,7 +39,7 @@ func exportFile(filename string) {
 		logger.Error("%v", err)
 		os.Exit(-1)
 	}
-	logger.Info("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
+	fmt.Printf("Exported '%s' to %s.", ConfigArgs.WorkingFile, filename)
 }
 
 // Prompt for password (cross-compatiable, except cygwin)
@@ -105,7 +105,7 @@ If you're using Windows:
 		if HasInternetAccess() {
 			syncDown()
 		} else {
-			logger.Info("Unable to pull, no internet access.")
+			fmt.Printf("Unable to pull, no internet access.")
 		}
 	}
 
@@ -173,9 +173,9 @@ If you're using Windows:
 			}
 		}
 		if totalWords > 1 && totalNewWords > 0 {
-			logger.Info("+%d words. %s total.", totalNewWords, Comma(int64(totalWords)))
+			fmt.Printf("+%d words. %s total.\n", totalNewWords, Comma(int64(totalWords)))
 		} else if totalNewWords > 0 {
-			logger.Info("+%d words.", totalNewWords)
+			fmt.Printf("+%d words.\n", totalNewWords)
 		}
 	}
 
@@ -183,7 +183,7 @@ If you're using Windows:
 		if HasInternetAccess() {
 			syncUp()
 		} else {
-			logger.Info("Unable to push, no internet access.")
+			fmt.Println("Unable to push, no internet access.")
 		}
 	}
 	return
