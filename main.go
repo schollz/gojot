@@ -140,7 +140,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime
-	app.Usage = `SDEES is a program that allows Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote documents, Decrypting, Editing, Encrypting, then Syncing back.
+	app.Usage = `Serverless Decentralized Editing of Encrypted Stuff. SDEES is for Syncing remote documents, Decrypting, Editing, Encrypting, then Syncing back.
 
 EXAMPLE USAGE:
    sdees new.txt # edit a new document, new.txt
@@ -287,6 +287,11 @@ EXAMPLE USAGE:
 			Usage:       "Only push, prevents pulling",
 			Destination: &RuntimeArgs.OnlyPush,
 		},
+		cli.StringFlag{
+			Name:        "search, s",
+			Usage:       "View only entries that contain `TEXT`",
+			Destination: &RuntimeArgs.TextSearch,
+		},
 		cli.BoolFlag{
 			Name:        "summary",
 			Usage:       "Summarize",
@@ -296,11 +301,6 @@ EXAMPLE USAGE:
 			Name:        "number, n",
 			Usage:       "Show up to `N` entries when summarizing",
 			Destination: &RuntimeArgs.NumberToShow,
-		},
-		cli.StringFlag{
-			Name:        "search, s",
-			Usage:       "View only entries that contain `TEXT`",
-			Destination: &RuntimeArgs.TextSearch,
 		},
 		cli.BoolFlag{
 			Name:        "debug",
@@ -319,7 +319,7 @@ EXAMPLE USAGE:
 		},
 		cli.StringFlag{
 			Name:        "import",
-			Usage:       "Import text from `FILE`",
+			Usage:       "Generate document from `FILE`",
 			Destination: &RuntimeArgs.ImportFile,
 		},
 		cli.StringFlag{
