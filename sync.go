@@ -251,7 +251,11 @@ func syncUp() {
 
 }
 
-func deleteRemote(folderToDelete string) {
+func deleteRemote(folderToDelete string) bool {
+	if !HasInternetAccess() {
+		fmt.Println("No internet access.")
+		return false
+	}
 	fmt.Printf("Deleting from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
@@ -322,4 +326,5 @@ func deleteRemote(folderToDelete string) {
 	sftp.Remove(dirToWalk)
 
 	fmt.Println("done.")
+	return true
 }

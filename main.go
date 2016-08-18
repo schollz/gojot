@@ -230,8 +230,11 @@ EXAMPLE USAGE:
 				fmt.Println("done.")
 				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory))
 				os.RemoveAll(path.Join(RuntimeArgs.WorkingPath, RuntimeArgs.DeleteDirectory+".cache.json"))
-				deleteRemote(RuntimeArgs.DeleteDirectory)
-				fmt.Printf("Deleted %s.\n", RuntimeArgs.DeleteDirectory)
+				if deleteRemote(RuntimeArgs.DeleteDirectory) {
+					fmt.Printf("Deleted %s.\n", RuntimeArgs.DeleteDirectory)
+				} else {
+					fmt.Printf("Did not delete remote copy of %s.\n", RuntimeArgs.DeleteDirectory)
+				}
 			} else {
 				fmt.Printf("Did not delete %s.\n", RuntimeArgs.DeleteDirectory)
 			}
@@ -265,14 +268,19 @@ EXAMPLE USAGE:
 	}
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:        "local, l",
-			Usage:       "Local editing (no syncing)",
-			Destination: &RuntimeArgs.DontSync,
-		},
-		cli.BoolFlag{
 			Name:        "all, a",
 			Usage:       "Edit all, loads whole document",
 			Destination: &RuntimeArgs.EditWhole,
+		},
+		cli.BoolFlag{
+			Name:        "list, ls",
+			Usage:       "List available files",
+			Destination: &RuntimeArgs.ListFiles,
+		},
+		cli.BoolFlag{
+			Name:        "local, l",
+			Usage:       "Local editing (no syncing)",
+			Destination: &RuntimeArgs.DontSync,
 		},
 		cli.BoolFlag{
 			Name:        "push, p",
@@ -286,7 +294,7 @@ EXAMPLE USAGE:
 		},
 		cli.StringFlag{
 			Name:        "number, n",
-			Usage:       "Limit number shown",
+			Usage:       "Show up to `N` entries when summarizing",
 			Destination: &RuntimeArgs.NumberToShow,
 		},
 		cli.StringFlag{
@@ -308,11 +316,6 @@ EXAMPLE USAGE:
 			Name:        "update",
 			Usage:       "Update sdees (requires Linux, Go1.6+)",
 			Destination: &RuntimeArgs.UpdateSdees,
-		},
-		cli.BoolFlag{
-			Name:        "list, ls",
-			Usage:       "List available files",
-			Destination: &RuntimeArgs.ListFiles,
 		},
 		cli.StringFlag{
 			Name:        "import",
