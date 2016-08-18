@@ -140,6 +140,7 @@ If you're using Windows:
 		}
 	}
 	totalWords := len(strings.Split(fullEntry, " "))
+	RuntimeArgs.Lines = len(strings.Split(fullEntry, "\n"))
 
 	if RuntimeArgs.Summarize {
 		_, entries := getFullEntry()
@@ -156,7 +157,10 @@ If you're using Windows:
 		}
 	} else {
 		t := time.Now()
-		fullEntry += string(t.Format("2006-01-02 15:04:05")) + "  "
+		fullEntry += string(t.Format("2006-01-02 15:04:05")) + " "
+		if RuntimeArgs.Editor == "vim" {
+			fullEntry += " "
+		}
 	}
 	err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(fullEntry), 0644)
 	if err != nil {

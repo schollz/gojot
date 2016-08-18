@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -178,52 +179,64 @@ func sortEntries(entries map[int]string) ([]string, []int) {
 
 func editEntry() string {
 	logger.Debug("Editing file")
-	vimrc := `func! WordProcessorModeCLI()
-		setlocal formatoptions=t1
-		setlocal textwidth=80
-		map j gj
-		map k gk
-		set formatprg=par
-		setlocal wrap
-		setlocal linebreak
-		setlocal noexpandtab
-		normal G$
-endfu
-com! WPCLI call WordProcessorModeCLI()`
-	// Append to .vimrc file
-	if exists(path.Join(RuntimeArgs.HomePath, ".vimrc")) {
-		// Check if .vimrc file contains code
-		logger.Debug("Found .vimrc.")
-		fileContents, err := ioutil.ReadFile(path.Join(RuntimeArgs.HomePath, ".vimrc"))
-		if err != nil {
-			log.Fatal(err)
-		}
-		if !strings.Contains(string(fileContents), "com! WPCLI call WordProcessorModeCLI") {
-			// Append to fileContents
-			logger.Debug("WPCLI not found in .vimrc, adding it...")
-			newvimrc := string(fileContents) + "\n" + vimrc
-			err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(newvimrc), 0644)
+
+	RuntimeArgs.Editor = "nano"
+	var cmdArgs []string
+
+	if RuntimeArgs.Editor == "vim" {
+		// Setup vim
+		vimrc := `func! WordProcessorModeCLI()
+			setlocal formatoptions=t1
+			setlocal textwidth=80
+			map j gj
+			map k gk
+			set formatprg=par
+			setlocal wrap
+			setlocal linebreak
+			setlocal noexpandtab
+			normal G$
+	endfu
+	com! WPCLI call WordProcessorModeCLI()`
+		// Append to .vimrc file
+		if exists(path.Join(RuntimeArgs.HomePath, ".vimrc")) {
+			// Check if .vimrc file contains code
+			logger.Debug("Found .vimrc.")
+			fileContents, err := ioutil.ReadFile(path.Join(RuntimeArgs.HomePath, ".vimrc"))
 			if err != nil {
 				log.Fatal(err)
 			}
+			if !strings.Contains(string(fileContents), "com! WPCLI call WordProcessorModeCLI") {
+				// Append to fileContents
+				logger.Debug("WPCLI not found in .vimrc, adding it...")
+				newvimrc := string(fileContents) + "\n" + vimrc
+				err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(newvimrc), 0644)
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				logger.Debug("WPCLI found in .vimrc.")
+			}
 		} else {
-			logger.Debug("WPCLI found in .vimrc.")
+			logger.Debug("Can not find .vimrc, creating new .vimrc...")
+			err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(vimrc), 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
-	} else {
-		logger.Debug("Can not find .vimrc, creating new .vimrc...")
-		err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".vimrc"), []byte(vimrc), 0644)
-		if err != nil {
-			log.Fatal(err)
+
+		cmdArgs = []string{"-c", "WPCLI", "+startinsert", path.Join(RuntimeArgs.TempPath, "temp")}
+		if len(RuntimeArgs.TextSearch) > 0 {
+			searchTerms := strings.Split(RuntimeArgs.TextSearch, " ")
+			cmdArgs = append([]string{"-c", "2match Keyword /\\c\\v(" + strings.Join(searchTerms, "|") + ")/"}, cmdArgs...)
 		}
+
+	} else if RuntimeArgs.Editor == "nano" {
+		lines := strconv.Itoa(RuntimeArgs.Lines)
+		cmdArgs = []string{"+" + lines + ",1000000", "--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}
 	}
 
-	cmdArgs := []string{"-c", "WPCLI", "+startinsert", path.Join(RuntimeArgs.TempPath, "temp")}
-	if len(RuntimeArgs.TextSearch) > 0 {
-		searchTerms := strings.Split(RuntimeArgs.TextSearch, " ")
-		cmdArgs = append([]string{"-c", "2match Keyword /\\c\\v(" + strings.Join(searchTerms, "|") + ")/"}, cmdArgs...)
-	}
-	cmd := exec.Command("vim", cmdArgs...)
-	// cmd := exec.Command("nano", []string{"--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}...)
+	// Run the editor
+	cmd := exec.Command(RuntimeArgs.Editor, cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()

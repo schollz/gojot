@@ -89,6 +89,7 @@ var RuntimeArgs struct {
 	NumberToShow     string
 	TextSearch       string
 	DeleteDirectory  string
+	Editor           string
 	CurrentFileList  []string
 	ServerFileSet    map[string]bool
 	DontSync         bool
@@ -102,6 +103,7 @@ var RuntimeArgs struct {
 	UpdateSdees      bool
 	Summarize        bool
 	ConfigAgain      bool
+	Lines            int
 }
 
 var ConfigArgs struct {

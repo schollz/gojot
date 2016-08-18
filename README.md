@@ -12,7 +12,7 @@ But, really, **SDEES** is just a fancy wrapper for `vim` that allows you to make
 
 This program grew out of constant utilization of `gpg`, `rsync`, and `vim`:
 
-```bash
+```
 $ rsync -arq --update user@remote:encrypted_notes encrypted_notes
 $ gpg -d encrypted_notes > notes
 Enter passphrase: *******
@@ -25,9 +25,9 @@ $ rm notes
 $ rsync -arq --update encrypted_notes user@remote:encrypted_notes
 ```
 
-which **SDEES** now combines into the single command (with `gpg` and `rsync` capabilities baked in now):
+**SDEES** now combines this functionality into a single program (with `gpg` and `rsync` capabilities built-in):
 
-```bash
+```
 $ sdees
 Pulling from remote...done.
 Enter password for editing 'notes.txt': ******
@@ -78,6 +78,8 @@ sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 # Acknowledgements
 
 Logo design by [logodust](http://logodust.com)
+
+Inspiration from [jrnl]
 
 # License
 
