@@ -4,8 +4,9 @@
 
 # SDEES
 
-- ...is a program that allows **Serverless Decentralized Editing of Encrypted Stuff**.
-- ...is for **Syncing** remote documents, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
+...is for **Syncing** remote documents, **Decrypting**, **Editing**, **Encrypting**, then **Syncing** back.
+
+...is a program that allows **Serverless Decentralized Editing of Encrypted Stuff**.
 
 But really, **SDEES** is just a fancy wrapper for `vim` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document in sync remotely. Since all changes are stored individually they can easily be merged, which means that you can edit your document offline on multiple computers without worrying about merging or overwriting.
 
@@ -72,7 +73,7 @@ sdees --summary -n 5 # list a summary of last five entries
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 ```
 
-![sdees usage](/branding/help1.gif)
+![sdees usage](/branding/help2.gif)
 
 # Acknowledgements
 
