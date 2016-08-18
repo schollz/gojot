@@ -120,18 +120,21 @@ func syncDown() {
 
 			fp, err := sftp.Open(file)
 			if err != nil {
+				logger.Error("Could not open %s", fp)
 				log.Fatal(err)
 			}
 
 			buf := bytes.NewBuffer(nil)
 			_, err = io.Copy(buf, fp)
 			if err != nil {
+				logger.Error("Could not write to %s", fp)
 				log.Fatal(err)
 			}
 			fp.Close()
 
 			err = ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, folderName, fileName), buf.Bytes(), 0644)
 			if err != nil {
+				logger.Error("Could copy down %s", fp)
 				log.Fatal(err)
 			}
 		} else {
@@ -180,6 +183,15 @@ func syncUp() {
 	}
 	defer sftp.Close()
 
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir)
+	if err != nil {
+		// has directory
+	}
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile)
+	if err != nil {
+		// has directory
+	}
+
 	for _, folder := range listFiles() {
 
 		// Collect names of files on Server
@@ -224,10 +236,12 @@ func syncUp() {
 			logger.Info("Syncing %s/%s.", folder, file)
 			f, err := sftp.Create(path.Join(dirToWalk, file))
 			if err != nil {
+				logger.Error("Could not create %s", file)
 				log.Fatal(err)
 			}
 			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, folder, file))
 			if _, err = f.Write(fileContents); err != nil {
+				logger.Error("Could not write to %s", file)
 				log.Fatal(err)
 			}
 		}
