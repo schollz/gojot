@@ -15,6 +15,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+// PublicKeyFiles is used to accessing the remote server
 func PublicKeyFile(file string) ssh.AuthMethod {
 	logger.Debug("Using %s", file)
 	buffer, err := ioutil.ReadFile(file)
@@ -42,6 +43,7 @@ func syncDown() {
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
 		if len(RuntimeArgs.ServerPassphrase) == 0 {
+			fmt.Printf("\nSSH key to connect to %s@%s not found, \nperhaps add it with `ssh-copy-id %s@%s`?\n\n", ConfigArgs.ServerUser, ConfigArgs.ServerHost, ConfigArgs.ServerUser, ConfigArgs.ServerHost)
 			fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			fmt.Printf("\n")
@@ -159,6 +161,7 @@ func syncUp() {
 	connection, err := ssh.Dial("tcp", ConfigArgs.ServerHost+":"+ConfigArgs.ServerPort, sshConfig)
 	if err != nil {
 		if len(RuntimeArgs.ServerPassphrase) == 0 {
+			fmt.Printf("\nSSH key to connect to %s@%s not found, \nperhaps add it with `ssh-copy-id %s@%s`?\n\n", ConfigArgs.ServerUser, ConfigArgs.ServerHost, ConfigArgs.ServerUser, ConfigArgs.ServerHost)
 			fmt.Printf("Enter password for connecting to '%s': ", ConfigArgs.ServerHost)
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			fmt.Printf("\n")

@@ -107,6 +107,7 @@ func run() {
 	}
 
 	// Pull latest copies
+	logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)
 	if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush {
 		if HasInternetAccess() {
 			syncDown()

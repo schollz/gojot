@@ -369,6 +369,10 @@ EXAMPLE USAGE:
 func initialize() {
 	var yesno string
 	currentUser, _ := user.Current()
+	ConfigArgs.ServerHost = ""
+	ConfigArgs.ServerUser = ""
+	ConfigArgs.ServerPort = ""
+
 	// Make directory
 	err := os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
 	if err != nil {
@@ -381,6 +385,7 @@ func initialize() {
 	if strings.TrimSpace(strings.ToLower(yesno)) == "y" {
 		fmt.Print("Enter remote address (default: localhost): ")
 		fmt.Scanln(&ConfigArgs.ServerHost)
+		logger.Debug("ConfigArgs.ServerHost: [%v]", ConfigArgs.ServerHost)
 		if len(ConfigArgs.ServerHost) == 0 {
 			ConfigArgs.ServerHost = "localhost"
 		}
