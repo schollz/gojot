@@ -30,6 +30,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 	return ssh.PublicKeys(key)
 }
 
+// syncDown pulls the latest copies of all the documents from the remote server
 func syncDown() {
 	fmt.Printf("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
@@ -148,6 +149,7 @@ func syncDown() {
 	fmt.Println("done.")
 }
 
+// syncUp pushes the latest versions of all the documents to the server
 func syncUp() {
 	fmt.Printf("Pushing to remote...")
 	// open an SFTP session over an existing ssh connection.
@@ -254,6 +256,7 @@ func syncUp() {
 
 }
 
+// deleteRemote deletes the entire document from the remote server
 func deleteRemote(folderToDelete string) bool {
 	if !HasInternetAccess() {
 		fmt.Println("No internet access.")
