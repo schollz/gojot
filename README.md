@@ -8,7 +8,9 @@
 
 ...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
 
-But, really, **SDEES** is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
+Ok. But, really, **SDEES** is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
+
+The remote computer is used only for file storage and does not require any server-side code. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
 
 This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`:
 
@@ -35,6 +37,8 @@ Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
 +410 words.
 Pushing to remote...done.
 ```
+
+One command + one password instead of six commands and three passwords.
 
 More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L29).
 
@@ -81,6 +85,8 @@ sdees --help # for more information
 Logo graphic from [logodust](http://logodust.com).
 
 Inspiration from [jrnl](http://jrnl.sh/).
+
+Southwest Airlines for providing two mechanical failures that gave me 8+ extra hours to code this.
 
 # License
 
