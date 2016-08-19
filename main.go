@@ -283,7 +283,9 @@ EXAMPLE USAGE:
 
 		// Get current file list
 		RuntimeArgs.CurrentFileList = getEntryList()
-
+		if ConfigArgs.ServerHost == "do not sync" {
+			RuntimeArgs.DontSync = true
+		}
 		// Run main app (run.go)
 		run()
 
@@ -363,6 +365,8 @@ EXAMPLE USAGE:
 // initialize asks the user for the remote user and server and the editor preference
 // and saves these parameters to ~/.sdeesgo/config.json
 func initialize() {
+	var yesno string
+	currentUser, _ := user.Current()
 	// Make directory
 	err := os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
 	if err != nil {
@@ -370,28 +374,33 @@ func initialize() {
 		log.Println(err)
 		return
 	}
-	fmt.Println("sdees has capability to SSH tunnel to a remote host in order to \nkeep documents synced across devices. If this is not needed, just use defaults.")
-	fmt.Print("Enter remote address (default: localhost): ")
-	fmt.Scanln(&ConfigArgs.ServerHost)
-	if len(ConfigArgs.ServerHost) == 0 {
-		ConfigArgs.ServerHost = "localhost"
-	}
+	fmt.Print("sdees has capability to SSH tunnel to a remote host in order to \nkeep documents synced across devices.\nWould you like to set this up? (y/n) ")
+	fmt.Scanln(&yesno)
+	if strings.TrimSpace(strings.ToLower(yesno)) == "y" {
+		fmt.Print("Enter remote address (default: localhost): ")
+		fmt.Scanln(&ConfigArgs.ServerHost)
+		if len(ConfigArgs.ServerHost) == 0 {
+			ConfigArgs.ServerHost = "localhost"
+		}
 
-	currentUser, _ := user.Current()
-	fmt.Printf("Enter remote user (default: %s): ", currentUser.Username)
-	fmt.Scanln(&ConfigArgs.ServerUser)
-	if len(ConfigArgs.ServerUser) == 0 {
+		fmt.Printf("Enter remote user (default: %s): ", currentUser.Username)
+		fmt.Scanln(&ConfigArgs.ServerUser)
+		if len(ConfigArgs.ServerUser) == 0 {
+			ConfigArgs.ServerUser = currentUser.Username
+		}
+
+		fmt.Printf("Enter remote port (default: %s): ", "22")
+		fmt.Scanln(&ConfigArgs.ServerPort)
+		if len(ConfigArgs.ServerPort) == 0 {
+			ConfigArgs.ServerPort = "22"
+		}
+	} else {
+		ConfigArgs.ServerHost = "do not sync"
 		ConfigArgs.ServerUser = currentUser.Username
-	}
-
-	fmt.Printf("Enter remote port (default: %s): ", "22")
-	fmt.Scanln(&ConfigArgs.ServerPort)
-	if len(ConfigArgs.ServerPort) == 0 {
 		ConfigArgs.ServerPort = "22"
 	}
 
 	fmt.Printf("Which editor do you want to use: vim (default), nano, or emacs? ")
-	var yesno string
 	fmt.Scanln(&yesno)
 	if strings.TrimSpace(strings.ToLower(yesno)) == "nano" {
 		ConfigArgs.Editor = "nano"
