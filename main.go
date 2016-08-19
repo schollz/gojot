@@ -283,6 +283,8 @@ EXAMPLE USAGE:
 
 		// Get current file list
 		RuntimeArgs.CurrentFileList = getEntryList()
+
+		// Check whether user setup remote syncing
 		if ConfigArgs.ServerHost == "do not sync" {
 			RuntimeArgs.DontSync = true
 		}

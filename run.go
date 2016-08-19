@@ -1,3 +1,5 @@
+// run.go handles the main functionality after the CLI flags are determined
+
 package main
 
 import (
@@ -84,19 +86,23 @@ func promptPassword() {
 func run() {
 	logger.Debug("Available files: %s", strings.Join(listFiles(), ", "))
 
-	// Check if VIM exists
-	_, err := exec.Command("vim", "--version").Output()
+	// Check if editor exists
+	_, err := exec.Command(ConfigArgs.Editor, "--version").Output()
 	if err != nil {
-		fmt.Println(`You need to download vim. If your using Unix:
+		if ConfigArgs.Editor == "vim" {
+			fmt.Println(`You need to download vim. If your using Unix:
 
-	apt-get install vim
+		apt-get install vim
 
-If you're using Windows:
+	If you're using Windows:
 
-	wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
-	unzip vim74w32.zip
-	mv vim/vim74/vim.exe ./
-`)
+		wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
+		unzip vim74w32.zip
+		mv vim/vim74/vim.exe ./
+	`)
+		} else {
+			fmt.Printf("You need to download %s or switch editors using `sdees --config`.\n", RuntimeArgs.Editor)
+		}
 		return
 	}
 
@@ -109,17 +115,19 @@ If you're using Windows:
 		}
 	}
 
-	// Get password for access
+	// Get password for access to GPG-encryption
 	promptPassword()
 
 	// Get current entry if needed
 	fullEntry := ""
 	if len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole {
+		// Get full entry
 		fullEntry, _ = getFullEntry()
 		if len(fullEntry) > 0 {
 			fullEntry += "\n\n"
 		}
 	} else if len(RuntimeArgs.TextSearch) > 0 {
+		// Get only entries that match search terms
 		searchTerms := strings.Split(RuntimeArgs.TextSearch, " ")
 		for i := range searchTerms {
 			searchTerms[i] = " " + searchTerms[i]
@@ -143,6 +151,7 @@ If you're using Windows:
 	RuntimeArgs.Lines = len(strings.Split(fullEntry, "\n"))
 
 	if RuntimeArgs.Summarize {
+		// If summarizing, use only the first lines
 		_, entries := getFullEntry()
 		totalEntries := len(entries)
 		numberToShow := totalEntries + 10
@@ -156,19 +165,24 @@ If you're using Windows:
 			}
 		}
 	} else {
+		// Add the timestamp for the new entry
 		t := time.Now()
 		fullEntry += string(t.Format("2006-01-02 15:04:05")) + " "
 		if ConfigArgs.Editor == "vim" {
 			fullEntry += " "
 		}
 	}
+	// Write the data contents to the tempfile
 	err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(fullEntry), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Edit the entry
 	newEntry := editEntry()
+
 	if !RuntimeArgs.Summarize {
+		// Parse and save the new entry
 		entries, _ := parseEntries(newEntry)
 		totalNewWords := 0
 		for _, entry := range entries {
@@ -183,6 +197,7 @@ If you're using Windows:
 		}
 	}
 
+	// Sync it back up
 	if !RuntimeArgs.DontSync || RuntimeArgs.OnlyPush {
 		if HasInternetAccess() {
 			syncUp()
@@ -191,5 +206,4 @@ If you're using Windows:
 		}
 	}
 	return
-
 }
