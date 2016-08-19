@@ -24,6 +24,8 @@ func CheckPasswordHash(hash string, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte("alskdjcoimecalks3234kj"+password))
 }
 
+// decryptString returns the decrypted string using a passphrase and
+// GPG symmetric encryption
 func decryptString(decryptionString string, encryptionPassphraseString string) (string, error) {
 	encryptionPassphrase := []byte(encryptionPassphraseString)
 	decbuf := bytes.NewBuffer([]byte(decryptionString))
@@ -53,6 +55,8 @@ func decryptString(decryptionString string, encryptionPassphraseString string) (
 	return string(bytes), nil
 }
 
+// decryptString returns the encrypted string using a passphrase and
+// GPG symmetric encryption
 func encryptString(encryptionText string, encryptionPassphraseString string) string {
 	encryptionPassphrase := []byte(encryptionPassphraseString)
 	encbuf := bytes.NewBuffer(nil)
@@ -73,17 +77,9 @@ func encryptString(encryptionText string, encryptionPassphraseString string) str
 	return encbuf.String()
 }
 
+// decrypt returns the decrypted contents of a GPG symmetric encrypted file
 func decrypt(file string) string {
 	fileContents, _ := ioutil.ReadFile(file)
 	decrypted, _ := decryptString(string(fileContents), RuntimeArgs.Passphrase)
 	return decrypted
-}
-
-func readAllFiles() []string {
-	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
-	fileNames := []string{}
-	for _, f := range files {
-		fileNames = append(fileNames, path.Join(RuntimeArgs.FullPath, f.Name()))
-	}
-	return fileNames
 }

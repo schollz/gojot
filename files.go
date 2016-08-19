@@ -12,6 +12,18 @@ import (
 	"time"
 )
 
+// readAllFiles returns a list of all the files in the sdees path
+func readAllFiles() []string {
+	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
+	fileNames := []string{}
+	for _, f := range files {
+		fileNames = append(fileNames, path.Join(RuntimeArgs.FullPath, f.Name()))
+	}
+	return fileNames
+}
+
+// getEntryList returns a list of the GPG encrypted entries
+// for the current working document
 func getEntryList() []string {
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile))
 	fileNames := []string{}
@@ -25,6 +37,8 @@ func getEntryList() []string {
 	return fileNames
 }
 
+// getFileList returns a map of all files in the sdees home directory
+// excluding cache, temp, and config files
 func getFileList() map[int]string {
 	filesIndexed := make(map[int]string)
 	for i, f := range listFiles() {
@@ -36,6 +50,8 @@ func getFileList() map[int]string {
 	return filesIndexed
 }
 
+// printFileList prints out the available files
+// available via --list
 func printFileList() {
 	fmt.Println("Available documents (access using `sdees NUM`):\n")
 	for i, f := range listFiles() {
@@ -47,6 +63,7 @@ func printFileList() {
 	fmt.Print("\n")
 }
 
+// listFiles returns a list of all the files in the sdees home directory
 func listFiles() []string {
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath))
 	fileNames := []string{}
@@ -61,8 +78,10 @@ func listFiles() []string {
 	return fileNames
 }
 
+// cleanUp deletes all temporary files and also deletes documents that were
+// made accidently (documents with no data)
 func cleanUp() error {
-	logger.Debug("Cleaning..")
+	logger.Debug("Cleaning...")
 	dir := RuntimeArgs.TempPath
 	d, err := os.Open(dir)
 	if err != nil {
@@ -120,6 +139,7 @@ func cleanUp() error {
 	return nil
 }
 
+// parseDate parses the two possible date formats
 func parseDate(s string) (bool, int) {
 	t, e := time.Parse("2006-01-02 15:04:05", s)
 	if e == nil {

@@ -7,6 +7,7 @@ import (
 	"github.com/speps/go-hashids"
 )
 
+// encodeNumber encodes the reversible-hash of number
 func encodeNumber(num int) string {
 	hd := hashids.NewData()
 	hd.Salt = "sdeeseeds"
@@ -16,6 +17,7 @@ func encodeNumber(num int) string {
 	return string(e)
 }
 
+// decodeNumber decodes the reversible-hash of number
 func decodeNumber(s string) int {
 	hd := hashids.NewData()
 	hd.Salt = "sdeeseeds"
@@ -25,17 +27,21 @@ func decodeNumber(s string) int {
 	return int(d[0])
 }
 
+// hashString generates a 6-character random string from integer hash of string
 func hashString(s string) string {
 	seed := integerHash(s)
 	return RandStringBytesMaskImprSrc(6, seed)
 }
 
+// integerHash generates a integer hash
 func integerHash(s string) int64 {
 	h := fnv.New64a()
 	h.Write([]byte(s))
 	return int64(h.Sum64())
 }
 
+// RandStringBytesMaskImprSrc generates a random string using a alphabet and seed
+// from SO
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const (
 	letterIdxBits = 6                    // 6 bits to represent a letter index

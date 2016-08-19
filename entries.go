@@ -125,6 +125,8 @@ func getFullEntry() (string, []string) {
 
 }
 
+// parseEntries is used to parse the full text for any entry and return all those
+// entries and their corresponding unix epoch datetimes
 func parseEntries(text string) ([]string, []int) {
 	defer timeTrack(time.Now(), "Parsing entries")
 	entry := ""
@@ -159,6 +161,8 @@ func parseEntries(text string) ([]string, []int) {
 	return entriesInOrder, gtsInOrder
 }
 
+// sortEntries takes a map of entries and returns a list of entries and a list
+// of their dates in ascending order
 func sortEntries(entries map[int]string) ([]string, []int) {
 	// Sort the entries in order
 	var keys []int
@@ -249,6 +253,9 @@ func editEntry() string {
 	return string(fileContents)
 }
 
+// writeEntry takes the contents of a file and writes the file in the
+// specified format (see main.go, top)
+// writing will be skipped if there is not much data, but it can be forced with forceWrite
 func writeEntry(fileContents string, forceWrite bool) bool {
 	// logger.Debug("Entry contains %d bytes.", len(fileContents))
 	if len(fileContents) < 22 && !forceWrite {
