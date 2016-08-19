@@ -1,4 +1,4 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg) ![Version 1.1.1](https://img.shields.io/badge/version-1.1.1-brightgreen.svg?version=flat-square)
+![build](https://img.shields.io/badge/build-passing-brightgreen.svg) [![Version 1.1.1](https://img.shields.io/badge/version-1.1.1-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
@@ -38,24 +38,22 @@ Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
 Pushing to remote...done.
 ```
 
-One command + one password instead of six commands and three passwords.
-
 More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L29).
 
 ## Features
 
 - Cross-compatibility (Windows/Linux/OS X).
-- _Only one_ dependency: the text-editor `vim` (pre-bundled for Windows!), `nano`, or `emacs`.
+- _Only one_ dependency: the text-editor. Use `vim`, `nano`, or `emacs`.
 - Encryption, compatible with `gpg`.
 - Remote document transfer.
-- Searching and summarizing,
+- Searching and summmarization,
 - Version control (all versions are saved, but only newest is shown).
 
 # Install
 
 The simplest way to install is to just download the [latest release](https://github.com/schollz/sdees/releases/latest). To install from source you must install Go 1.6+.
 
-```bash
+```
 git clone https://github.com/schollz/sdees.git
 cd sdees
 make install
@@ -63,7 +61,7 @@ make install
 
 Once installed you can update easily (must have Go1.6+ and Linux):
 
-```bash
+```
 sdees --update
 ```
 
@@ -71,7 +69,7 @@ sdees --update
 
 The first time you run you can configure your remote system and editor.
 
-```bash
+```
 sdees new.txt # edit a new document, new.txt
 sdees --summary -n 5 # list a summary of last five entries
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
@@ -87,6 +85,8 @@ Logo graphic from [logodust](http://logodust.com).
 Inspiration from [jrnl](http://jrnl.sh/).
 
 Southwest Airlines for providing two mechanical failures that gave me 8+ extra hours to code this.
+
+Stack overflow (see code for attributions).
 
 # License
 
