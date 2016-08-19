@@ -63,6 +63,7 @@ import (
 	"os/signal"
 	"os/user"
 	"path"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -75,6 +76,7 @@ import (
 var Version string
 var BuildTime string
 var Build string
+var Extension string
 
 // Global parameters
 var RuntimeArgs struct {
@@ -171,6 +173,13 @@ EXAMPLE USAGE:
 			logger.Level(2)
 		} else {
 			logger.Level(0)
+		}
+
+		// Check if its Windows
+		if runtime.GOOS == "windows" {
+			Extension = ".exe"
+		} else {
+			Extension = ""
 		}
 
 		// Set the paths

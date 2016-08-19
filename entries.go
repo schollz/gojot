@@ -242,7 +242,7 @@ func editEntry() string {
 	}
 
 	// Run the editor
-	cmd := exec.Command(ConfigArgs.Editor, cmdArgs...)
+	cmd := exec.Command(ConfigArgs.Editor+Extension, cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
