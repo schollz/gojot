@@ -73,14 +73,11 @@ func syncDown() {
 	if err != nil {
 		// has directory
 	}
-	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir + "/" + ConfigArgs.WorkingFile)
-	if err != nil {
-		// has directory
-	}
 
 	// walk a directory
 	RuntimeArgs.ServerFileSet = make(map[string]bool)
 	files := []string{}
+	serverFolders := make(map[string]bool)
 	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir
 	logger.Debug("Walking %s", dirToWalk)
 	w := sftp.Walk(dirToWalk)
@@ -94,6 +91,24 @@ func syncDown() {
 			continue
 		}
 		files = append(files, w.Path())
+		if !strings.Contains(w.Path(), ".gpg") && !strings.Contains(w.Path(), ".pass") {
+			serverFolders[w.Path()] = true
+		}
+	}
+
+	// Check whether local documents are the same as server documents
+	for _, localFolder := range listFiles() {
+		if _, ok := serverFolders[dirToWalk+"/"+localFolder]; !ok {
+			logger.Debug("Server doesn't have %s", localFolder)
+			// newFiles := files
+			// for i := range files {
+			// 	fmt.Println(files[i])
+			// 	if strings.Contains(files[i], dirToWalk+"/"+localFolder) {
+			// 		fmt.Println(files[i])
+			// 		newFiles = append(newFiles[:i], newFiles[i+1:]...)
+			// 	}
+			// }
+		}
 	}
 
 	filesToSync := []string{}
@@ -249,16 +264,16 @@ func syncUp() {
 
 		// Sync any local files to server
 		for i, file := range filesToSync {
-			fmt.Printf("%d/%d)\tSyncing %s/%s.\n", i+1, len(filesToSync), folder, file)
 			f, err := sftp.Create(path.Join(dirToWalk, file))
 			if err != nil {
-				logger.Error("Could not create %s", file)
-				log.Fatal(err)
-			}
-			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, folder, file))
-			if _, err = f.Write(fileContents); err != nil {
-				logger.Error("Could not write to %s", file)
-				log.Fatal(err)
+				logger.Debug("%s does not exist on server, skipping.", dirToWalk)
+			} else {
+				fmt.Printf("%d/%d)\tSyncing %s/%s.\n", i+1, len(filesToSync), folder, file)
+				fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, folder, file))
+				if _, err = f.Write(fileContents); err != nil {
+					logger.Error("Could not write to %s", file)
+					log.Fatal(err)
+				}
 			}
 		}
 
