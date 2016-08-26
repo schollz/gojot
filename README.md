@@ -43,11 +43,11 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 ## Features
 
 - Cross-compatibility (Windows/Linux/OS X).
-- _Only one_ dependency: the text-editor. Use `vim`, `nano`, or `emacs`.
+- _Only one_ dependency: a CLI text-editor, either `vim`, `nano`, or `emacs`. (The Windows release always includes `vim.exe`).
 - Encryption, compatible with `gpg`.
 - Remote document transfer.
-- Searching and summmarization,
-- Version control (all versions are saved, but only newest is shown).
+- Searching and summmaries.
+- Version control (all versions are saved, currently only newest is shown).
 
 # Install
 
