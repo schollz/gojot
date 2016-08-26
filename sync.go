@@ -32,7 +32,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 
 // syncDown pulls the latest copies of all the documents from the remote server
 func syncDown() {
-	fmt.Printf("Pulling from remote...")
+	fmt.Println("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -96,6 +96,9 @@ func syncDown() {
 		files = append(files, w.Path())
 	}
 
+	filesToSync := []string{}
+	fileNamesToSync := []string{}
+	folderNamesToSync := []string{}
 	for _, file := range files {
 		fileNameSplit := strings.Split(file, "/")
 		fileName := fileNameSplit[len(fileNameSplit)-1]
@@ -119,39 +122,48 @@ func syncDown() {
 					log.Fatal(err)
 				}
 			}
-			logger.Debug("Syncing %s/%s.", folderName, fileName)
+			folderNamesToSync = append(folderNamesToSync, folderName)
+			filesToSync = append(filesToSync, file)
+			fileNamesToSync = append(fileNamesToSync, fileName)
 
-			fp, err := sftp.Open(file)
-			if err != nil {
-				logger.Error("Could not open %s", fp)
-				log.Fatal(err)
-			}
-
-			buf := bytes.NewBuffer(nil)
-			_, err = io.Copy(buf, fp)
-			if err != nil {
-				logger.Error("Could not write to %s", fp)
-				log.Fatal(err)
-			}
-			fp.Close()
-
-			err = ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, folderName, fileName), buf.Bytes(), 0644)
-			if err != nil {
-				logger.Error("Could copy down %s", fp)
-				log.Fatal(err)
-			}
 		} else {
 			// logger.Debug("Skipping %s", fileName)
 		}
 
 	}
 
-	fmt.Println("done.")
+	for i := range filesToSync {
+		folderName := folderNamesToSync[i]
+		fileName := fileNamesToSync[i]
+		file := filesToSync[i]
+		fmt.Printf("%d/%d)\tSyncing %s/%s.\n", i+1, len(filesToSync), folderName, fileName)
+
+		fp, err := sftp.Open(file)
+		if err != nil {
+			logger.Error("Could not open %s", fp)
+			log.Fatal(err)
+		}
+
+		buf := bytes.NewBuffer(nil)
+		_, err = io.Copy(buf, fp)
+		if err != nil {
+			logger.Error("Could not write to %s", fp)
+			log.Fatal(err)
+		}
+		fp.Close()
+
+		err = ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, folderName, fileName), buf.Bytes(), 0644)
+		if err != nil {
+			logger.Error("Could copy down %s", fp)
+			log.Fatal(err)
+		}
+	}
+	fmt.Println("...done.")
 }
 
 // syncUp pushes the latest versions of all the documents to the server
 func syncUp() {
-	fmt.Printf("Pushing to remote...")
+	fmt.Println("Pushing to remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{
 		User: ConfigArgs.ServerUser,
@@ -196,7 +208,6 @@ func syncUp() {
 	if err != nil {
 		// has directory
 	}
-
 	for _, folder := range listFiles() {
 
 		// Collect names of files on Server
@@ -237,8 +248,8 @@ func syncUp() {
 		}
 
 		// Sync any local files to server
-		for _, file := range filesToSync {
-			logger.Debug("Syncing %s/%s.", folder, file)
+		for i, file := range filesToSync {
+			fmt.Printf("%d/%d)\tSyncing %s/%s.\n", i+1, len(filesToSync), folder, file)
 			f, err := sftp.Create(path.Join(dirToWalk, file))
 			if err != nil {
 				logger.Error("Could not create %s", file)
@@ -252,7 +263,7 @@ func syncUp() {
 		}
 
 	}
-	fmt.Println("done.")
+	fmt.Println("...done.")
 
 }
 
