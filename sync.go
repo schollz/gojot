@@ -353,10 +353,15 @@ func deleteRemote(folderToDelete string) bool {
 
 	for _, file := range files {
 		logger.Debug(file)
-		sftp.Remove(file)
+		err := sftp.Remove(file)
+		if err != nil {
+			logger.Debug("Error removing file %s: %s", file, err.Error())
+		}
 	}
-	sftp.Remove(dirToWalk)
-
+	err = sftp.Remove(dirToWalk)
+	if err != nil {
+		logger.Debug("Error removing %s: %s", dirToWalk, err.Error())
+	}
 	fmt.Println("done.")
 	return true
 }

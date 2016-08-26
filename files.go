@@ -149,5 +149,9 @@ func parseDate(s string) (bool, int) {
 	if e == nil {
 		return true, int(t.Unix())
 	}
+	t, e = time.Parse("2006-01-02", strings.Split(s, " ")[0])
+	if e == nil {
+		return true, int(t.Unix())
+	}
 	return false, int(-1)
 }
