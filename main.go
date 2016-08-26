@@ -243,9 +243,26 @@ EXAMPLE USAGE:
 		// Run Importing/Exporting
 		if len(RuntimeArgs.ImportFile) > 0 {
 			importFile(RuntimeArgs.ImportFile)
+			// Sync it back up
+			if !RuntimeArgs.DontSync || RuntimeArgs.OnlyPush {
+				if HasInternetAccess() {
+					syncUp()
+				} else {
+					fmt.Println("Unable to push, no internet access.")
+				}
+			}
 			return nil
 		}
 		if len(RuntimeArgs.ExportFile) > 0 {
+			// Pull latest copies
+			logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)
+			if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush {
+				if HasInternetAccess() {
+					syncDown()
+				} else {
+					fmt.Println("Unable to pull, no internet access.")
+				}
+			}
 			exportFile(RuntimeArgs.ExportFile)
 			return nil
 		}
