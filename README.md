@@ -8,11 +8,11 @@
 
 ...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
 
-Ok. But, really, **SDEES** is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
+Ok. But, really, `sdees` is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
 
 The remote computer is used only for file storage and does not require any server-side code. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
 
-This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`:
+This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`. Before `sdees` I had to do this:
 
 ```
 $ rsync -arq --update user@remote:encrypted_notes encrypted_notes
@@ -27,7 +27,7 @@ $ rm notes
 $ rsync -arq --update encrypted_notes user@remote:encrypted_notes
 ```
 
-**SDEES** now combines this functionality into a single program (with `gpg` and `rsync` capabilities built-in):
+Now, with `sdees` (which has `gpg` and `rsync` capabilities built-in) I can do this:
 
 ```
 $ sdees
