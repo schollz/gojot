@@ -475,7 +475,7 @@ func update() {
 		return
 	}
 	logger.Debug("Checking current version...")
-	out, err := exec.Command(path.Join(dir, "sdees"), "--version").Output()
+	out, err := exec.Command("sdees", "--version").Output()
 	if err == nil {
 		fmt.Println("Current version:")
 		fmt.Println(string(out))

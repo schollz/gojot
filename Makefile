@@ -21,8 +21,6 @@ $(BINARY): $(SOURCES)
 
 .PHONY: install
 install:
-	$(MAKE) clean
-	$(MAKE)
 	mv sdees /usr/local/bin/
 
 .PHONY: clean
