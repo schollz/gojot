@@ -23,7 +23,7 @@ $(BINARY): $(SOURCES)
 install:
 	$(MAKE) clean
 	$(MAKE)
-	sudo mv sdees /usr/local/bin/
+	mv sdees /usr/local/bin/
 
 .PHONY: clean
 clean:
