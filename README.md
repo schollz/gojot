@@ -56,7 +56,8 @@ The simplest way to install is to just download the [latest release](https://git
 ```
 git clone https://github.com/schollz/sdees.git
 cd sdees
-go build      OR       make && sudo make install
+make
+make install    # if you want to install to your path
 ```
 
 Once installed you can update easily (must have Go1.6+ and Linux):
