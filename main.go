@@ -482,27 +482,33 @@ func update() {
 	} else {
 		logger.Error("Something went wrong: %s", err.Error())
 	}
+
+	// Remove git directory if it exists
+	os.RemoveAll("tempsdees")
+
 	logger.Debug("Cloning latest...")
 	fullCommand := strings.Split("git clone https://github.com/schollz/sdees.git tempsdees", " ")
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		logger.Error("Could not clone latest: %s", err.Error())
+		os.Exit(-1)
 	}
 
 	os.Chdir("./tempsdees")
 
+	fullCommand = strings.Split("make", " ")
+	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
+		logger.Error("Could not make: %s", err.Error())
+		os.Exit(-1)
+	}
+
 	fullCommand = strings.Split("make install", " ")
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		logger.Error("Could not make install: %s", err.Error())
+		os.Exit(-1)
 	}
 
 	os.Chdir("../")
-	fullCommand = strings.Split("rm -rf ./tempsdees", " ")
-	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	os.RemoveAll("tempsdees")
 
 	out, err = exec.Command("sdees", "--version").Output()
 	if err == nil {
