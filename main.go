@@ -63,6 +63,7 @@ import (
 	"os/signal"
 	"os/user"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"syscall"
@@ -462,15 +463,26 @@ func initialize() {
 // update does `git pull` to collect the latest version of sdees, and does a
 // make install to copy the new version into the local directory
 func update() {
+	logger.Debug("Updating sdees...")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(-1)
+	}
+	logger.Debug(dir)
 	if !HasInternetAccess() {
 		fmt.Println("Cannot access internet to update.")
 		return
 	}
-	out, err := exec.Command("sdees", "--version").Output()
+	logger.Debug("Checking current version...")
+	out, err := exec.Command(path.Join(dir, "sdees"), "--version").Output()
 	if err == nil {
 		fmt.Println("Current version:")
 		fmt.Println(string(out))
+	} else {
+		logger.Error("Something went wrong: %s", err.Error())
 	}
+	logger.Debug("Cloning latest...")
 	fullCommand := strings.Split("git clone https://github.com/schollz/sdees.git tempsdees", " ")
 	if err := exec.Command(fullCommand[0], fullCommand[1:]...).Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
