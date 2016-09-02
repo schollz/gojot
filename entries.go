@@ -185,7 +185,6 @@ func editEntry() string {
 	logger.Debug("Editing file")
 
 	var cmdArgs []string
-
 	if ConfigArgs.Editor == "vim" {
 		// Setup vim
 		vimrc := `func! WordProcessorModeCLI()
@@ -239,13 +238,56 @@ func editEntry() string {
 	} else if ConfigArgs.Editor == "emacs" {
 		lines := strconv.Itoa(RuntimeArgs.Lines)
 		cmdArgs = []string{"+" + lines + ":1000000", path.Join(RuntimeArgs.TempPath, "temp")}
+	} else if ConfigArgs.Editor == "micro" {
+		settings := `{
+    "autoclose": false,
+    "autoindent": false,
+    "colorscheme": "atomdark",
+    "cursorline": false,
+    "gofmt": false,
+    "goimports": false,
+    "ignorecase": false,
+    "indentchar": " ",
+    "linter": false,
+    "ruler": false,
+    "savecursor": false,
+    "saveundo": false,
+    "scrollmargin": 3,
+    "scrollspeed": 2,
+    "statusline": false,
+    "syntax": false,
+    "tabsize": 4,
+    "tabstospaces": false
+}`
+		if exists(path.Join(RuntimeArgs.HomePath, ".config")) {
+			if exists(path.Join(RuntimeArgs.HomePath, ".config", "micro")) {
+				err := ioutil.WriteFile(path.Join(RuntimeArgs.HomePath, ".config", "micro", "settings.json"), []byte(settings), 0644)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+
+		lines := strconv.Itoa(RuntimeArgs.Lines)
+		cmdArgs = []string{"+" + lines + ",1000000", path.Join(RuntimeArgs.TempPath, "temp")}
 	}
 
+	// Load from binary assets
+	data, err := Asset("bin/" + ConfigArgs.Editor + Extension)
+	if err == nil {
+		err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, ConfigArgs.Editor+Extension), data, 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ConfigArgs.Editor = path.Join(RuntimeArgs.TempPath, ConfigArgs.Editor)
+	}
+
+	logger.Debug("Using editor %s", ConfigArgs.Editor)
 	// Run the editor
 	cmd := exec.Command(ConfigArgs.Editor+Extension, cmdArgs...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

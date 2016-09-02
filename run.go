@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path"
 	"strconv"
 	"strings"
@@ -86,25 +85,25 @@ func promptPassword() {
 func run() {
 	logger.Debug("Available files: %s", strings.Join(listFiles(), ", "))
 
-	// Check if editor exists
-	_, err := exec.Command(ConfigArgs.Editor, "--version").Output()
-	if err != nil {
-		if ConfigArgs.Editor == "vim" {
-			fmt.Println(`You need to download vim. If your using Unix:
-
-		apt-get install vim
-
-	If you're using Windows:
-
-		wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
-		unzip vim74w32.zip
-		mv vim/vim74/vim.exe ./
-	`)
-		} else {
-			fmt.Printf("You need to download %s or switch editors using `sdees --config`.\n", RuntimeArgs.Editor)
-		}
-		return
-	}
+	// // Check if editor exists
+	// _, err := exec.Command(ConfigArgs.Editor, "--version").Output()
+	// if err != nil {
+	// 	if ConfigArgs.Editor == "vim" {
+	// 		fmt.Println(`You need to download vim. If your using Unix:
+	//
+	// 	apt-get install vim
+	//
+	// If you're using Windows:
+	//
+	// 	wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
+	// 	unzip vim74w32.zip
+	// 	mv vim/vim74/vim.exe ./
+	// `)
+	// 	} else {
+	// 		fmt.Printf("You need to download %s or switch editors using `sdees --config`.\n", RuntimeArgs.Editor)
+	// 	}
+	// 	return
+	// }
 
 	// Pull latest copies
 	logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)
@@ -174,7 +173,7 @@ func run() {
 		}
 	}
 	// Write the data contents to the tempfile
-	err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(fullEntry), 0644)
+	err := ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, "temp"), []byte(fullEntry), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
