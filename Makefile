@@ -17,7 +17,6 @@ $(BINARY): $(SOURCES)
 	go get github.com/speps/go-hashids
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
-	go get -u github.com/jteeuwen/go-bindata/...
 	go build ${LDFLAGS} -o ${BINARY} ${SOURCES}
 
 .PHONY: install
@@ -32,22 +31,21 @@ clean:
 
 .PHONY: binaries
 binaries:
+	go get - github.com/jteeuwen/go-bindata/...
 	rm -rf binaries
+	rm -rf bin
 	rm -rf bindata.go
 	mkdir binaries
 	## LINUX
-	# rm -rf bin
-	# mkdir bin
-	# git clone https://github.com/zyedidia/micro.git && cd micro/cmd/micro && env GOOS=linux GOARCH=amd64 go build -o ../../../bin/micro
-	# env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
-	# zip -j binaries/sdees_linux_amd64.zip binaries/sdees
-	# rm binaries/sdees
-	# env GOOS=linux GOARCH=arm go build ${LDFLAGS} -o binaries/sdees
-	# zip -j binaries/sdees_linux_arm.zip binaries/sdees
-	# rm binaries/sdees
-	# env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o binaries/sdees
-	# zip -j binaries/sdees_linux_arm64.zip binaries/sdees
-	# rm binaries/sdees
+	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
+	rm binaries/sdees
+	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_arm.zip binaries/sdees
+	rm binaries/sdees
+	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_linux_arm64.zip binaries/sdees
+	rm binaries/sdees
 	## WINDOWS
 	rm -rf bin
 	mkdir bin
@@ -56,10 +54,11 @@ binaries:
 	mv vim/vim74/vim.exe ./bin/
 	rm -rf vim*
 	rm -rf bindata.go
-	go-bindata bin
+	$(GOPATH)/bin/go-bindata bin
 	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
 	zip -j binaries/sdees_windows_amd64.zip binaries/sdees.exe
 	rm -rf binaries/vim.exe
 	rm -rf ./vim/
 	rm -rf ./bin/
+	rm -rf bindata.go
 	rm binaries/sdees.exe
