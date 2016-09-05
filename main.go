@@ -2,12 +2,12 @@
 //                           SDEES information
 // -----------------------------------------------------------------------------
 //
-// All configuration files an documents are stored in the folder ~/.sdeesgo/.
+// All configuration files an documents are stored in the folder ~/.config/sdees/.
 // Documents are encrypted with symmetric GPG-encryption.
-// Each document, X.txt, is stored as a new folder ~/.sdeesgo/X.txt/.
+// Each document, X.txt, is stored as a new folder ~/.config/sdees/X.txt/.
 // Only files in the document folder are synced remotely.
 // Passwords for GPG-encryption are hashed with bcrypt and then stored
-// in the document folder ~/.sdeesgo/X.txt/X.txt.pass.
+// in the document folder ~/.config/sdees/X.txt/X.txt.pass.
 //
 // Individual entries for a document are stored as GPG encoded files.
 // Entries are edited in a temporary file that is always deleted upon exiting,
@@ -392,7 +392,7 @@ EXAMPLE USAGE:
 }
 
 // initialize asks the user for the remote user and server and the editor preference
-// and saves these parameters to ~/.sdeesgo/config.json
+// and saves these parameters to ~/.config/sdees/config.json
 func initialize() {
 	var yesno string
 	currentUser, _ := user.Current()
