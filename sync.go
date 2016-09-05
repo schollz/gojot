@@ -69,6 +69,11 @@ func syncDown() {
 	}
 	defer sftp.Close()
 
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/.config/")
+	if err != nil {
+		// has directory
+	}
+
 	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir)
 	if err != nil {
 		// has directory
@@ -120,13 +125,7 @@ func syncDown() {
 		if !strings.Contains(fileName, ".gpg") && !strings.Contains(fileName, ".pass") {
 			continue
 		}
-		folderName := ""
-		for i, s := range fileNameSplit {
-			if s == RuntimeArgs.SdeesDir {
-				folderName = fileNameSplit[i+1]
-				break
-			}
-		}
+		folderName := fileNameSplit[len(fileNameSplit)-2]
 		RuntimeArgs.ServerFileSet[fileName] = true
 
 		if !exists(path.Join(RuntimeArgs.WorkingPath, folderName, fileName)) {
@@ -214,6 +213,11 @@ func syncUp() {
 		log.Fatal(err)
 	}
 	defer sftp.Close()
+
+	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + ".config")
+	if err != nil {
+		// has directory
+	}
 
 	err = sftp.Mkdir("/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir)
 	if err != nil {
