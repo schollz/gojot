@@ -20,7 +20,7 @@ $(BINARY): $(SOURCES)
 	rm -rf bin
 	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
-	go build ${LDFLAGS} -o ${BINARY} $(shell find $(SOURCEDIR) -name '*.go')
+	go build ${LDFLAGS} -o ${BINARY}
 
 .PHONY: install
 install:
