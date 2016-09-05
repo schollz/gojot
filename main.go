@@ -87,10 +87,10 @@ var RuntimeArgs struct {
 	ExportFile       string
 	HomePath         string // home path, usually "~/"
 	SSHKey           string // path to key, usually "~/.ssh/id_rsa"
-	WorkingPath      string // main path, usually "~/.sdees/"
-	FullPath         string // path with working file, usuallly "~/.sdees/notes.txt/"
-	TempPath         string // usually "~/.sdees/temp/"
-	SdeesDir         string // name of sdees dir, like ".sdees"
+	WorkingPath      string // main path, usually "~/.config/sdees/"
+	FullPath         string // path with working file, usuallly "~/.config/sdees/notes.txt/"
+	TempPath         string // usually "~/.config/sdees/temp/"
+	SdeesDir         string // name of sdees dir, like ".config/sdees"
 	NumberToShow     string
 	TextSearch       string
 	DeleteDirectory  string
@@ -136,7 +136,7 @@ func main() {
 	}()
 
 	// Default directory to store temp files, config, and document
-	RuntimeArgs.SdeesDir = ".sdeesgo"
+	RuntimeArgs.SdeesDir = path.Join(".config", "sdees")
 
 	// App information
 	app := cli.NewApp()
@@ -400,8 +400,16 @@ func initialize() {
 	ConfigArgs.ServerUser = ""
 	ConfigArgs.ServerPort = ""
 
+	// Make .config directory in home if doesn't exist
+	err := os.MkdirAll(path.Join(RuntimeArgs.HomePath, ".config"), 0711)
+	if err != nil {
+		log.Println("Error creating directory")
+		log.Println(err)
+		return
+	}
+
 	// Make directory
-	err := os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
+	err = os.MkdirAll(RuntimeArgs.WorkingPath, 0711)
 	if err != nil {
 		log.Println("Error creating directory")
 		log.Println(err)
