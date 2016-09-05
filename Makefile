@@ -1,5 +1,4 @@
 SOURCEDIR=.
-SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
 
 BINARY=sdees
 
@@ -18,8 +17,10 @@ $(BINARY): $(SOURCES)
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get github.com/jteeuwen/go-bindata/...
+	rm -rf bin
+	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
-	go build ${LDFLAGS} -o ${BINARY} ${SOURCES}
+	go build ${LDFLAGS} -o ${BINARY} $(shell find $(SOURCEDIR) -name '*.go')
 
 .PHONY: install
 install:
@@ -36,6 +37,8 @@ binaries:
 	go get github.com/jteeuwen/go-bindata/...
 	rm -rf binaries
 	mkdir binaries
+	rm -rf bin
+	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
 	## LINUX
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
