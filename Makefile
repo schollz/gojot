@@ -17,6 +17,8 @@ $(BINARY): $(SOURCES)
 	go get github.com/speps/go-hashids
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
+	go get github.com/jteeuwen/go-bindata/...
+	$(GOPATH)/bin/go-bindata bin
 	go build ${LDFLAGS} -o ${BINARY} ${SOURCES}
 
 .PHONY: install
@@ -31,11 +33,10 @@ clean:
 
 .PHONY: binaries
 binaries:
-	go get - github.com/jteeuwen/go-bindata/...
+	go get github.com/jteeuwen/go-bindata/...
 	rm -rf binaries
-	rm -rf bin
-	rm -rf bindata.go
 	mkdir binaries
+	$(GOPATH)/bin/go-bindata bin
 	## LINUX
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
 	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
