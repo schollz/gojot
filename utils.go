@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -167,4 +169,26 @@ func copyFileContents(src, dst string) (err error) {
 	}
 	err = out.Sync()
 	return
+}
+
+// shred writes random data to the file before erasing it
+func shred(fileName string) error {
+	fileData, err := os.Stat(fileName)
+	if err != nil {
+		return err
+	}
+	b := make([]byte, fileData.Size())
+	_, err = rand.Read(b)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile("test.txt", b, 0644)
+	if err != nil {
+		return err
+	}
+	err = os.Remove(fileName)
+	if err != nil {
+		return err
+	}
+	return nil
 }
