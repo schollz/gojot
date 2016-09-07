@@ -102,7 +102,7 @@ func cleanUp() error {
 	fileList := listFiles()
 	for i, f := range fileList {
 		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
-		if len(files) < 2 {
+		if len(files) < 1 {
 			for _, file := range files {
 				logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
 				err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
@@ -116,7 +116,7 @@ func cleanUp() error {
 				log.Fatal(err)
 			}
 			if ConfigArgs.WorkingFile == f {
-				if len(fileList) < 2 {
+				if len(fileList) < 1 {
 					ConfigArgs.WorkingFile = "notes.txt"
 				} else {
 					if i != 0 {

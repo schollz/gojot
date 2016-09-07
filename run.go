@@ -45,39 +45,39 @@ func exportFile(filename string) {
 
 // Prompt for password (cross-compatiable, except cygwin)
 func promptPassword() {
-	passwordAccepted := false
-	for passwordAccepted == false {
-		fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
-		bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-		password := strings.TrimSpace(string(bytePassword))
-		RuntimeArgs.Passphrase = password
-		if exists(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass")) {
-			// Check old password
-			fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"))
-			err := CheckPasswordHash(string(fileContents), password)
+	possibleFiles := getEntryList()
+	password1 := "1"
+	if len(possibleFiles) == 0 {
+		password2 := "2"
+		for password1 != password2 {
+			fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			password1 = strings.TrimSpace(string(bytePassword))
+			fmt.Printf("\nEnter password again: ")
+			bytePassword2, _ := terminal.ReadPassword(int(syscall.Stdin))
+			password2 = strings.TrimSpace(string(bytePassword2))
+			if password1 != password2 {
+				fmt.Println("\nPasswords do not match.")
+			}
+		}
+	} else {
+		testFile := possibleFiles[0]
+		logger.Debug("Testing with %s", path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile, testFile))
+		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile, testFile))
+		passwordAccepted := false
+		for passwordAccepted == false {
+			fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			password1 = strings.TrimSpace(string(bytePassword))
+			_, err := decryptString(string(fileContents), password1)
 			if err == nil {
 				passwordAccepted = true
 			} else {
 				fmt.Println("\nPasswords do not match.")
 			}
-		} else {
-			// Generate new passwrod
-			fmt.Printf("\nEnter password again: ")
-			bytePassword2, _ := terminal.ReadPassword(int(syscall.Stdin))
-			password2 := strings.TrimSpace(string(bytePassword2))
-			if password == password2 {
-				// Write password to file
-				passwordAccepted = true
-				passwordHashed, _ := HashPassword(password)
-				err := ioutil.WriteFile(path.Join(RuntimeArgs.FullPath, ConfigArgs.WorkingFile+".pass"), passwordHashed, 0644)
-				if err != nil {
-					log.Fatal("Could not write to file.")
-				}
-			} else {
-				fmt.Println("\nPasswords do not match.")
-			}
 		}
 	}
+	RuntimeArgs.Passphrase = password1
 	fmt.Println("")
 }
 

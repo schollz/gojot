@@ -35,7 +35,7 @@ func getFullEntry() (string, []string) {
 		entryStrings := make(map[string]string)
 		logger.Debug("No cache.")
 		for _, file := range allFiles {
-			if strings.Contains(file, ".pass") {
+			if strings.Contains(file, ".pass") { // to be deprecated
 				continue
 			}
 			foo := strings.Split(file, "/")
