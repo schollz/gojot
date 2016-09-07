@@ -40,10 +40,10 @@
 //
 // run() (run.go):
 // - Handles importing/exporting
-// - Pulls latest copy from server
+// - Pulls latest copy from remote
 // - Prompts for password
 // - Starts new entry -> editEntry() (entries.go)
-// - Pushes latest to server
+// - Pushes latest to remote
 //
 // editEntry() (entries.go):
 // - Edits with vim
@@ -391,7 +391,7 @@ EXAMPLE USAGE:
 	app.Run(os.Args)
 }
 
-// initialize asks the user for the remote user and server and the editor preference
+// initialize asks the user for the remote user and remote and the editor preference
 // and saves these parameters to ~/.config/sdees/config.json
 func initialize() {
 	var yesno string

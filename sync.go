@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-// PublicKeyFiles is used to accessing the remote server
+// PublicKeyFiles is used to accessing the remote filesystem
 func PublicKeyFile(file string) ssh.AuthMethod {
 	logger.Debug("Using %s", file)
 	buffer, err := ioutil.ReadFile(file)
@@ -30,7 +30,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 	return ssh.PublicKeys(key)
 }
 
-// syncDown pulls the latest copies of all the documents from the remote server
+// syncDown pulls the latest copies of all the documents from the remote filesystem
 func syncDown() {
 	fmt.Println("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
@@ -82,7 +82,7 @@ func syncDown() {
 	// walk a directory
 	RuntimeArgs.ServerFileSet = make(map[string]bool)
 	files := []string{}
-	serverFolders := make(map[string]bool)
+	remoteFolders := make(map[string]bool)
 	dirToWalk := "/home/" + ConfigArgs.ServerUser + "/" + RuntimeArgs.SdeesDir
 	logger.Debug("Walking %s", dirToWalk)
 	w := sftp.Walk(dirToWalk)
@@ -97,13 +97,13 @@ func syncDown() {
 		}
 		files = append(files, w.Path())
 		if !strings.Contains(w.Path(), ".gpg") && !strings.Contains(w.Path(), ".pass") {
-			serverFolders[w.Path()] = true
+			remoteFolders[w.Path()] = true
 		}
 	}
 
-	// Check whether local documents are the same as server documents
+	// Check whether local documents are the same as remote documents
 	for _, localFolder := range listFiles() {
-		if _, ok := serverFolders[dirToWalk+"/"+localFolder]; !ok {
+		if _, ok := remoteFolders[dirToWalk+"/"+localFolder]; !ok {
 			logger.Debug("Server doesn't have %s", localFolder)
 			// newFiles := files
 			// for i := range files {
@@ -175,7 +175,7 @@ func syncDown() {
 	fmt.Println("...done.")
 }
 
-// syncUp pushes the latest versions of all the documents to the server
+// syncUp pushes the latest versions of all the documents to the remote
 func syncUp() {
 	fmt.Println("Pushing to remote...")
 	// open an SFTP session over an existing ssh connection.
@@ -256,7 +256,7 @@ func syncUp() {
 			RuntimeArgs.ServerFileSet[fileName] = true
 		}
 
-		// Collect local files and check if they are on server
+		// Collect local files and check if they are on remote
 		localFiles, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, folder))
 		for _, f := range localFiles {
 			if _, ok := RuntimeArgs.ServerFileSet[f.Name()]; !ok {
@@ -266,11 +266,11 @@ func syncUp() {
 			}
 		}
 
-		// Sync any local files to server
+		// Sync any local files to remote
 		for i, file := range filesToSync {
 			f, err := sftp.Create(path.Join(dirToWalk, file))
 			if err != nil {
-				logger.Debug("%s does not exist on server, skipping.", dirToWalk)
+				logger.Debug("%s does not exist on remote, skipping.", dirToWalk)
 			} else {
 				fmt.Printf("%d/%d)\tSyncing %s/%s.\n", i+1, len(filesToSync), folder, file)
 				fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, folder, file))
@@ -286,7 +286,7 @@ func syncUp() {
 
 }
 
-// deleteRemote deletes the entire document from the remote server
+// deleteRemote deletes the entire document from the remote filesystem
 func deleteRemote(folderToDelete string) bool {
 	if !HasInternetAccess() {
 		fmt.Println("No internet access.")
