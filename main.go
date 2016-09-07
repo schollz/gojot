@@ -155,7 +155,7 @@ func main() {
 		Build = Build[0:7]
 	}
 	app.Version = Version + " " + Build + " " + BuildTime
-	app.Usage = `Serverless Decentralized Editing of Encrypted Stuff
+	app.Usage = `Serverless Distributed Editing of Encrypted Stuff
 
 	 https://github.com/schollz/sdees
 
