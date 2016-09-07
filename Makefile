@@ -40,6 +40,11 @@ binaries:
 	rm -rf bin
 	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
+	## OS X
+	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
+	zip -j binaries/sdees_osx_amd64.zip binaries/sdees
+	rm binaries/sdees
+	
 	## LINUX
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
 	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
