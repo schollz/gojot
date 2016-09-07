@@ -8,21 +8,20 @@ import (
 	"os"
 	"path"
 
-	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/crypto/openpgp"
 	"golang.org/x/crypto/openpgp/armor"
 )
 
-// HashPassword generates a bcrypt hash of the password using work factor 14.
-func HashPassword(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte("alskdjcoimecalks3234kj"+password), 12)
-}
+// // HashPassword generates a bcrypt hash of the password using work factor 14.
+// func HashPassword(password string) ([]byte, error) {
+// 	return bcrypt.GenerateFromPassword([]byte("alskdjcoimecalks3234kj"+password), 14)
+// }
 
-// CheckPassword securely compares a bcrypt hashed password with its possible
-// plaintext equivalent.  Returns nil on success, or an error on failure.
-func CheckPasswordHash(hash string, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte("alskdjcoimecalks3234kj"+password))
-}
+// // CheckPassword securely compares a bcrypt hashed password with its possible
+// // plaintext equivalent.  Returns nil on success, or an error on failure.
+// func CheckPasswordHash(hash string, password string) error {
+// 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte("alskdjcoimecalks3234kj"+password))
+// }
 
 // decryptString returns the decrypted string using a passphrase and
 // GPG symmetric encryption
