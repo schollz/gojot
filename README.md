@@ -1,4 +1,4 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg) [![Version 1.2.0](https://img.shields.io/badge/version-1.2.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
+![build](https://img.shields.io/badge/build-passing-brightgreen.svg) [![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
@@ -48,6 +48,7 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 - Remote document transfer.
 - Searching and summmaries.
 - Version control (all versions are saved, currently only newest is shown).
+- Temp files are shredded (random bytes written before deletion).
 
 # Install
 

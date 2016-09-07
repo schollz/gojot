@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=1.2.0
+VERSION=1.2.1
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 
@@ -44,7 +44,7 @@ binaries:
 	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
 	zip -j binaries/sdees_osx_amd64.zip binaries/sdees
 	rm binaries/sdees
-	
+
 	## LINUX
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
 	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
