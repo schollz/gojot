@@ -4,7 +4,7 @@
 
 # SDEES
 
-...does **Serverless Distributed Editing** of **Encrypted Stuff**.
+...does **Serverless Decentralized Editing** of **Encrypted Stuff**.
 
 ...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
 
