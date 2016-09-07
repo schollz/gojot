@@ -93,10 +93,8 @@ func cleanUp() error {
 		return err
 	}
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
-		if err != nil {
-			return err
-		}
+		logger.Debug("Shredding %s", filepath.Join(dir, name))
+		shred(filepath.Join(dir, name))
 	}
 
 	fileList := listFiles()
@@ -104,17 +102,11 @@ func cleanUp() error {
 		files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.WorkingPath, f))
 		if len(files) < 1 {
 			for _, file := range files {
-				logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
-				err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
-				if err != nil {
-					log.Fatal(err)
-				}
+				logger.Debug("Shredding %s.", path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
+				shred(path.Join(RuntimeArgs.WorkingPath, f, file.Name()))
 			}
-			logger.Debug("Remove %s.", path.Join(RuntimeArgs.WorkingPath, f))
-			err := os.Remove(path.Join(RuntimeArgs.WorkingPath, f))
-			if err != nil {
-				log.Fatal(err)
-			}
+			logger.Debug("Shredding %s.", path.Join(RuntimeArgs.WorkingPath, f))
+			shred(path.Join(RuntimeArgs.WorkingPath, f))
 			if ConfigArgs.WorkingFile == f {
 				if len(fileList) < 1 {
 					ConfigArgs.WorkingFile = "notes.txt"
