@@ -46,7 +46,7 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 - _Only one_ dependency: a CLI text-editor, either `vim`, `nano`, or `emacs`. (The Windows release always includes `vim.exe`).
 - Encryption, compatible with `gpg`.
 - Remote document transfer.
-- Searching and summmaries.
+- Searching and summaries.
 - Version control (all versions are saved, currently only newest is shown).
 - Temp files are shredded (random bytes written before deletion).
 
