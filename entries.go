@@ -234,7 +234,7 @@ func editEntry() string {
 
 	} else if ConfigArgs.Editor == "nano" {
 		lines := strconv.Itoa(RuntimeArgs.Lines)
-		cmdArgs = []string{"+" + lines + ",1000000", "--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}
+		cmdArgs = []string{"+" + lines + ",1000000", "-r", "80", "--tempfile", path.Join(RuntimeArgs.TempPath, "temp")}
 	} else if ConfigArgs.Editor == "emacs" {
 		lines := strconv.Itoa(RuntimeArgs.Lines)
 		cmdArgs = []string{"+" + lines + ":1000000", path.Join(RuntimeArgs.TempPath, "temp")}
