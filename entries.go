@@ -295,6 +295,18 @@ func editEntry() string {
 	return string(fileContents)
 }
 
+func getFrontMatter(fileContents string) (string, int) {
+	// Hash date to get fileName
+	dateString := ""
+	for _, line := range strings.Split(fileContents, "\n") {
+		s := strings.Split(line, " ")
+		dateString = s[0] + " " + s[1]
+		break
+	}
+	_, dateVal := parseDate(dateString)
+	return encodeNumber(dateVal) + "." + hashString(fileContents), dateVal
+}
+
 // writeEntry takes the contents of a file and writes the file in the
 // specified format (see main.go, top)
 // writing will be skipped if there is not much data, but it can be forced with forceWrite
@@ -306,14 +318,7 @@ func writeEntry(fileContents string, forceWrite bool) bool {
 	}
 
 	// Hash date to get fileName
-	dateString := ""
-	for _, line := range strings.Split(fileContents, "\n") {
-		s := strings.Split(line, " ")
-		dateString = s[0] + " " + s[1]
-		break
-	}
-	_, dateVal := parseDate(dateString)
-	fileNameFrontMatter := encodeNumber(dateVal) + "." + hashString(fileContents)
+	fileNameFrontMatter, dateVal := getFrontMatter(fileContents)
 	for _, file := range RuntimeArgs.CurrentFileList {
 		if strings.Contains(file, fileNameFrontMatter) {
 			// File already exists

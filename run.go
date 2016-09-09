@@ -192,7 +192,21 @@ func run() {
 
 	if !RuntimeArgs.Summarize {
 		// Parse and save the new entry
-		entries, _ := parseEntries(newEntry)
+		entries, gtsNew := parseEntries(newEntry)
+		oldEntries, gtsOld := parseEntries(fullEntry)
+		if len(gtsOld) != len(gtsNew) {
+			newGts := make(map[int]bool)
+			for _, gtNew := range gtsNew {
+				newGts[gtNew] = true
+			}
+			for i, gtOld := range gtsOld {
+				if _, ok := newGts[gtOld]; !ok {
+					frontMatter, _ := getFrontMatter(oldEntries[i])
+					fileDate := strings.Split(frontMatter, ".")
+					logger.Debug("You want to delete %s?", fileDate[0])
+				}
+			}
+		}
 		totalNewWords := 0
 		for _, entry := range entries {
 			if writeEntry(entry, false) {
