@@ -120,11 +120,20 @@ func run() {
 
 	// Get current entry if needed
 	fullEntry := ""
-	if len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole {
+	if (len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole) || len(RuntimeArgs.NumberToShow) > 0 {
 		// Get full entry
-		fullEntry, _ = getFullEntry()
-		if len(fullEntry) > 0 {
-			fullEntry += "\n\n"
+		_, allEntries := getFullEntry()
+		totalEntries := len(allEntries)
+		numberToShow := totalEntries
+		if len(RuntimeArgs.NumberToShow) > 0 {
+			numberToShow, _ = strconv.Atoi(RuntimeArgs.NumberToShow)
+			logger.Debug("Showing latest %d of %d entries.", numberToShow, totalEntries)
+		}
+		numberToShow = numberToShow + 1
+		for i, entry := range allEntries {
+			if i > totalEntries-numberToShow {
+				fullEntry += entry + "\n\n"
+			}
 		}
 	} else if len(RuntimeArgs.TextSearch) > 0 {
 		// Get only entries that match search terms
