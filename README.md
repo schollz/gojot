@@ -1,4 +1,5 @@
-![build](https://img.shields.io/badge/build-passing-brightgreen.svg) [![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
+[![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
+[![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
