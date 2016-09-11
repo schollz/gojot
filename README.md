@@ -3,11 +3,7 @@
 
 ![sdees](http://i.imgur.com/I6EzEDH.jpg)
 
-# SDEES
-
-...does **Serverless Decentralized Editing** of **Encrypted Stuff**.
-
-...allows you to **Sync**, **Decrypt**, **Edit**, **Encrypt**, and **Sync** a document.
+## SDEES Does Editing, Encryption, and Synchronization
 
 Ok. But, really, `sdees` is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
 
