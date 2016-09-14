@@ -58,9 +58,9 @@ binaries:
 	## WINDOWS
 	rm -rf bin
 	mkdir bin
-	wget ftp://ftp.vim.org/pub/vim/pc/vim74w32.zip
-	unzip vim74w32.zip
-	mv vim/vim74/vim.exe ./bin/
+	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
+	unzip vim80w32.zip
+	mv vim/vim80/vim.exe ./bin/
 	rm -rf vim*
 	rm -rf bindata.go
 	$(GOPATH)/bin/go-bindata bin

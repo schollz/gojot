@@ -66,9 +66,14 @@ func promptPassword() {
 		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile, testFile))
 		passwordAccepted := false
 		for passwordAccepted == false {
-			fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
-			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-			password1 = strings.TrimSpace(string(bytePassword))
+			if RuntimeArgs.TryPassword == "" {
+				fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
+				bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+				password1 = strings.TrimSpace(string(bytePassword))
+			} else {
+				password1 = RuntimeArgs.TryPassword
+				RuntimeArgs.TryPassword = ""
+			}
 			_, err := decryptString(string(fileContents), password1)
 			if err == nil {
 				passwordAccepted = true
@@ -104,6 +109,10 @@ func run() {
 	// 	}
 	// 	return
 	// }
+	fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
+	bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+	RuntimeArgs.TryPassword = strings.TrimSpace(string(bytePassword))
+	fmt.Println("")
 
 	// Pull latest copies
 	logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)

@@ -95,6 +95,7 @@ var RuntimeArgs struct {
 	TextSearch       string
 	DeleteDirectory  string
 	Editor           string
+	TryPassword      string
 	CurrentFileList  []string
 	ServerFileSet    map[string]bool
 	DontSync         bool
