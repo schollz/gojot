@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=1.2.2
+VERSION=1.2.3
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 
