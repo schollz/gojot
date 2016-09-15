@@ -66,14 +66,9 @@ func promptPassword() {
 		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile, testFile))
 		passwordAccepted := false
 		for passwordAccepted == false {
-			if RuntimeArgs.TryPassword == "" {
-				fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
-				bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-				password1 = strings.TrimSpace(string(bytePassword))
-			} else {
-				password1 = RuntimeArgs.TryPassword
-				RuntimeArgs.TryPassword = ""
-			}
+			fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
+			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
+			password1 = strings.TrimSpace(string(bytePassword))
 			_, err := decryptString(string(fileContents), password1)
 			if err == nil {
 				passwordAccepted = true
@@ -109,14 +104,12 @@ func run() {
 	// 	}
 	// 	return
 	// }
-	fmt.Printf("Enter password for editing '%s': ", ConfigArgs.WorkingFile)
-	bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
-	RuntimeArgs.TryPassword = strings.TrimSpace(string(bytePassword))
-	fmt.Println("")
 
-	// Pull latest copies
-	logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)
-	if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush {
+	// Get password for access to GPG-encryption
+	promptPassword()
+
+	if RuntimeArgs.ForcePull {
+		logger.Debug("Forcing pull...")
 		if HasInternetAccess() {
 			syncDown()
 		} else {
@@ -124,12 +117,18 @@ func run() {
 		}
 	}
 
-	// Get password for access to GPG-encryption
-	promptPassword()
-
 	// Get current entry if needed
 	fullEntry := ""
 	if (len(RuntimeArgs.TextSearch) == 0 && RuntimeArgs.EditWhole) || len(RuntimeArgs.NumberToShow) > 0 {
+		// Pull latest copies
+		logger.Debug("RuntimeArgs.DontSync: %v", RuntimeArgs.DontSync)
+		if !RuntimeArgs.DontSync && !RuntimeArgs.OnlyPush && !RuntimeArgs.ForcePull {
+			if HasInternetAccess() {
+				syncDown()
+			} else {
+				fmt.Println("Unable to pull, no internet access.")
+			}
+		}
 		// Get full entry
 		_, allEntries := getFullEntry()
 		totalEntries := len(allEntries)

@@ -100,6 +100,7 @@ var RuntimeArgs struct {
 	ServerFileSet    map[string]bool
 	DontSync         bool
 	OnlyPush         bool
+	ForcePull        bool
 	Push             bool
 	Pull             bool
 	Debug            bool
@@ -339,9 +340,9 @@ EXAMPLE USAGE:
 			Destination: &RuntimeArgs.DontSync,
 		},
 		cli.BoolFlag{
-			Name:        "push, p",
-			Usage:       "Only push, prevents pulling",
-			Destination: &RuntimeArgs.OnlyPush,
+			Name:        "pull, p",
+			Usage:       "Force pull (pulls only occur on editing full document)",
+			Destination: &RuntimeArgs.ForcePull,
 		},
 		cli.StringFlag{
 			Name:        "search, s",
