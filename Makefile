@@ -32,6 +32,18 @@ clean:
 	rm -rf binaries
 	rm -rf tempsdees
 
+.PHONY: windows
+windows:
+	rm -rf bin
+	mkdir bin
+	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
+	unzip vim80w32.zip
+	mv vim/vim80/vim.exe ./bin/
+	rm -rf vim*
+	rm -rf bindata.go
+	$(GOPATH)/bin/go-bindata bin
+	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
+
 .PHONY: binaries
 binaries:
 	go get github.com/jteeuwen/go-bindata/...

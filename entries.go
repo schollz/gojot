@@ -273,13 +273,17 @@ func editEntry() string {
 	}
 
 	// Load from binary assets
+	logger.Debug("Trying to get asset: %s", "bin/"+ConfigArgs.Editor+Extension)
 	data, err := Asset("bin/" + ConfigArgs.Editor + Extension)
 	if err == nil {
+		logger.Debug("Using builtin editor: %s", "bin/"+ConfigArgs.Editor+Extension)
 		err = ioutil.WriteFile(path.Join(RuntimeArgs.TempPath, ConfigArgs.Editor+Extension), data, 0755)
 		if err != nil {
 			log.Fatal(err)
 		}
 		ConfigArgs.Editor = path.Join(RuntimeArgs.TempPath, ConfigArgs.Editor)
+	} else {
+		logger.Debug("Could not find builtin editor: %s", err.Error())
 	}
 
 	logger.Debug("Using editor %s", ConfigArgs.Editor)
