@@ -66,11 +66,13 @@ func createGithubRepo(username string, password string, reponame string) (bool, 
 
 func main() {
 	// createBranches()
-	getAllBranchInfo()
-	testWorkersBranchInfo()
+	// getAllBranchInfo()
+	// testWorkersBranchInfo()
+	fmt.Println(ListBranches("../asdfjhadsf"))
+	GetBranchesInfo("../gittest")
 	// readBranches()
 	// testWorkers()
-	fmt.Println(runCommand("git show master:test.go"))
+	// fmt.Println(runCommand("git show master:test.go"))
 }
 
 func githubPush(username string, password string, reponame string) {
@@ -85,57 +87,6 @@ func readBranches() {
 	}
 	elapsed := time.Since(start)
 	log.Printf("readBranches took %s", elapsed/101)
-	fmt.Println("Done")
-}
-
-func workerBranchInfo(id int, jobs <-chan string, results chan<- string) {
-	os.Chdir("../gittest")
-	for j := range jobs {
-		cmd := exec.Command("git", "log", "--pretty=format:'%H-=-%ad-=-%s'", j)
-		stdout, err := cmd.Output()
-		if err != nil {
-			log.Fatal(err)
-		}
-		results <- strings.TrimSpace(string(stdout))
-	}
-}
-
-func testWorkersBranchInfo() {
-	start := time.Now()
-	//In order to use our pool of workers we need to send them work and collect their results. We make 2 channels for this.
-	jobs := make(chan string, 100)
-	results := make(chan string, 100)
-	//This starts up 50 workers, initially blocked because there are no jobs yet.
-	for w := 1; w <= 50; w++ {
-		go workerBranchInfo(w, jobs, results)
-	}
-	//Here we send 9 jobs and then close that channel to indicate that’s all the work we have.
-	for j := 0; j < 100; j++ {
-		jobs <- strconv.Itoa(j)
-	}
-	close(jobs)
-	//Finally we collect all the results of the work.
-	for a := 0; a < 100; a++ {
-		fmt.Println(<-results)
-	}
-	elapsed := time.Since(start)
-	log.Printf("testWorkersBranchInfo took %s", elapsed/101)
-}
-
-func getAllBranchInfo() {
-	infos := []string{}
-	os.Chdir("../gittest")
-	start := time.Now()
-	for i := 0; i < 100; i++ {
-		cmd := exec.Command("git", "log", "--pretty=format:'%H-=-%ad-=-%s'", strconv.Itoa(i))
-		stdout, err := cmd.Output()
-		if err != nil {
-			log.Fatal(err)
-		}
-		infos = append(infos, string(stdout))
-	}
-	elapsed := time.Since(start)
-	log.Printf("getAllBranchInfo took %s", elapsed/101)
 	fmt.Println("Done")
 }
 
