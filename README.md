@@ -10,25 +10,8 @@ The `master` branch only contains README.md about what the repo is?
 Here, we'd like to pull particular entry without checking out (to avoid lots of file writing).
 
 `git show branch_name:file` gets the current text of the `file` in `branch_name`
-`git ls-tree --name-only branch_name` returns the names of all the files in that branch
-`git show --no-abbrev-commit branch_name` returns the following which cna be used to extra commit ID, author, and date:
-```
-$ git show --no-abbrev-commit 3
-commit e1d7a86389587a7c39b637b218614441680872a7
-Author: Zack Scholl <zack.scholl@gmail.com>
-Date:   Mon Sep 19 11:29:41 2016 -0400
-
-    added test.txt
-
-diff --git a/test.txt b/test.txt
-new file mode 100755
-index 0000000..4550f73
---- /dev/null
-+++ b/test.txt
-@@ -0,0 +1 @@
-+hello, world branch #3
-\ No newline at end of file
-```
+`git ls-tree --name-only branch_name` returns the names document in that branch
+`git log --pretty=format:"%H -=- %ad -=- %s" branch_name` returns hash, date, and the subject for the latest in that branch
 
 
 ## Creating new entry
