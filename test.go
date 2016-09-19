@@ -68,7 +68,11 @@ func main() {
 	// createBranches()
 	// readBranches()
 	// testWorkers()
-	fmt.Println(runCommand("git push origin master"))
+
+}
+
+func githubPush(username string, password string, reponame string) {
+	fmt.Println(runCommand("git push https://" + username + ":" + password + "@github.com/" + username + "/" + reponame + ".git --all"))
 }
 
 func readBranches() {
