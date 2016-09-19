@@ -68,6 +68,7 @@ func main() {
 	// createBranches()
 	// readBranches()
 	// testWorkers()
+	fmt.Println(runCommand("git push origin master"))
 }
 
 func readBranches() {
