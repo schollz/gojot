@@ -68,7 +68,7 @@ func main() {
 	// createBranches()
 	// readBranches()
 	// testWorkers()
-
+	fmt.Println(runCommand("git show master:test.go"))
 }
 
 func githubPush(username string, password string, reponame string) {
