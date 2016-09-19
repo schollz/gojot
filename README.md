@@ -5,6 +5,8 @@
 
 ## SDEES Does Editing, Encryption, and Synchronization
 
+_Note: Development has begun on the master branch for a `git`-enabled SDEES which will afford much more flexibility. The stable version of SDEES can be found on the [`1.x` branch](https://github.com/schollz/sdees/tree/1.x)._
+
 Ok. But, really, `sdees` is just a fancy wrapper for `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
 
 The remote computer is used only for file storage and does not require any server-side code. Edits are stored individually and can be merged easily, so you can edit your document offline on multiple computers without worrying about losing data or overwriting.
