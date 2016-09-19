@@ -48,21 +48,21 @@ Cache should look like:
   "document_a.txt": {
     "branch_1": {
       "fulltext":"some text [encrytped]",
-      "hash": "asbaklsdjclasdifasdf"
+      "latest_commit": "asbaklsdjclasdifasdf"
     },
     "branch_2": {
       "fulltext":"some different text [encrytped]",
-      "hash": "asdfaskcoeckoekasec"
+      "latest_commit": "asdfaskcoeckoekasec"
     },
   },
   "document_b.txt": {
     "branch_2": {
       "fulltext":"some text [encrytped]",
-      "hash": "asbaklsdjclasdifasdf"
+      "latest_commit": "asbaklsdjclasdifasdf"
     },
     "branch_3": {
       "fulltext":"some text [encrytped]",
-      "hash": "asbaklsdjclasdifasdf"
+      "latest_commit": "asbaklsdjclasdifasdf"
     },
   },
 }
@@ -73,17 +73,7 @@ This cache can then keep track of all branches (all unique keys of the set of al
 Cache is updated on two conditions:
 
 1. The branches listed by `git branch --list` contain branches that do not exist in cache. In this case, that branch is investigated to see which documents there are, and then adds them to the cache respectively.
-2. Upon `git fetch` (whose output is below) there is an update to a branch. Upon this case, that branch is updated.
-
-```
-Fetching origin
-remote: Counting objects: 3, done.
-remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
-Unpacking objects: 100% (3/3), done.
-From https://github.com/schollz/test
-   8bc227f..38b0366  branch_name          -> origin/branch_name
-```
-
+2. 
 
 
 ## Deletion
