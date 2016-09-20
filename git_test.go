@@ -46,12 +46,66 @@ func TestGetInfo(t *testing.T) {
 
 func TestClone(t *testing.T) {
 	log.Println("Testing CloneRepo()...")
-	os.RemoveAll("test")
-	err := CloneRepo("./", "git@github.com:schollz/test.git")
-	_, err2 := os.Stat("test")
-	if err != nil || err2 != nil {
-		t.Error("Got error while cloning: %s", err.Error())
+	os.RemoveAll("/tmp/test")
+	err := Clone("/tmp/test", "https://github.com:schollz/test.git")
+	if err != nil {
+		t.Error("Got error while cloning: " + err.Error())
 	}
+
+	branches, _ := ListBranches("/tmp/test")
+	if len(branches) > 2 && err != nil {
+		t.Error("Something unexpected " + err.Error())
+	}
+}
+
+func TestNewDocument(t *testing.T) {
+	log.Println("Testing NewDocument()...")
+	_, err := NewDocument("/tmp/test", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	if err != nil {
+		t.Error("Got error while making new document: " + err.Error())
+	}
+}
+
+func TestPush(t *testing.T) {
+	log.Println("Testing Push()...")
+	err := Push("/tmp/test")
+	if err != nil {
+		t.Error("Got error pushing: " + err.Error())
+	}
+}
+
+func TestGetLatest(t *testing.T) {
+	log.Println("Testing GetLatest()...")
+	os.RemoveAll("/tmp/testOld")
+	err := Clone("/tmp/testOld", "https://github.com:schollz/test.git")
+	if err != nil {
+		t.Error("Got error while cloning: " + err.Error())
+	}
+
+	os.RemoveAll("/tmp/testNew")
+	err = Clone("/tmp/testNew", "https://github.com:schollz/test.git")
+	if err != nil {
+		t.Error("Got error while cloning: " + err.Error())
+	}
+
+	branch, err := NewDocument("/tmp/testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	if err != nil {
+		t.Error("Got error while making new document: " + err.Error())
+	}
+	logger.Debug("Created new branch %s", branch)
+
+	err = Push("/tmp/testNew")
+	if err != nil {
+		t.Error("Got error pushing: " + err.Error())
+	}
+
+	time.Sleep(3 * time.Second)
+
+	_, err = GetLatest("/tmp/testOld")
+	if err != nil {
+		t.Error("Got error GetLatest: " + err.Error())
+	}
+
 }
 
 func createBranches() {

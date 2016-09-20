@@ -23,7 +23,7 @@ After document is written:
 ```
 git checkout --orphan 'randombranchid'
 git add document_a
-git commit -am "GPG-encoded text of first line in document_a"
+git commit --date "Thu, 07 Apr 2005 22:13:13 +0200" -am "GPG-encoded text of first line in document_a"
 ```
 
 And then the commit can be pushed.
