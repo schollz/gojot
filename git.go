@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -41,7 +40,7 @@ func ListBranches(folder string) ([]string, error) {
 	return branches, nil
 }
 
-func GetLatest(gitfolder string) ([]string, error) {
+func GetLatest(gitfolder string) ([]string, []string, error) {
 	var err error
 	err = nil
 	cwd, _ := os.Getwd()
@@ -49,28 +48,75 @@ func GetLatest(gitfolder string) ([]string, error) {
 	os.Chdir(gitfolder)
 
 	addedBranches := []string{}
+	deletedBranches := []string{}
 
 	oldBranches, err := ListBranches(gitfolder)
+
 	if err != nil {
-		return []string{}, err
+		return []string{}, []string{}, err
 	}
-	fmt.Println(oldBranches)
 
 	err = Fetch(gitfolder)
 	if err != nil {
-		return []string{}, err
+		return []string{}, []string{}, err
 	}
 
 	newBranches, err := ListBranches(gitfolder)
 	if err != nil {
-		return []string{}, err
+		return []string{}, []string{}, err
 	}
 
-	fmt.Println(oldBranches)
-	fmt.Println(newBranches)
+	oldBranchesMap := make(map[string]bool)
+	for _, branch := range oldBranches {
+		oldBranchesMap[branch] = true
+	}
+	for _, branch := range newBranches {
+		if _, ok := oldBranchesMap[branch]; !ok {
+			addedBranches = append(addedBranches, branch)
+		}
+	}
 
-	return addedBranches, err
+	newBranchesMap := make(map[string]bool)
+	for _, branch := range newBranches {
+		newBranchesMap[branch] = true
+	}
+	for _, branch := range oldBranches {
+		if _, ok := newBranchesMap[branch]; !ok {
+			deletedBranches = append(deletedBranches, branch)
+		}
+	}
 
+	return addedBranches, deletedBranches, err
+
+}
+
+func Delete(gitfolder string, branch string) error {
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	os.Chdir(gitfolder)
+
+	// Make sure we aren't on that branch
+	cmd := exec.Command("git", "checkout", "master")
+	_, err := cmd.Output()
+	if err != nil {
+		return errors.New("Problem switching to master")
+	}
+
+	// Delete branch
+	cmd = exec.Command("git", "branch", "-D", branch)
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Problem deleting branch " + branch)
+	}
+
+	// Delete branch remotely
+	cmd = exec.Command("git", "push", "origin", "--delete", branch)
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Problem deleting branch remotely " + branch)
+	}
+
+	return nil
 }
 
 func Fetch(gitfolder string) error {
@@ -86,6 +132,13 @@ func Fetch(gitfolder string) error {
 		logger.Error("Problem fetching all")
 	}
 
+	// Fetch deleted
+	cmd = exec.Command("git", "fetch", "-p")
+	_, err = cmd.Output()
+	if err != nil {
+		logger.Error("Problem fetching deleted")
+	}
+
 	// Get branchces
 	cmd = exec.Command("git", "branch", "-r")
 	stdout, err := cmd.Output()
@@ -93,6 +146,7 @@ func Fetch(gitfolder string) error {
 		return errors.New("Cannot branch -r")
 	}
 	branches := []string{}
+	allBranches := make(map[string]bool)
 	for _, line := range strings.Split(string(stdout), "\n") {
 		branchName := strings.TrimSpace(line)
 		if strings.Contains(branchName, "->") {
@@ -101,6 +155,7 @@ func Fetch(gitfolder string) error {
 		if strings.Contains(branchName, "origin/") {
 			branchName = strings.TrimSpace(strings.Split(branchName, "origin/")[1])
 		}
+		allBranches[branchName] = true
 		if len(branchName) == 0 || branchName == "master" {
 			continue
 		}
@@ -113,9 +168,22 @@ func Fetch(gitfolder string) error {
 		cmd.Output()
 	}
 
+	// Find if branches are no longer on remote
+	localBranches, _ := ListBranches(gitfolder)
+	for _, localBranch := range localBranches {
+		if _, ok := allBranches[localBranch]; !ok {
+			logger.Debug("%s branch no longer on remote", localBranch)
+			// Delete locally
+			cmd = exec.Command("git", "branch", "-D", localBranch)
+			_, err = cmd.Output()
+			if err != nil {
+				return errors.New("Problem deleting branch " + localBranch)
+			}
+		}
+	}
 	// Fetch all
 	cmd = exec.Command("git", "fetch", "--all")
-	stdout, err = cmd.Output()
+	_, err = cmd.Output()
 	if err != nil {
 		logger.Error("Problem fetching all")
 	}
@@ -164,12 +232,11 @@ func Push(gitfolder string) error {
 	os.Chdir(gitfolder)
 
 	cmd := exec.Command("git", "push", "--all", "origin")
-	stdout, err := cmd.Output()
+	_, err = cmd.Output()
 	if err != nil {
 		return errors.New("Cannot push " + gitfolder)
 	}
 
-	logger.Debug(string(stdout))
 	return nil
 }
 
