@@ -172,24 +172,17 @@ func Fetch(gitfolder string) error {
 		cmd.Output()
 	}
 
-	// Find if branches are no longer on remote
+	// Find if branches are no longer on remote and delete them locally
 	localBranches, _ := ListBranches(gitfolder)
 	for _, localBranch := range localBranches {
 		if _, ok := allBranches[localBranch]; !ok {
 			logger.Debug("%s branch no longer on remote", localBranch)
-			// Delete locally
 			cmd = exec.Command("git", "branch", "-D", localBranch)
 			_, err = cmd.Output()
 			if err != nil {
 				return errors.New("Problem deleting branch " + localBranch)
 			}
 		}
-	}
-	// Fetch all
-	cmd = exec.Command("git", "fetch", "--all")
-	_, err = cmd.Output()
-	if err != nil {
-		logger.Error("Problem fetching all")
 	}
 
 	return nil
