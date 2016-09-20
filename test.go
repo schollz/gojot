@@ -64,17 +64,6 @@ func createGithubRepo(username string, password string, reponame string) (bool, 
 	return true, response
 }
 
-func main() {
-	// createBranches()
-	// getAllBranchInfo()
-	// testWorkersBranchInfo()
-	fmt.Println(ListBranches("../asdfjhadsf"))
-	GetBranchesInfo("../gittest")
-	// readBranches()
-	// testWorkers()
-	// fmt.Println(runCommand("git show master:test.go"))
-}
-
 func githubPush(username string, password string, reponame string) {
 	fmt.Println(runCommand("git push https://" + username + ":" + password + "@github.com/" + username + "/" + reponame + ".git --all"))
 }
@@ -87,37 +76,6 @@ func readBranches() {
 	}
 	elapsed := time.Since(start)
 	log.Printf("readBranches took %s", elapsed/101)
-	fmt.Println("Done")
-}
-
-func createBranches() {
-	os.RemoveAll("./gittest")
-	os.Mkdir("gittest", 0644)
-	os.Chdir("gittest")
-	runCommand("git init")
-	d1 := []byte("hello, world")
-	err := ioutil.WriteFile("test.txt", d1, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	runCommand("git add test.txt")
-	runCommand("git commit -am 'added test.txt'")
-
-	start := time.Now()
-	for i := 0; i < 100; i++ {
-		runCommand("git checkout --orphan " + strconv.Itoa(i))
-		d1 = []byte("hello, world branch #" + strconv.Itoa(i))
-		err = ioutil.WriteFile("test.txt", d1, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-		runCommand("git add test.txt")
-		runCommand("git commit -am 'added test.txt'")
-		// 3 commands = 115 ms / command
-	}
-
-	elapsed := time.Since(start)
-	log.Printf("createBranches took %s", elapsed)
 	fmt.Println("Done")
 }
 

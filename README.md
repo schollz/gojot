@@ -10,7 +10,9 @@ The `master` branch only contains README.md about what the repo is?
 Here, we'd like to pull particular entry without checking out (to avoid lots of file writing).
 
 `git show branch_name:file` gets the current text of the `file` in `branch_name`
+
 `git ls-tree --name-only branch_name` returns the names document in that branch
+
 `git log --pretty=format:"%H -=- %ad -=- %s" branch_name` returns hash, date, and the subject for the latest in that branch
 
 
@@ -73,7 +75,7 @@ This cache can then keep track of all branches (all unique keys of the set of al
 Cache is updated on two conditions:
 
 1. The branches listed by `git branch --list` contain branches that do not exist in cache. In this case, that branch is investigated to see which documents there are, and then adds them to the cache respectively.
-2. 
+2.
 
 
 ## Deletion
