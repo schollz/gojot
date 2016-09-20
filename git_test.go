@@ -12,53 +12,59 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	log.Println("Creating branches for testing...")
-	createBranches()
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
+		log.Println("Creating branches for testing...")
 		createBranches()
 	}
 	exitVal := m.Run()
-	log.Println("This gets run AFTER any tests get run!")
+	log.Println("Testing completed.")
 
 	os.Exit(exitVal)
 }
 
-func TestOne(t *testing.T) {
-	log.Println("TestOne running")
-}
-
-func TestTwo(t *testing.T) {
-	log.Println("TestTwo running")
-}
-
 func TestListBranches(t *testing.T) {
-	log.Println("Testing list branches...")
+	log.Println("Testing ListBranches()...")
 	branches, err := ListBranches("./gittest")
-	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
-		createBranches()
+	if len(branches) != 100 && err != nil {
+		t.Error("Expected 100 branches, got %d, and error %s", len(branches), err.Error())
 	}
-	fmt.Println(len(branches), err)
-	// Output: 100 <nil>
 }
 
 func TestGetInfo(t *testing.T) {
-	log.Println("Testing Get info...")
+	log.Println("Testing GetInfo()...")
 	branchNames, _ := ListBranches("./gittest")
 	entries, _ := GetInfo("./gittest", branchNames)
 	for _, entry := range entries {
 		if entry.Branch == "12" {
-			fmt.Println(entry.Fulltext)
+			if entry.Fulltext != "hello, world branch #12" {
+				t.Error("Expected %s, got %s", "hello, world branch #12", entry.Fulltext)
+			}
+			break
 		}
 	}
-	// Output: hello, world branch #12
+}
+
+func TestClone(t *testing.T) {
+	log.Println("Testing CloneRepo()...")
+	os.RemoveAll("test")
+	err := CloneRepo("./", "git@github.com:schollz/test.git")
+	_, err2 := os.Stat("test")
+	if err != nil || err2 != nil {
+		t.Error("Got error while cloning: %s", err.Error())
+	}
 }
 
 func createBranches() {
 	os.RemoveAll("./gittest")
-	os.Mkdir("gittest", 0644)
-	os.Chdir("gittest")
+	os.Mkdir("gittest", 0755)
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	err := os.Chdir("./gittest")
+	if err != nil {
+		log.Fatal(err)
+	}
 	cmd := exec.Command("git", "init")
-	_, err := cmd.Output()
+	_, err = cmd.Output()
 	if err != nil {
 		log.Fatal(err)
 	}

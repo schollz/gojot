@@ -36,3 +36,28 @@ func ListBranches(folder string) ([]string, error) {
 
 	return branches, nil
 }
+
+func ParseFetch(message string) {
+
+}
+
+func NewDocumentOnNewBranch(fulltext string, name string, gitfolder string) {
+
+}
+
+func CloneRepo(folder string, remote string) error {
+	logger.Debug("Cloning %s into directory at %s", remote, folder)
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	err := os.Chdir(folder)
+	if err != nil {
+		return errors.New("Cannot chdir into " + folder)
+	}
+	cmd := exec.Command("git", "clone", "git@github.com:schollz/test.git")
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Cannot clone into " + folder)
+	} else {
+		return nil
+	}
+}
