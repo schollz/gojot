@@ -41,6 +41,7 @@ func ListBranches(folder string) ([]string, error) {
 }
 
 func GetLatest(gitfolder string) ([]string, []string, error) {
+	defer timeTrack(time.Now(), "GetLatest")
 	var err error
 	err = nil
 	cwd, _ := os.Getwd()
@@ -91,6 +92,8 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 }
 
 func Delete(gitfolder string, branch string) error {
+	defer timeTrack(time.Now(), "Delete")
+
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	os.Chdir(gitfolder)
@@ -120,6 +123,7 @@ func Delete(gitfolder string, branch string) error {
 }
 
 func Fetch(gitfolder string) error {
+	defer timeTrack(time.Now(), "Fetch")
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)

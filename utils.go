@@ -1,6 +1,15 @@
 package main
 
-import "math/rand"
+import (
+	"math/rand"
+	"time"
+)
+
+// timeTrack from https://coderwall.com/p/cp5fya/measuring-execution-time-in-go
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	logger.Debug("%s took %s", name, elapsed)
+}
 
 // RandStringBytesMaskImprSrc generates a random string using a alphabet and seed
 // from SO
