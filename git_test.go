@@ -46,21 +46,25 @@ func TestGetInfo(t *testing.T) {
 
 func TestClone(t *testing.T) {
 	log.Println("Testing CloneRepo()...")
-	os.RemoveAll("/tmp/test")
-	err := Clone("/tmp/test", "https://github.com:schollz/test.git")
+	err := os.RemoveAll("test")
+	if err != nil {
+		t.Errorf("Got error while removing directory: " + err.Error())
+	}
+	err = Clone("test", "https://github.com/schollz/test.git")
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	branches, _ := ListBranches("/tmp/test")
+	branches, _ := ListBranches("test")
 	if len(branches) > 2 && err != nil {
 		t.Errorf("Something unexpected " + err.Error())
 	}
+
 }
 
 func TestNewDocument(t *testing.T) {
 	log.Println("Testing NewDocument()...")
-	_, err := NewDocument("/tmp/test", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	_, err := NewDocument("test", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -68,7 +72,7 @@ func TestNewDocument(t *testing.T) {
 
 func TestPush(t *testing.T) {
 	log.Println("Testing Push()...")
-	err := Push("/tmp/test")
+	err := Push("test")
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
@@ -77,64 +81,68 @@ func TestPush(t *testing.T) {
 func TestDelete(t *testing.T) {
 	log.Println("Testing Delete()...")
 
-	os.RemoveAll("/tmp/testDelete1")
-	err := Clone("/tmp/testDelete1", "https://github.com:schollz/test.git")
+	os.RemoveAll("testDelete1")
+	err := Clone("testDelete1", "https://github.com/schollz/test.git")
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
-	branches, _ := ListBranches("/tmp/testDelete1")
+	branches, _ := ListBranches("testDelete1")
 
-	err = Delete("/tmp/testDelete1", branches[1])
+	err = Delete("testDelete1", branches[1])
 	if err != nil {
 		t.Errorf("Got error deleting: " + err.Error())
 	}
 
-	err = Push("/tmp/testDelete1")
+	err = Push("testDelete1")
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
 
-	os.RemoveAll("/tmp/testDelete")
-	err = Clone("/tmp/testDelete", "https://github.com:schollz/test.git")
+	os.RemoveAll("testDelete")
+	err = Clone("testDelete", "https://github.com/schollz/test.git")
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	newBranches, _ := ListBranches("/tmp/testDelete")
+	newBranches, _ := ListBranches("testDelete")
 	for _, branch := range newBranches {
 		if branch == branches[1] {
 			t.Errorf("Deletion of branch " + branches[1] + " did not propogate")
 		}
 	}
 	logger.Debug("Deleted branch " + branches[1])
+
+	os.RemoveAll("testDelete")
+	os.RemoveAll("testDelete1")
 }
 
 func TestGetLatest(t *testing.T) {
 	log.Println("Testing GetLatest()...")
-	os.RemoveAll("/tmp/testOld")
-	err := Clone("/tmp/testOld", "https://github.com:schollz/test.git")
+
+	os.RemoveAll("testOld")
+	err := Clone("testOld", "https://github.com/schollz/test.git")
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	os.RemoveAll("/tmp/testNew")
-	err = Clone("/tmp/testNew", "https://github.com:schollz/test.git")
+	os.RemoveAll("testNew")
+	err = Clone("testNew", "https://github.com/schollz/test.git")
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	branch, err := NewDocument("/tmp/testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	branch, err := NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
 	logger.Debug("Created new branch %s", branch)
 
-	err = Push("/tmp/testNew")
+	err = Push("testNew")
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
-
-	newBranches, _, err := GetLatest("/tmp/testOld")
+	logger.Debug(os.Getwd())
+	newBranches, _, err := GetLatest("testOld")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
 	}
@@ -145,13 +153,13 @@ func TestGetLatest(t *testing.T) {
 	}
 
 	// Test deletion
-	err = Delete("/tmp/testNew", branch)
+	err = Delete("testNew", branch)
 	if err != nil {
 		t.Errorf("Got error deleting: " + err.Error())
 	}
 	logger.Debug("Deleted new branch %s", branch)
 
-	_, deletedBranches, err := GetLatest("/tmp/testOld")
+	_, deletedBranches, err := GetLatest("testOld")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
 	}
@@ -160,6 +168,9 @@ func TestGetLatest(t *testing.T) {
 	if len(deletedBranches) == 0 {
 		t.Errorf("Expected seeing %s but got %v instead", branch, deletedBranches)
 	}
+
+	os.RemoveAll("testNew")
+	os.RemoveAll("testOld")
 
 }
 

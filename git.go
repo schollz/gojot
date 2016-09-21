@@ -51,7 +51,7 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 	addedBranches := []string{}
 	deletedBranches := []string{}
 
-	oldBranches, err := ListBranches(gitfolder)
+	oldBranches, err := ListBranches("./")
 
 	if err != nil {
 		return []string{}, []string{}, err
@@ -62,7 +62,7 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 		return []string{}, []string{}, err
 	}
 
-	newBranches, err := ListBranches(gitfolder)
+	newBranches, err := ListBranches("./")
 	if err != nil {
 		return []string{}, []string{}, err
 	}
@@ -167,13 +167,17 @@ func Fetch(gitfolder string) error {
 	}
 
 	// Track each branch
+	start := time.Now()
 	for _, branch := range branches {
 		cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 		cmd.Output()
 	}
+	logger.Debug("Tracking took %s", time.Since(start).String())
 
 	// Find if branches are no longer on remote and delete them locally
-	localBranches, _ := ListBranches(gitfolder)
+	logger.Debug(os.Getwd())
+	localBranches, _ := ListBranches("./")
+	logger.Debug(os.Getwd())
 	for _, localBranch := range localBranches {
 		if _, ok := allBranches[localBranch]; !ok {
 			logger.Debug("%s branch no longer on remote", localBranch)
