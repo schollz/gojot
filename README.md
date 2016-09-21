@@ -49,21 +49,29 @@ Cache should look like:
 {
   "document_a.txt": {
     "branch_1": {
-      "fulltext":"some text [encrytped]",
+      "fulltext":"some text",
+      "message": "some message",
+      "date": "2016",
       "latest_commit": "asbaklsdjclasdifasdf"
     },
     "branch_2": {
-      "fulltext":"some different text [encrytped]",
+      "fulltext":"some different text",
+      "message": "some message",
+      "date": "2016",
       "latest_commit": "asdfaskcoeckoekasec"
     },
   },
   "document_b.txt": {
     "branch_2": {
-      "fulltext":"some text [encrytped]",
+      "fulltext":"some text",
+      "message": "some message",
+      "date": "2016",
       "latest_commit": "asbaklsdjclasdifasdf"
     },
     "branch_3": {
-      "fulltext":"some text [encrytped]",
+      "fulltext":"some text",
+      "message": "some message",
+      "date": "2016",
       "latest_commit": "asbaklsdjclasdifasdf"
     },
   },
@@ -74,8 +82,8 @@ This cache can then keep track of all branches (all unique keys of the set of al
 
 Cache is updated on two conditions:
 
-1. The branches listed by `git branch --list` contain branches that do not exist in cache. In this case, that branch is investigated to see which documents there are, and then adds them to the cache respectively.
-2.
+1. Any branch is added/deleted should be updated in cache.
+2. Any branch which has a different commit should be updated in the cache.
 
 
 ## Deletion
