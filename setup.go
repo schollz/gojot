@@ -6,9 +6,10 @@ import (
 	"path"
 )
 
-func setupPaths() {
+func setup() {
 	// Set the paths
 	homeDir, _ := home.Dir()
+
 	if !exists(path.Join(homeDir, ".cache")) {
 		err := os.MkdirAll(path.Join(homeDir, ".cache"), 0711)
 		if err != nil {
@@ -35,5 +36,9 @@ func setupPaths() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	if !exists(path.Join(RuntimeArgs.ConfigPath, "synced.json")) {
+		config()
 	}
 }

@@ -39,7 +39,7 @@ func main() {
 	}()
 
 	// Setup paths
-	setupPaths()
+	setup()
 
 	// App information
 	app := cli.NewApp()
