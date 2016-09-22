@@ -46,19 +46,23 @@ func getFullEntry() (string, []string) {
 			if val, ok := entryModifiedDates[info[0]]; ok {
 				if modifiedTimestamp > val {
 					entryModifiedDates[info[0]] = modifiedTimestamp
-					entryStrings[info[0]] = decrypt(file) + "\n"
+					entryStrings[info[0]] = decrypt(file)
 				}
 			} else {
 				entryModifiedDates[info[0]] = modifiedTimestamp
-				entryStrings[info[0]] = decrypt(file) + "\n"
+				entryStrings[info[0]] = decrypt(file)
 			}
 			cache.Files = append(cache.Files, file)
 		}
 
-		wholeText := ""
-		for key := range entryStrings {
-			wholeText += entryStrings[key]
+		wholeTextEntries := make([]string, len(entryStrings))
+		i := 0
+		for _, val := range entryStrings {
+			wholeTextEntries[i] = val
+			i++
 		}
+		wholeText := strings.Join(wholeTextEntries, "\n")
+
 		allEntries, gts = parseEntries(wholeText)
 
 	} else {
