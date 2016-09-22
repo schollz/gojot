@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -37,4 +38,17 @@ func RandStringBytesMaskImprSrc(n int, seed int64) string {
 	}
 
 	return string(b)
+}
+
+// exists returns whether the given file or directory exists or not
+// from http://stackoverflow.com/questions/10510691/how-to-check-whether-a-file-or-directory-denoted-by-a-path-exists-in-golang
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
