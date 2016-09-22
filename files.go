@@ -14,6 +14,7 @@ import (
 
 // readAllFiles returns a list of all the files in the sdees path
 func readAllFiles() []string {
+	defer timeTrack(time.Now(), "readAllFiles")
 	files, _ := ioutil.ReadDir(path.Join(RuntimeArgs.FullPath))
 	fileNames := []string{}
 	for _, f := range files {

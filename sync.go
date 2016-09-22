@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -32,6 +33,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 
 // syncDown pulls the latest copies of all the documents from the remote filesystem
 func syncDown() {
+	defer timeTrack(time.Now(), "Syncing down")
 	fmt.Println("Pulling from remote...")
 	// open an SFTP session over an existing ssh connection.
 	sshConfig := &ssh.ClientConfig{

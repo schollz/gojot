@@ -14,15 +14,16 @@ import (
 	"time"
 )
 
+type CachedDoc struct {
+	Files      []string
+	Entries    []string
+	Timestamps []int
+}
+
 // Gets the whole document, using the latest version of each entry
 // Defaults to cache if available
 func getFullEntry() (string, []string) {
 	defer timeTrack(time.Now(), "Got full entry")
-	type CachedDoc struct {
-		Files      []string
-		Entries    []string
-		Timestamps []int
-	}
 
 	fullEntry := ""
 	cache := CachedDoc{[]string{}, []string{}, []int{}}
@@ -33,7 +34,7 @@ func getFullEntry() (string, []string) {
 	if !exists(path.Join(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))) {
 		entryModifiedDates := make(map[string]int)
 		entryStrings := make(map[string]string)
-		logger.Debug("No cache.")
+		logger.Debug("Creating cache...")
 		for _, file := range allFiles {
 			if strings.Contains(file, ".pass") { // to be deprecated
 				continue
@@ -53,11 +54,13 @@ func getFullEntry() (string, []string) {
 			}
 			cache.Files = append(cache.Files, file)
 		}
+
 		wholeText := ""
 		for key := range entryStrings {
 			wholeText += entryStrings[key]
 		}
 		allEntries, gts = parseEntries(wholeText)
+
 	} else {
 		logger.Debug("Using cache.")
 		fileContents, _ := ioutil.ReadFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"))
@@ -106,23 +109,27 @@ func getFullEntry() (string, []string) {
 	}
 
 	// Cache the entries for next time
-	cache.Entries = []string{}
-	cache.Timestamps = []int{}
+	cache.Entries = make([]string, len(allEntries))
+	cache.Timestamps = make([]int, len(allEntries))
 	for i, entry := range allEntries {
-		fullEntry += entry + "\n\n"
-		cache.Entries = append(cache.Entries, entry)
-		cache.Timestamps = append(cache.Timestamps, gts[i])
+		cache.Entries[i] = entry
+		cache.Timestamps[i] = gts[i]
 	}
+	fullEntry = strings.Join(cache.Entries, "\n\n")
+	go saveCache(cache)
+
+	// Return the full Entry and the individual entries
+	return strings.TrimSpace(fullEntry), cache.Entries
+
+}
+
+func saveCache(cache CachedDoc) {
 	cacheJson, _ := json.Marshal(cache)
 	encryptedCacheJson := encryptString(string(cacheJson), RuntimeArgs.Passphrase)
 	err := ioutil.WriteFile(path.Join(RuntimeArgs.WorkingPath, ConfigArgs.WorkingFile+".cache.json"), []byte(encryptedCacheJson), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Return the full Entry and the individual entries
-	return strings.TrimSpace(fullEntry), cache.Entries
-
 }
 
 // parseEntries is used to parse the full text for any entry and return all those
@@ -164,6 +171,7 @@ func parseEntries(text string) ([]string, []int) {
 // sortEntries takes a map of entries and returns a list of entries and a list
 // of their dates in ascending order
 func sortEntries(entries map[int]string) ([]string, []int) {
+	defer timeTrack(time.Now(), "Sorted entries")
 	// Sort the entries in order
 	var keys []int
 	for k := range entries {
