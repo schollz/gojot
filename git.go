@@ -162,7 +162,19 @@ func Fetch(gitfolder string) error {
 		branches = append(branches, branchName)
 	}
 
-	// Track each branch
+	// Reset all branches to origin
+	// git branch -vv
+	// rIzVvd cbafe05 [origin/rIzVvd: ahead 3, behind 1] deleted
+	// Find ANY that have "ahead" or "behind", and do
+	//      git checkout branch
+	//      git reset --hard HEAD
+
+	// Track branches not being tracked.
+	//       BRANCHES NOT BEING TRACKED
+	//                 =
+	//   SET OF BRANCHES FROM git branch -r
+	//                  -
+	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
 	for _, branch := range branches {
 		cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)

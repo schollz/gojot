@@ -162,6 +162,10 @@ func TestGetLatest(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error deleting: " + err.Error())
 	}
+	err = Push("testNew")
+	if err != nil {
+		t.Errorf("Got error pushing: " + err.Error())
+	}
 	logger.Debug("Deleted new branch %s", branch)
 
 	_, deletedBranches, err := GetLatest("testOld")
