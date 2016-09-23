@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+// BEFORE RUNNING TESTS:
+// Make sure to set this to a repo you own, that you don't care about
+var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
+
 func TestMain(m *testing.M) {
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
@@ -18,8 +22,16 @@ func TestMain(m *testing.M) {
 	}
 
 	exitVal := m.Run()
-	log.Println("Testing completed.")
 
+	// Delete all the folders that get Created
+	log.Println("Deleting testing folders")
+	os.RemoveAll("gittest")
+	os.RemoveAll("gittest10")
+	os.RemoveAll("test")
+	os.RemoveAll("testNew")
+	os.RemoveAll("testOld")
+
+	log.Println("Testing complete")
 	os.Exit(exitVal)
 }
 
@@ -54,7 +66,7 @@ func TestClone(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error while removing directory: " + err.Error())
 	}
-	err = Clone("test", "https://github.com/schollz/test.git")
+	err = Clone("test", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
@@ -102,7 +114,7 @@ func TestDelete(t *testing.T) {
 	log.Println("Testing Delete()...")
 
 	os.RemoveAll("testDelete1")
-	err := Clone("testDelete1", "https://github.com/schollz/test.git")
+	err := Clone("testDelete1", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
@@ -119,7 +131,7 @@ func TestDelete(t *testing.T) {
 	}
 
 	os.RemoveAll("testDelete")
-	err = Clone("testDelete", "https://github.com/schollz/test.git")
+	err = Clone("testDelete", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
@@ -136,7 +148,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	log.Println("Testing TestGetLatestWithLocalEdits()...")
 
 	os.RemoveAll("testOld")
-	err := Clone("testOld", "https://github.com/schollz/test.git")
+	err := Clone("testOld", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
@@ -147,7 +159,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 
 	os.RemoveAll("testNew")
-	err = Clone("testNew", "https://github.com/schollz/test.git")
+	err = Clone("testNew", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
@@ -187,13 +199,13 @@ func TestGetLatest(t *testing.T) {
 	log.Println("Testing GetLatest()...")
 
 	os.RemoveAll("testOld")
-	err := Clone("testOld", "https://github.com/schollz/test.git")
+	err := Clone("testOld", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
 	os.RemoveAll("testNew")
-	err = Clone("testNew", "https://github.com/schollz/test.git")
+	err = Clone("testNew", GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}

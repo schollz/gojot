@@ -31,7 +31,7 @@ func TestLoadCache(t *testing.T) {
 func TestUpdateCache(t *testing.T) {
 	gitfolder := "testOld"
 	os.RemoveAll(gitfolder)
-	err := Clone(gitfolder, "https://github.com/schollz/test.git")
+	err := Clone(gitfolder, GITHUB_TEST_REPO)
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}

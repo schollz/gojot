@@ -340,7 +340,7 @@ func Clone(folder string, remote string) error {
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 
-	cmd := exec.Command("git", "clone", "git@github.com:schollz/test.git", folder)
+	cmd := exec.Command("git", "clone", remote, folder)
 	_, err = cmd.Output()
 	if err != nil {
 		log.Println(err)
