@@ -40,46 +40,43 @@ func CleanFolderName(gitfolder string) string {
 	return strings.Replace(strings.Replace(gitfolder, "/", "", -1), ".", "", -1)
 }
 
-func UpdateCache(gitfolder string, currentCache map[string]Entry) map[string]Entry {
+func UpdateCache(gitfolder string, currentCache map[string]Entry) (map[string]Entry, []string) {
 	defer timeTrack(time.Now(), "Updating cache")
 	cache := make(map[string]Entry)
 	cacheFile := path.Join(CachePath, CleanFolderName(gitfolder)+".cache")
 
 	branchNames, _ := ListBranches(gitfolder)
+	entriesToUpdate := []Entry{} // which branches to update in cache
 	entries, _ := GetInfo(gitfolder, branchNames)
 
-	// New cache
 	if !exists(cacheFile) || len(currentCache) == 0 {
+		// Generate new cache
 		logger.Debug("Generating new cache")
-		entries, _ = GetText(gitfolder, entries)
-		for _, entry := range entries {
-			cache[entry.Branch] = entry
-		}
-		go WriteCache(gitfolder, cache)
-		return cache
-	}
-
-	// Load and update cache
-	logger.Debug("Loading and updating cache")
-	cache = LoadCache(gitfolder)
-	branchesToUpdate := []Entry{} // which branches to update in cache
-	for _, info := range entries {
-		if _, ok := cache[info.Branch]; !ok {
-			branchesToUpdate = append(branchesToUpdate, info)
-			continue
-		}
-		if info.Hash != cache[info.Branch].Hash {
-			branchesToUpdate = append(branchesToUpdate, info)
+		entriesToUpdate = entries
+	} else {
+		// Load and update cache
+		logger.Debug("Loading and updating cache")
+		cache = LoadCache(gitfolder)
+		for _, info := range entries {
+			if _, ok := cache[info.Branch]; !ok {
+				entriesToUpdate = append(entriesToUpdate, info)
+				continue
+			}
+			if info.Hash != cache[info.Branch].Hash {
+				entriesToUpdate = append(entriesToUpdate, info)
+			}
 		}
 	}
 
-	branchesToUpdate, _ = GetText(gitfolder, branchesToUpdate)
-	for _, info := range branchesToUpdate {
+	entriesToUpdate, _ = GetText(gitfolder, entriesToUpdate)
+	updatedBranches := make([]string, len(entriesToUpdate))
+	for i, info := range entriesToUpdate {
 		logger.Debug("Updating branch %s", info.Branch)
 		cache[info.Branch] = info
+		updatedBranches[i] = info.Branch
 	}
 	go WriteCache(gitfolder, cache)
-	return cache
+	return cache, updatedBranches
 }
 
 func WriteCache(gitfolder string, cache map[string]Entry) {

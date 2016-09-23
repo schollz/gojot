@@ -36,7 +36,7 @@ func TestUpdateCache(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
-	cache := UpdateCache(gitfolder, EMPTY_CACHE)
+	cache, _ := UpdateCache(gitfolder, EMPTY_CACHE)
 	newLocalBranch, err := NewDocument(gitfolder, "test2.txt", "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
@@ -49,5 +49,8 @@ func TestUpdateCache(t *testing.T) {
 	}
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
-	UpdateCache(gitfolder, cache)
+	_, updatedBranches := UpdateCache(gitfolder, cache)
+	if len(updatedBranches) != 2 {
+		t.Errorf("Error updating branches")
+	}
 }
