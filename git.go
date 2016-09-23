@@ -197,7 +197,9 @@ func Fetch(gitfolder string) error {
 }
 
 func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string) (string, error) {
-	defer timeTrack(time.Now(), "New document "+documentname+" in "+gitfolder+" created")
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]NewDocument %s", id, documentname)
+	defer timeTrack(time.Now(), "["+id+"]NewDocument")
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -232,6 +234,9 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 }
 
 func Push(gitfolder string) error {
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Pushing %s", id, gitfolder)
+	defer timeTrack(time.Now(), "["+id+"]Pushing")
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -247,6 +252,9 @@ func Push(gitfolder string) error {
 }
 
 func Clone(folder string, remote string) error {
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Cloning %s", id, remote)
+	defer timeTrack(time.Now(), "["+id+"]Cloning")
 	var err error
 	logger.Debug("Cloning %s into directory at %s", remote, folder)
 	cwd, _ := os.Getwd()
