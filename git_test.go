@@ -115,6 +115,55 @@ func TestDelete(t *testing.T) {
 	os.RemoveAll("testDelete1")
 }
 
+func TestGetLatestWithLocalEdits(t *testing.T) {
+	log.Println("Testing TestGetLatestWithLocalEdits()...")
+
+	os.RemoveAll("testOld")
+	err := Clone("testOld", "https://github.com/schollz/test.git")
+	if err != nil {
+		t.Errorf("Got error while cloning: " + err.Error())
+	}
+
+	newLocalBranch, err := NewDocument("testOld", "test2.txt", "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	if err != nil {
+		t.Errorf("Got error while making new document: " + err.Error())
+	}
+
+	os.RemoveAll("testNew")
+	err = Clone("testNew", "https://github.com/schollz/test.git")
+	if err != nil {
+		t.Errorf("Got error while cloning: " + err.Error())
+	}
+
+	_, err = NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	if err != nil {
+		t.Errorf("Got error while making new document: " + err.Error())
+	}
+
+	err = Push("testNew")
+	if err != nil {
+		t.Errorf("Got error pushing: " + err.Error())
+	}
+
+	_, _, err = GetLatest("testOld")
+	if err != nil {
+		t.Errorf("Got error GetLatest: " + err.Error())
+	}
+	err = Push("testOld")
+	if err != nil {
+		t.Errorf("Got error pushing: " + err.Error())
+	}
+
+	newBranches, _, err := GetLatest("testNew")
+	if err != nil {
+		t.Errorf("Got error GetLatest: " + err.Error())
+	}
+	if newBranches[0] != newLocalBranch {
+		t.Errorf("Did the local branch %s get overidden?", newLocalBranch)
+	}
+
+}
+
 func TestGetLatest(t *testing.T) {
 	log.Println("Testing GetLatest()...")
 

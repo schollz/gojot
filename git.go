@@ -43,6 +43,9 @@ func ListBranches(folder string) ([]string, error) {
 	return branches, nil
 }
 
+// GetLatest assumes you already have a cloned repo in `gitfolder`
+// and it will fetch the latest and compare the before and after
+// to update the cache incrementally
 func GetLatest(gitfolder string) ([]string, []string, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Getting latest for %s", id, gitfolder)
@@ -102,6 +105,8 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 
 }
 
+// Delete will permanetly delete by deleting and creating a new orphan
+// branch. This will erase history on all copies!
 func Delete(gitfolder string, branch string) error {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Deleting branch %s in %s", id, branch, gitfolder)
@@ -131,6 +136,8 @@ func Delete(gitfolder string, branch string) error {
 	return nil
 }
 
+// Fetch will force fetch and update tracking and rebase all branches so
+// that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Fetching %s", id, gitfolder)
@@ -297,6 +304,8 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if err != nil {
 		return newBranch, errors.New("Cannot commit " + documentname)
 	}
+
+	logger.Debug("Created new branch %s for document", newBranch)
 
 	return newBranch, err
 }
