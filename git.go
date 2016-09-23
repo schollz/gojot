@@ -181,9 +181,7 @@ func Fetch(gitfolder string) error {
 	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find if branches are no longer on remote and delete them locally
-	logger.Debug(os.Getwd())
 	localBranches, _ := ListBranches("./")
-	logger.Debug(os.Getwd())
 	for _, localBranch := range localBranches {
 		if _, ok := allBranches[localBranch]; !ok {
 			logger.Debug("Deleted locally '%s' - branch no longer on remote", localBranch)
