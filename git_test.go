@@ -141,7 +141,6 @@ func TestGetLatest(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
-	logger.Debug(os.Getwd())
 	newBranches, _, err := GetLatest("testOld")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())

@@ -13,6 +13,7 @@ import (
 // ListBranches returns a slice of the branch names of the repo
 // excluding the master branch
 func ListBranches(folder string) ([]string, error) {
+	defer timeTrack(time.Now(), "Listed branches for "+folder)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	err := os.Chdir(folder)
@@ -41,7 +42,7 @@ func ListBranches(folder string) ([]string, error) {
 }
 
 func GetLatest(gitfolder string) ([]string, []string, error) {
-	defer timeTrack(time.Now(), "GetLatest")
+	defer timeTrack(time.Now(), "Got latest for "+gitfolder)
 	var err error
 	err = nil
 	cwd, _ := os.Getwd()
@@ -76,6 +77,9 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 			addedBranches = append(addedBranches, branch)
 		}
 	}
+	if len(addedBranches) > 0 {
+		logger.Debug("Found %d remote branches that have been added: %v", len(addedBranches), addedBranches)
+	}
 
 	newBranchesMap := make(map[string]bool)
 	for _, branch := range newBranches {
@@ -86,13 +90,16 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 			deletedBranches = append(deletedBranches, branch)
 		}
 	}
+	if len(deletedBranches) > 0 {
+		logger.Debug("Found %d remote branches that have been deleted: %v", len(deletedBranches), deletedBranches)
+	}
 
 	return addedBranches, deletedBranches, err
 
 }
 
 func Delete(gitfolder string, branch string) error {
-	defer timeTrack(time.Now(), "Delete")
+	defer timeTrack(time.Now(), "Deleted branch "+branch+" in "+gitfolder)
 
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -118,12 +125,11 @@ func Delete(gitfolder string, branch string) error {
 	if err != nil {
 		return errors.New("Problem deleting branch remotely " + branch)
 	}
-
 	return nil
 }
 
 func Fetch(gitfolder string) error {
-	defer timeTrack(time.Now(), "Fetch")
+	defer timeTrack(time.Now(), "Fetching "+gitfolder)
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -172,7 +178,7 @@ func Fetch(gitfolder string) error {
 		cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 		cmd.Output()
 	}
-	logger.Debug("Tracking took %s", time.Since(start).String())
+	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find if branches are no longer on remote and delete them locally
 	logger.Debug(os.Getwd())
@@ -180,7 +186,7 @@ func Fetch(gitfolder string) error {
 	logger.Debug(os.Getwd())
 	for _, localBranch := range localBranches {
 		if _, ok := allBranches[localBranch]; !ok {
-			logger.Debug("%s branch no longer on remote", localBranch)
+			logger.Debug("Deleted locally '%s' - branch no longer on remote", localBranch)
 			cmd = exec.Command("git", "branch", "-D", localBranch)
 			_, err = cmd.Output()
 			if err != nil {
@@ -193,6 +199,7 @@ func Fetch(gitfolder string) error {
 }
 
 func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string) (string, error) {
+	defer timeTrack(time.Now(), "New document "+documentname+" in "+gitfolder+" created")
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)

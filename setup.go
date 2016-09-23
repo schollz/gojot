@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path"
+
+	home "github.com/mitchellh/go-homedir"
 )
 
 func setup() {
