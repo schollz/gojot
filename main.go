@@ -17,7 +17,16 @@ var BuildTime string
 var Build string
 var Extension string
 
+// Structures
+type Entry struct {
+	Document, Branch, Date, Hash, Message, Text string
+}
+
 // Global parameters
+var (
+	Cache map[string]Entry
+)
+
 var RuntimeArgs struct {
 	Debug      bool
 	CachePath  string

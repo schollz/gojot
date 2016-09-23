@@ -284,8 +284,11 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {
-		log.Println(err)
-		return newBranch, errors.New("Cannot checkout branch " + newBranch)
+		cmd2 := exec.Command("git", "checkout", newBranch)
+		_, err2 := cmd2.Output()
+		if err2 != nil {
+			return newBranch, errors.New("Cannot checkout branch " + newBranch)
+		}
 	}
 
 	err = ioutil.WriteFile(documentname, []byte(fulltext), 0644)
@@ -305,7 +308,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 		return newBranch, errors.New("Cannot commit " + documentname)
 	}
 
-	logger.Debug("Created new branch %s for document", newBranch)
+	logger.Debug("Updated document %s in branch %s", documentname, newBranch)
 
 	return newBranch, err
 }

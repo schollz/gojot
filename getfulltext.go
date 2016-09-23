@@ -8,19 +8,14 @@ import (
 	"time"
 )
 
-type ResultText struct {
-	Document, Branch, Text string
-}
-
-type JobText struct {
-	Branch, Document string
-}
-
-func getTextWorker(id int, jobs <-chan JobText, results chan<- ResultText) {
+func getTextWorker(id int, jobs <-chan Entry, results chan<- Entry) {
 	for job := range jobs {
-		result := new(ResultText)
+		result := new(Entry)
 		result.Branch = job.Branch
 		result.Document = job.Document
+		result.Date = job.Date
+		result.Hash = job.Hash
+		result.Message = job.Message
 
 		cmd := exec.Command("git", "show", result.Branch+":"+result.Document)
 		stdout, err := cmd.Output()
@@ -33,10 +28,10 @@ func getTextWorker(id int, jobs <-chan JobText, results chan<- ResultText) {
 	}
 }
 
-func getTextInParallel(inputs []JobText) []ResultText {
+func getTextInParallel(inputs []Entry) []Entry {
 	//In order to use our pool of workers we need to send them work and collect their results. We make 2 channels for this.
-	jobs := make(chan JobText, len(inputs))
-	results := make(chan ResultText, len(inputs))
+	jobs := make(chan Entry, len(inputs))
+	results := make(chan Entry, len(inputs))
 	//This starts up 50 workers, initially blocked because there are no jobs yet.
 	for w := 0; w < 50; w++ {
 		go getTextWorker(w, jobs, results)
@@ -47,14 +42,14 @@ func getTextInParallel(inputs []JobText) []ResultText {
 	}
 	close(jobs)
 	//Finally we collect all the results of the work.
-	entries := make([]ResultText, len(inputs))
+	entries := make([]Entry, len(inputs))
 	for a := 0; a < len(inputs); a++ {
 		entries[a] = <-results
 	}
 	return entries
 }
 
-func GetText(folder string, branchNames []string, documentNames []string) ([]ResultText, error) {
+func GetText(folder string, entries []Entry) ([]Entry, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Getting Text %s", id, folder)
 	defer timeTrack(time.Now(), "["+id+"]Getting Text "+folder)
@@ -63,14 +58,8 @@ func GetText(folder string, branchNames []string, documentNames []string) ([]Res
 	defer os.Chdir(cwd)
 	err := os.Chdir(folder)
 	if err != nil {
-		return []ResultText{}, errors.New("Cannot chdir into " + folder)
+		return []Entry{}, errors.New("Cannot chdir into " + folder)
 	}
 
-	inputs := make([]JobText, len(documentNames))
-	for i := range documentNames {
-		inputs[i].Branch = branchNames[i]
-		inputs[i].Document = documentNames[i]
-	}
-	entries := getTextInParallel(inputs)
-	return entries, nil
+	return getTextInParallel(entries), nil
 }

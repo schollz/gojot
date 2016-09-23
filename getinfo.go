@@ -8,13 +8,9 @@ import (
 	"time"
 )
 
-type EntryInfo struct {
-	Document, Branch, Date, Hash, Message string
-}
-
-func getInfoWorker(id int, jobs <-chan string, results chan<- EntryInfo) {
+func getInfoWorker(id int, jobs <-chan string, results chan<- Entry) {
 	for branch := range jobs {
-		result := new(EntryInfo)
+		result := new(Entry)
 		result.Branch = branch
 
 		// cmd = exec.Command("git", "show", branch+":"+result.Document)
@@ -40,10 +36,10 @@ func getInfoWorker(id int, jobs <-chan string, results chan<- EntryInfo) {
 	}
 }
 
-func getInfoInParallel(branchNames []string) []EntryInfo {
+func getInfoInParallel(branchNames []string) []Entry {
 	//In order to use our pool of workers we need to send them work and collect their results. We make 2 channels for this.
 	jobs := make(chan string, len(branchNames))
-	results := make(chan EntryInfo, len(branchNames))
+	results := make(chan Entry, len(branchNames))
 	//This starts up 50 workers, initially blocked because there are no jobs yet.
 	for w := 0; w < 50; w++ {
 		go getInfoWorker(w, jobs, results)
@@ -54,14 +50,14 @@ func getInfoInParallel(branchNames []string) []EntryInfo {
 	}
 	close(jobs)
 	//Finally we collect all the results of the work.
-	entries := make([]EntryInfo, len(branchNames))
+	entries := make([]Entry, len(branchNames))
 	for a := 0; a < len(branchNames); a++ {
 		entries[a] = <-results
 	}
 	return entries
 }
 
-func GetInfo(folder string, branchNames []string) ([]EntryInfo, error) {
+func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Getting info %s", id, folder)
 	defer timeTrack(time.Now(), "["+id+"]Getting info "+folder)
@@ -70,7 +66,7 @@ func GetInfo(folder string, branchNames []string) ([]EntryInfo, error) {
 	defer os.Chdir(cwd)
 	err := os.Chdir(folder)
 	if err != nil {
-		return []EntryInfo{}, errors.New("Cannot chdir into " + folder)
+		return []Entry{}, errors.New("Cannot chdir into " + folder)
 	}
 
 	entries := getInfoInParallel(branchNames)

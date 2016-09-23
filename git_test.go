@@ -14,8 +14,9 @@ import (
 func TestMain(m *testing.M) {
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
-		createBranches()
+		createBranches("./gittest", 100)
 	}
+
 	exitVal := m.Run()
 	log.Println("Testing completed.")
 
@@ -85,22 +86,12 @@ func TestGetText(t *testing.T) {
 	log.Println("Testing GetText()...")
 	branchNames, _ := ListBranches("./gittest")
 	entries, _ := GetInfo("./gittest", branchNames)
-	documents := make([]string, len(entries))
-	branches := make([]string, len(entries))
-	var testEntry EntryInfo
-	for i, entry := range entries {
-		documents[i] = entry.Document
-		branches[i] = entry.Branch
-		if i == 12 {
-			testEntry = entry
-		}
-	}
 
-	texts, _ := GetText("./gittest", branches, documents)
-	for _, text := range texts {
-		if text.Branch == testEntry.Branch {
-			if text.Text != "hello, world branch #"+testEntry.Branch {
-				t.Errorf("Got error getting text: %v", text)
+	entries, _ = GetText("./gittest", entries)
+	for _, entry := range entries {
+		if entry.Branch == "12" {
+			if entry.Text != "hello, world branch #12" {
+				t.Errorf("Got different text: %s", entry.Text)
 			}
 		}
 	}
@@ -253,12 +244,12 @@ func TestGetLatest(t *testing.T) {
 
 }
 
-func createBranches() {
-	os.RemoveAll("./gittest")
-	os.Mkdir("gittest", 0755)
+func createBranches(gitfolder string, numBranches int) {
+	os.RemoveAll(gitfolder)
+	os.Mkdir(gitfolder, 0755)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
-	err := os.Chdir("./gittest")
+	err := os.Chdir(gitfolder)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -279,7 +270,7 @@ func createBranches() {
 	_, err = cmd.Output()
 
 	start := time.Now()
-	for i := 0; i < 100; i++ {
+	for i := 0; i < numBranches; i++ {
 		cmd := exec.Command("git", "checkout", "--orphan", strconv.Itoa(i))
 		_, err := cmd.Output()
 
