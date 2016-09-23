@@ -16,29 +16,31 @@ func getInfoWorker(id int, jobs <-chan string, results chan<- Entry) {
 	for branch := range jobs {
 		result := new(Entry)
 		result.Branch = branch
-		cmd := exec.Command("git", "ls-tree", "--name-only", branch)
+		// cmd := exec.Command("git", "ls-tree", "--name-only", branch)
+		// stdout, err := cmd.Output()
+		// if err != nil {
+		// 	logger.Error("git ls-tree --name-only %s did not work", branch)
+		// }
+		// result.Document = strings.TrimSpace(string(stdout))
+
+		// cmd = exec.Command("git", "show", branch+":"+result.Document)
+		// stdout, err = cmd.Output()
+		// if err != nil {
+		// 	logger.Error("git show %s:%s did not work", branch, result.Document)
+		// }
+		result.Fulltext = "" //strings.TrimSpace(string(stdout))
+
+		cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'%H-=-%ad-=-%s'", branch)
 		stdout, err := cmd.Output()
-		if err != nil {
-			logger.Error("git ls-tree --name-only %s did not work", branch)
-		}
-		result.Document = strings.TrimSpace(string(stdout))
-
-		cmd = exec.Command("git", "show", branch+":"+result.Document)
-		stdout, err = cmd.Output()
-		if err != nil {
-			logger.Error("git show %s:%s did not work", branch, result.Document)
-		}
-		result.Fulltext = strings.TrimSpace(string(stdout))
-
-		cmd = exec.Command("git", "log", "--pretty=format:'%H-=-%ad-=-%s'", branch)
-		stdout, err = cmd.Output()
 		if err != nil {
 			logger.Error(`Couldn't run git log --pretty=format:'%%H-=-%%ad-=-%%s'` + branch)
 		}
-		items := strings.Split(string(stdout), "-=-")
+		lines := strings.Split(string(stdout), "\n")
+		items := strings.Split(lines[0], "-=-")
+		result.Document = strings.TrimSpace(lines[1])
 		result.Hash = items[0]
 		result.Date = items[1]
-		result.Message = items[2]
+		result.Message = items[2][1 : len(items[2])-1]
 
 		results <- *result
 	}

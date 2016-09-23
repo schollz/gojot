@@ -39,6 +39,12 @@ func TestGetInfo(t *testing.T) {
 			if entry.Fulltext != "hello, world branch #12" {
 				t.Errorf("Expected %s, got %s", "hello, world branch #12", entry.Fulltext)
 			}
+			if entry.Document != "test.txt" {
+				t.Errorf("Expected %s, got %s", "test.txt", entry.Document)
+			}
+			if entry.Message != "added test.txt" {
+				t.Errorf("Expected %s, got %s", "added test.txt", entry.Message)
+			}
 			break
 		}
 	}
