@@ -16,6 +16,10 @@ var (
 	CachePath string
 )
 
+func CleanFolderName(gitfolder string) string {
+	return strings.Replace(strings.Replace(gitfolder, "/", "", -1), ".", "", -1)
+}
+
 func init() {
 	// Set the paths
 	homeDir, _ := home.Dir()
@@ -34,10 +38,6 @@ func init() {
 			log.Fatal(err)
 		}
 	}
-}
-
-func CleanFolderName(gitfolder string) string {
-	return strings.Replace(strings.Replace(gitfolder, "/", "", -1), ".", "", -1)
 }
 
 func UpdateCache(gitfolder string, forceUpdate bool) (map[string]Entry, []string) {

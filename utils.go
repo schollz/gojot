@@ -52,3 +52,30 @@ func exists(path string) bool {
 	}
 	return true
 }
+
+// Shred writes random data to the file before erasing it
+func Shred(fileName string) error {
+	f, err := os.OpenFile(fileName, os.O_RDWR|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+	fileData, err := f.Stat()
+	if err != nil {
+		return err
+	}
+	b := make([]byte, fileData.Size())
+	_, err = rand.Read(b)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteAt(b, 0)
+	if err != nil {
+		return err
+	}
+	f.Close()
+	err = os.Remove(fileName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
