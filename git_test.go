@@ -81,6 +81,32 @@ func TestPush(t *testing.T) {
 	}
 }
 
+func TestGetText(t *testing.T) {
+	log.Println("Testing GetText()...")
+	branchNames, _ := ListBranches("./gittest")
+	entries, _ := GetInfo("./gittest", branchNames)
+	documents := make([]string, len(entries))
+	branches := make([]string, len(entries))
+	var testEntry EntryInfo
+	for i, entry := range entries {
+		documents[i] = entry.Document
+		branches[i] = entry.Branch
+		if i == 12 {
+			testEntry = entry
+		}
+	}
+
+	texts, _ := GetText("./gittest", branches, documents)
+	for _, text := range texts {
+		if text.Branch == testEntry.Branch {
+			if text.Text != "hello, world branch #"+testEntry.Branch {
+				t.Errorf("Got error getting text: %v", text)
+			}
+		}
+	}
+
+}
+
 func TestDelete(t *testing.T) {
 	log.Println("Testing Delete()...")
 
@@ -135,25 +161,28 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
+	// Make some new edit and push it
 	_, err = NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
-
 	err = Push("testNew")
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
 
+	// Get latest, should not override the local branch
 	_, _, err = GetLatest("testOld")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
 	}
+	// Push the local brance
 	err = Push("testOld")
 	if err != nil {
 		t.Errorf("Got error pushing: " + err.Error())
 	}
 
+	// Get new branch
 	newBranches, _, err := GetLatest("testNew")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
@@ -161,7 +190,6 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	if newBranches[0] != newLocalBranch {
 		t.Errorf("Did the local branch %s get overidden?", newLocalBranch)
 	}
-
 }
 
 func TestGetLatest(t *testing.T) {
