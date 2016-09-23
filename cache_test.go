@@ -9,14 +9,13 @@ import (
 )
 
 var CACHE_TEST_PATH = "./gittest10"
-var EMPTY_CACHE = make(map[string]Entry)
 
 func TestCache(t *testing.T) {
 	if _, err := os.Stat(CACHE_TEST_PATH); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
 		createBranches(CACHE_TEST_PATH, 100)
 	}
-	UpdateCache(CACHE_TEST_PATH, EMPTY_CACHE)
+	UpdateCache(CACHE_TEST_PATH, true)
 	if !exists(path.Join(CachePath, CleanFolderName(CACHE_TEST_PATH)+".cache")) {
 		t.Errorf("Error creating cache")
 	}
@@ -36,7 +35,7 @@ func TestUpdateCache(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
-	cache, _ := UpdateCache(gitfolder, EMPTY_CACHE)
+	UpdateCache(gitfolder, true)
 	newLocalBranch, err := NewDocument(gitfolder, "test2.txt", "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
@@ -49,7 +48,7 @@ func TestUpdateCache(t *testing.T) {
 	}
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
-	_, updatedBranches := UpdateCache(gitfolder, cache)
+	_, updatedBranches := UpdateCache(gitfolder, false)
 	if len(updatedBranches) != 2 {
 		t.Errorf("Error updating branches")
 	}

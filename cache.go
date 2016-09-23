@@ -40,7 +40,7 @@ func CleanFolderName(gitfolder string) string {
 	return strings.Replace(strings.Replace(gitfolder, "/", "", -1), ".", "", -1)
 }
 
-func UpdateCache(gitfolder string, currentCache map[string]Entry) (map[string]Entry, []string) {
+func UpdateCache(gitfolder string, forceUpdate bool) (map[string]Entry, []string) {
 	defer timeTrack(time.Now(), "Updating cache")
 	cache := make(map[string]Entry)
 	cacheFile := path.Join(CachePath, CleanFolderName(gitfolder)+".cache")
@@ -49,12 +49,12 @@ func UpdateCache(gitfolder string, currentCache map[string]Entry) (map[string]En
 	entriesToUpdate := []Entry{} // which branches to update in cache
 	entries, _ := GetInfo(gitfolder, branchNames)
 
-	if !exists(cacheFile) || len(currentCache) == 0 {
+	if !exists(cacheFile) || forceUpdate {
 		// Generate new cache
 		logger.Debug("Generating new cache")
 		entriesToUpdate = entries
 	} else {
-		// Load and update cache
+		// Load current cache
 		logger.Debug("Loading and updating cache")
 		cache = LoadCache(gitfolder)
 		for _, info := range entries {
