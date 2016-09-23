@@ -119,12 +119,9 @@ func Delete(gitfolder string, branch string) error {
 		return errors.New("Problem deleting branch " + branch)
 	}
 
-	// Delete branch remotely
-	cmd = exec.Command("git", "push", "origin", "--delete", branch)
-	_, err = cmd.Output()
-	if err != nil {
-		return errors.New("Problem deleting branch remotely " + branch)
-	}
+	// Create empty file and commit to same branch
+	NewDocument(gitfolder, ".deleted", "", "deleted", "Thu, 07 Apr 2005 22:13:13 +0200", branch)
+
 	return nil
 }
 
@@ -136,17 +133,10 @@ func Fetch(gitfolder string) error {
 	os.Chdir(gitfolder)
 
 	// Fetch all
-	cmd := exec.Command("git", "fetch", "--all")
+	cmd := exec.Command("git", "fetch", "--all", "--force", "--prune")
 	_, err = cmd.Output()
 	if err != nil {
 		logger.Error("Problem fetching all")
-	}
-
-	// Fetch deleted
-	cmd = exec.Command("git", "fetch", "-p")
-	_, err = cmd.Output()
-	if err != nil {
-		logger.Error("Problem fetching deleted")
 	}
 
 	// Get branchces
@@ -180,23 +170,24 @@ func Fetch(gitfolder string) error {
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
 
-	// Find if branches are no longer on remote and delete them locally
-	localBranches, _ := ListBranches("./")
-	for _, localBranch := range localBranches {
-		if _, ok := allBranches[localBranch]; !ok {
-			logger.Debug("Deleted locally '%s' - branch no longer on remote", localBranch)
-			cmd = exec.Command("git", "branch", "-D", localBranch)
-			_, err = cmd.Output()
-			if err != nil {
-				return errors.New("Problem deleting branch " + localBranch)
-			}
-		}
-	}
+	// NOT NEEDED - THIS IS TAKEN CARE OF WITH FETCH --FORCE
+	// // Find if branches are no longer on remote and delete them locally
+	// localBranches, _ := ListBranches("./")
+	// for _, localBranch := range localBranches {
+	// 	if _, ok := allBranches[localBranch]; !ok {
+	// 		logger.Debug("Deleted locally '%s' - branch no longer on remote", localBranch)
+	// 		cmd = exec.Command("git", "branch", "-D", localBranch)
+	// 		_, err = cmd.Output()
+	// 		if err != nil {
+	// 			return errors.New("Problem deleting branch " + localBranch)
+	// 		}
+	// 	}
+	// }
 
 	return nil
 }
 
-func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string) (string, error) {
+func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string, branchNameOverride string) (string, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]NewDocument %s", id, documentname)
 	defer timeTrack(time.Now(), "["+id+"]NewDocument")
@@ -205,7 +196,10 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	defer os.Chdir(cwd)
 	os.Chdir(gitfolder)
 
-	newBranch := RandStringBytesMaskImprSrc(6, time.Now().UnixNano())
+	newBranch := branchNameOverride
+	if len(branchNameOverride) == 0 {
+		newBranch = RandStringBytesMaskImprSrc(6, time.Now().UnixNano())
+	}
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {
@@ -242,7 +236,7 @@ func Push(gitfolder string) error {
 	defer os.Chdir(cwd)
 	os.Chdir(gitfolder)
 
-	cmd := exec.Command("git", "push", "--all", "origin")
+	cmd := exec.Command("git", "push", "--force", "--all", "origin")
 	_, err = cmd.Output()
 	if err != nil {
 		return errors.New("Cannot push " + gitfolder)

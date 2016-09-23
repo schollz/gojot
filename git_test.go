@@ -70,7 +70,7 @@ func TestClone(t *testing.T) {
 
 func TestNewDocument(t *testing.T) {
 	log.Println("Testing NewDocument()...")
-	_, err := NewDocument("test", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	_, err := NewDocument("test", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -137,7 +137,7 @@ func TestGetLatest(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	branch, err := NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200")
+	branch, err := NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -174,8 +174,8 @@ func TestGetLatest(t *testing.T) {
 		t.Errorf("Expected seeing %s but got %v instead", branch, deletedBranches)
 	}
 
-	os.RemoveAll("testNew")
-	os.RemoveAll("testOld")
+	// os.RemoveAll("testNew")
+	// os.RemoveAll("testOld")
 
 }
 
