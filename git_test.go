@@ -36,9 +36,6 @@ func TestGetInfo(t *testing.T) {
 	entries, _ := GetInfo("./gittest", branchNames)
 	for _, entry := range entries {
 		if entry.Branch == "12" {
-			if entry.Fulltext != "hello, world branch #12" {
-				t.Errorf("Expected %s, got %s", "hello, world branch #12", entry.Fulltext)
-			}
 			if entry.Document != "test.txt" {
 				t.Errorf("Expected %s, got %s", "test.txt", entry.Document)
 			}
@@ -110,14 +107,10 @@ func TestDelete(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	newBranches, _ := ListBranches("testDelete")
-	for _, branch := range newBranches {
-		if branch == branches[1] {
-			t.Errorf("Deletion of branch " + branches[1] + " did not propogate")
-		}
+	info, _ := GetInfo("testDelete", []string{branches[1]})
+	if info[0].Message != "deleted" {
+		t.Errorf("Error while deleting, got %v", info[0])
 	}
-	logger.Debug("Deleted branch " + branches[1])
-
 	os.RemoveAll("testDelete")
 	os.RemoveAll("testDelete1")
 }
@@ -168,14 +161,14 @@ func TestGetLatest(t *testing.T) {
 	}
 	logger.Debug("Deleted new branch %s", branch)
 
-	_, deletedBranches, err := GetLatest("testOld")
+	_, _, err = GetLatest("testOld")
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
 	}
-	logger.Debug("Fetched deleted branches: %v", deletedBranches)
 
-	if len(deletedBranches) == 0 {
-		t.Errorf("Expected seeing %s but got %v instead", branch, deletedBranches)
+	info, _ := GetInfo("testOld", []string{branch})
+	if info[0].Message != "deleted" {
+		t.Errorf("Error while deleting %s, got %v", branch, info[0])
 	}
 
 	// os.RemoveAll("testNew")

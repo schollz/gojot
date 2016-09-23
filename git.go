@@ -13,7 +13,9 @@ import (
 // ListBranches returns a slice of the branch names of the repo
 // excluding the master branch
 func ListBranches(folder string) ([]string, error) {
-	defer timeTrack(time.Now(), "Listed branches for "+folder)
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Listing branches %s", id, folder)
+	defer timeTrack(time.Now(), "["+id+"]Listing branches "+folder)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	err := os.Chdir(folder)
@@ -42,7 +44,9 @@ func ListBranches(folder string) ([]string, error) {
 }
 
 func GetLatest(gitfolder string) ([]string, []string, error) {
-	defer timeTrack(time.Now(), "Got latest for "+gitfolder)
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Getting latest for %s", id, gitfolder)
+	defer timeTrack(time.Now(), "["+id+"]Getting latest "+gitfolder)
 	var err error
 	err = nil
 	cwd, _ := os.Getwd()
@@ -99,7 +103,9 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 }
 
 func Delete(gitfolder string, branch string) error {
-	defer timeTrack(time.Now(), "Deleted branch "+branch+" in "+gitfolder)
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Deleting branch %s in %s", id, branch, gitfolder)
+	defer timeTrack(time.Now(), "["+id+"]Deleting "+branch)
 
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
