@@ -126,7 +126,9 @@ func Delete(gitfolder string, branch string) error {
 }
 
 func Fetch(gitfolder string) error {
-	defer timeTrack(time.Now(), "Fetching "+gitfolder)
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Fetching %s", id, gitfolder)
+	defer timeTrack(time.Now(), "["+id+"]Fetching "+gitfolder)
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -146,7 +148,7 @@ func Fetch(gitfolder string) error {
 		return errors.New("Cannot branch -r")
 	}
 	branches := []string{}
-	allBranches := make(map[string]bool)
+	remotelyTrackedBranches := make(map[string]bool)
 	for _, line := range strings.Split(string(stdout), "\n") {
 		branchName := strings.TrimSpace(line)
 		if strings.Contains(branchName, "->") {
@@ -155,19 +157,43 @@ func Fetch(gitfolder string) error {
 		if strings.Contains(branchName, "origin/") {
 			branchName = strings.TrimSpace(strings.Split(branchName, "origin/")[1])
 		}
-		allBranches[branchName] = true
 		if len(branchName) == 0 || branchName == "master" {
 			continue
 		}
+		remotelyTrackedBranches[branchName] = true
 		branches = append(branches, branchName)
 	}
 
-	// Reset all branches to origin
-	// git branch -vv
-	// rIzVvd cbafe05 [origin/rIzVvd: ahead 3, behind 1] deleted
-	// Find ANY that have "ahead" or "behind", and do
-	//      git checkout branch
-	//      git reset --hard HEAD
+	// Find all locally tracked branches with
+	//		git branch -vv
+	cmd = exec.Command("git", "branch", "-vv")
+	stdout, err = cmd.Output()
+	if err != nil {
+		return errors.New("Cannot branch -vv")
+	}
+	branchesToReset := []string{}
+	locallyTrackedBranches := make(map[string]bool)
+	for _, line := range strings.Split(string(stdout), "\n") {
+		if strings.Contains(line, "[") && strings.Contains(line, "]") {
+			split1 := strings.Split(line, "[")
+			split2 := strings.Split(split1[1], "]")
+			insides := split2[0]
+			split1 = strings.Split(insides, ":")
+			branch := split1[0]
+			if strings.Contains(branch, "/") {
+				split2 = strings.Split(branch, "/")
+				branch = split2[len(split2)-1]
+			}
+			branch = strings.TrimSpace(branch)
+			if len(branch) == 0 {
+				continue
+			}
+			if strings.Contains(insides, "ahead ") || strings.Contains(insides, "behind ") {
+				branchesToReset = append(branchesToReset, branch)
+			}
+			locallyTrackedBranches[branch] = true
+		}
+	}
 
 	// Track branches not being tracked.
 	//       BRANCHES NOT BEING TRACKED
@@ -176,11 +202,41 @@ func Fetch(gitfolder string) error {
 	//                  -
 	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
-	for _, branch := range branches {
-		cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
-		cmd.Output()
+	for branch := range remotelyTrackedBranches {
+		if _, ok := locallyTrackedBranches[branch]; !ok {
+			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
+			cmd.Output()
+		}
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
+
+	// Find ANY that have "ahead" or "behind", and do
+	//      git checkout branch
+	//      git reset --hard HEAD
+	// 			git rebase
+	for _, branch := range branchesToReset {
+		logger.Debug("Resetting branch %s", branch)
+		cmd = exec.Command("git", "checkout", branch)
+		stdout, err = cmd.Output()
+		if err != nil {
+			return errors.New("Cannot checkout" + branch)
+		}
+		cmd = exec.Command("git", "reset", "--hard", "HEAD")
+		stdout, err = cmd.Output()
+		if err != nil {
+			return errors.New("Cannot reset --hard HEAD of " + branch)
+		}
+		cmd = exec.Command("git", "rebase")
+		stdout, err = cmd.Output()
+		if err != nil {
+			return errors.New("Cannot rebase " + branch)
+		}
+		cmd = exec.Command("git", "checkout", "master")
+		stdout, err = cmd.Output()
+		if err != nil {
+			return errors.New("Cannot checkout master")
+		}
+	}
 
 	// NOT NEEDED - THIS IS TAKEN CARE OF WITH FETCH --FORCE
 	// // Find if branches are no longer on remote and delete them locally
