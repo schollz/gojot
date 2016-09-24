@@ -40,24 +40,26 @@ func TestEncryptFile(t *testing.T) {
 func TestDecryptFileCorrectPassword(t *testing.T) {
 	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
 	EncryptFile("test.txt", "abcd")
-	text, err := DecryptFile("test.txt.gpg", "abcd")
+	err := DecryptFile("test.txt.gpg", "abcd")
 	if err != nil {
 		t.Errorf("Error decrypting file: %s", err.Error())
 	}
-	if text != "Some random text" {
-		t.Errorf("Expected 'Some random text', and instead got '%s'", text)
+	b, err := ioutil.ReadFile("test.txt")
+	if string(b) != "Some random text" {
+		t.Errorf("Expected 'Some random text', and instead got '%s'", string(b))
 	}
 }
 
 func TestDecryptFileWrongPassword(t *testing.T) {
 	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
 	EncryptFile("test.txt", "abcd")
-	text, err := DecryptFile("test.txt.gpg", "asdfasdf")
+	err := DecryptFile("test.txt.gpg", "asdfasdf")
 	if err == nil {
 		t.Errorf("Error decrypting file: %s", err.Error())
 	}
-	if text == "Some random text" {
-		t.Errorf("Expected NOT 'Some random text', and instead got '%s'", text)
+	b, err := ioutil.ReadFile("test.txt")
+	if string(b) == "Some random text" {
+		t.Errorf("Expected NOT 'Some random text', and instead got '%s'", string(b))
 	}
 }
 

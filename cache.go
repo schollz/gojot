@@ -26,18 +26,11 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	err = nil
 
 	cacheFile := path.Join(RemoteFolder, document+".cache")
-	if Encrypt && exists(cacheFile+".gpg") {
-		err = DecryptFile(cacheFile, Passphrase)
-		if err != nil {
-			return cache, []string{}, err
-		}
-		document += ".gpg"
-	}
 
 	// FIrst colelct branches to get info from
 	branchNames, _ := ListBranches(gitfolder)
 	var branchesToGetInfo []string
-	if !exists(cacheFile) || forceUpdate {
+	if (!exists(cacheFile) && !exists(cacheFile+".gpg")) || forceUpdate {
 		logger.Debug("Generating new cache")
 		branchesToGetInfo = branchNames
 		cache.Ignore = make(map[string]bool)
@@ -54,12 +47,16 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	}
 
 	// From those branches, determine which entries need fulltext updating
+	if Encrypt {
+		document += ".gpg"
+	}
 	entriesToUpdate := []Entry{} // which branches to update in cache
 	entries, _ := GetInfo(gitfolder, branchesToGetInfo)
 	for _, entry := range entries {
 		cache.Ignore[entry.Branch] = entry.Document != document
 		ignore, ok := cache.Ignore[entry.Branch]
 		if !ok {
+			entriesToUpdate = append(entriesToUpdate, entry)
 			continue
 		}
 		if !ignore && entry.Hash != cache.Branch[entry.Branch].Hash {
@@ -82,6 +79,9 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	}
 
 	// Save
+	if Encrypt {
+		document = strings.Split(document, ".gpg")[0]
+	}
 	WriteCache(gitfolder, document, cache)
 
 	return cache, updatedBranches, err
@@ -105,6 +105,12 @@ func WriteCache(gitfolder string, document string, cache Cache) {
 
 func LoadCache(gitfolder string, document string) Cache {
 	cacheFile := path.Join(RemoteFolder, document+".cache")
+	if Encrypt {
+		err := DecryptFile(cacheFile, Passphrase)
+		if err != nil {
+			logger.Error("Error decrypting %s", cacheFile)
+		}
+	}
 	defer timeTrack(time.Now(), "Loading cache")
 	b, err := ioutil.ReadFile(cacheFile)
 	if err != nil {
@@ -113,7 +119,7 @@ func LoadCache(gitfolder string, document string) Cache {
 	var cache Cache
 	err = json.Unmarshal(b, &cache)
 	if err != nil {
-		logger.Error("Error marshaling " + cacheFile + ": " + err.Error())
+		logger.Error("Error umarshling " + cacheFile + ": " + err.Error())
 	}
 	return cache
 }

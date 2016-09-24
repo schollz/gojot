@@ -38,7 +38,7 @@ func TestUpdateCache(t *testing.T) {
 	}
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
-	_, updatedBranches := UpdateCache(gitfolder, "test2.txt", false)
+	_, updatedBranches, _ := UpdateCache(gitfolder, "test2.txt", false)
 	if len(updatedBranches) != 2 {
 		t.Errorf("Error updating branches, got %v", updatedBranches)
 	}

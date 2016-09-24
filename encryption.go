@@ -77,7 +77,6 @@ func DecryptFile(file string, passphrase string) error {
 	if err != nil {
 		return err
 	}
-	err = Shred(file)
 	return err
 }
 

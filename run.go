@@ -18,7 +18,7 @@ func Run() {
 	}
 
 	if Encrypt {
-		Passphrase = PromptPassword(path.Join(RemoteFolder, CurrentDocument+".cache"))
+		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
 	}
 	cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
 	if err != nil {

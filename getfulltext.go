@@ -66,3 +66,18 @@ func GetText(folder string, entries []Entry) ([]Entry, error) {
 
 	return getTextInParallel(entries), nil
 }
+
+func GetTextOfOne(gitfolder string, branch string, document string) (string, error) {
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	err := os.Chdir(gitfolder)
+	if err != nil {
+		return "", errors.New("Cannot chdir into " + gitfolder)
+	}
+	cmd := exec.Command("git", "show", branch+":"+document)
+	stdout, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(stdout)), nil
+}
