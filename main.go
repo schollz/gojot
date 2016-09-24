@@ -23,6 +23,8 @@ var (
 	Cache                           map[string]Entry
 	CachePath, ConfigPath, TempPath string
 	CurrentDocument, Editor, Remote string
+	All                             bool
+	DeleteDocument                  string
 	RemoteFolder                    string
 	Extension                       string
 	Debug                           bool
@@ -87,6 +89,25 @@ EXAMPLE USAGE:
 		} else {
 			Extension = ""
 		}
+
+		// Load configuration
+		LoadConfiguration()
+
+		// Process some flags
+		if len(DeleteDocument) > 0 {
+			err := Delete(RemoteFolder, DeleteDocument)
+			if err != nil {
+				logger.Error(err.Error())
+				return err
+			}
+			err = Push(RemoteFolder)
+			if err != nil {
+				logger.Error(err.Error())
+				return err
+			}
+			return nil
+		}
+
 		Run()
 		return nil
 	}
@@ -95,6 +116,16 @@ EXAMPLE USAGE:
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
 			Destination: &Debug,
+		},
+		cli.BoolFlag{
+			Name:        "all, a",
+			Usage:       "Edit all of the document",
+			Destination: &All,
+		},
+		cli.StringFlag{
+			Name:        "delete",
+			Usage:       "Delete `document`",
+			Destination: &DeleteDocument,
 		},
 	}
 	app.Run(os.Args)

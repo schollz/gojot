@@ -87,7 +87,7 @@ func LoadConfiguration() {
 	}
 	Editor = c.Editor
 	Remote = c.Remote
-
+	RemoteFolder = path.Join(CachePath, HashString(Remote))
 	if len(CurrentDocument) == 0 {
 		fmt.Print("What is the name of the document you want to edit? ")
 		fmt.Scanln(&CurrentDocument)
@@ -98,4 +98,5 @@ func LoadConfiguration() {
 		log.Println(err)
 	}
 	ioutil.WriteFile(path.Join(ConfigPath, "config.json"), b, 0644)
+
 }
