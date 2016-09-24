@@ -40,7 +40,7 @@ func TestEncryptFile(t *testing.T) {
 func TestDecryptFileCorrectPassword(t *testing.T) {
 	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
 	EncryptFile("test.txt", "abcd")
-	err := DecryptFile("test.txt.gpg", "abcd")
+	err := DecryptFile("test.txt", "abcd")
 	if err != nil {
 		t.Errorf("Error decrypting file: %s", err.Error())
 	}
@@ -53,7 +53,7 @@ func TestDecryptFileCorrectPassword(t *testing.T) {
 func TestDecryptFileWrongPassword(t *testing.T) {
 	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
 	EncryptFile("test.txt", "abcd")
-	err := DecryptFile("test.txt.gpg", "asdfasdf")
+	err := DecryptFile("test.txt", "asdfasdf")
 	if err == nil {
 		t.Errorf("Error decrypting file: %s", err.Error())
 	}

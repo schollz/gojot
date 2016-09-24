@@ -57,17 +57,17 @@ func TestGetInfo(t *testing.T) {
 	log.Println("Testing GetInfo()...")
 	branchNames, _ := ListBranches("./gittest")
 	entries, _ := GetInfo("./gittest", branchNames)
+	foundOne := false
 	for _, entry := range entries {
-		if entry.Branch == "12" {
-			if entry.Document != "test.txt" {
-				t.Errorf("Expected %s, got %s", "test.txt", entry.Document)
-			}
-			if entry.Message != "added test.txt" {
-				t.Errorf("Expected %s, got %s", "added test.txt", entry.Message)
-			}
+		if entry.Document == "test.txt" && entry.Message == "added test.txt" {
+			foundOne = true
 			break
 		}
 	}
+	if !foundOne {
+		t.Errorf("Could not get info!")
+	}
+
 }
 
 func TestClone(t *testing.T) {
