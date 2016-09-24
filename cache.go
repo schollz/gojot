@@ -17,12 +17,22 @@ type Cache struct {
 	Ignore map[string]bool
 }
 
-func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []string) {
-	cacheFile := path.Join(RemoteFolder, document+".cache")
+func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []string, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Updating cache for document %s in %s", id, document, gitfolder)
 	defer timeTrack(time.Now(), "["+id+"]Updating cache")
 	var cache Cache
+	var err error
+	err = nil
+
+	cacheFile := path.Join(RemoteFolder, document+".cache")
+	if Encrypt && exists(cacheFile+".gpg") {
+		err = DecryptFile(cacheFile, Passphrase)
+		if err != nil {
+			return cache, []string{}, err
+		}
+		document += ".gpg"
+	}
 
 	// FIrst colelct branches to get info from
 	branchNames, _ := ListBranches(gitfolder)
@@ -74,7 +84,7 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	// Save
 	WriteCache(gitfolder, document, cache)
 
-	return cache, updatedBranches
+	return cache, updatedBranches, err
 }
 
 func WriteCache(gitfolder string, document string, cache Cache) {
@@ -86,6 +96,9 @@ func WriteCache(gitfolder string, document string, cache Cache) {
 	err = ioutil.WriteFile(cacheFile, b, 0644)
 	if err != nil {
 		logger.Error("Error writing " + cacheFile + ": " + err.Error())
+	}
+	if Encrypt {
+		EncryptFile(cacheFile, Passphrase)
 	}
 	logger.Debug("Wrote cache file: %s", cacheFile)
 }

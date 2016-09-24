@@ -279,7 +279,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 
 	newBranch := branchNameOverride
 	if len(branchNameOverride) == 0 {
-		newBranch = RandStringBytesMaskImprSrc(6, time.Now().UnixNano())
+		newBranch = RandStringBytesMaskImprSrc(5, time.Now().UnixNano())
 	}
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
@@ -294,6 +294,14 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	err = ioutil.WriteFile(documentname, []byte(fulltext), 0644)
 	if err != nil {
 		return newBranch, errors.New("Cannot write file " + documentname)
+	}
+	if Encrypt {
+		err = EncryptFile(documentname, Passphrase)
+		if err != nil {
+			return newBranch, err
+		}
+		documentname += ".gpg"
+		message = EncryptString(message, Passphrase)
 	}
 
 	cmd = exec.Command("git", "add", documentname)

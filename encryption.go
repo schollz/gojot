@@ -64,10 +64,21 @@ func EncryptString(encryptionText string, encryptionPassphraseString string) str
 }
 
 // DecryptFile returns the decrypted contents of a GPG symmetric encrypted file
-func DecryptFile(file string, passphrase string) (string, error) {
-	fileContents, _ := ioutil.ReadFile(file)
+func DecryptFile(file string, passphrase string) error {
+	fileContents, err := ioutil.ReadFile(file + ".gpg")
+	if err != nil {
+		return err
+	}
 	decrypted, err := DecryptString(string(fileContents), passphrase)
-	return decrypted, err
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(file, []byte(decrypted), 0644)
+	if err != nil {
+		return err
+	}
+	err = Shred(file)
+	return err
 }
 
 // EncryptFile creates an encrypted file with extension gpg

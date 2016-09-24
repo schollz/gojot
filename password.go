@@ -13,7 +13,7 @@ import (
 // use "" for no file, in which a new password will be generated
 func PromptPassword(fileToTest string) string {
 	password1 := "1"
-	if len(fileToTest) == 0 {
+	if !exists(fileToTest + ".gpg") {
 		password2 := "2"
 		for password1 != password2 {
 			fmt.Printf("Enter password: ")
@@ -33,9 +33,10 @@ func PromptPassword(fileToTest string) string {
 			fmt.Printf("Enter password: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
-			_, err := DecryptFile(fileToTest, password1)
+			err := DecryptFile(fileToTest, password1)
 			if err == nil {
 				passwordAccepted = true
+				EncryptFile(fileToTest, password1)
 			} else {
 				fmt.Println("\nPasswords do not match.")
 			}

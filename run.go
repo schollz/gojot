@@ -16,7 +16,15 @@ func Run() {
 	} else {
 		Fetch(RemoteFolder)
 	}
-	cache, _ := UpdateCache(RemoteFolder, CurrentDocument, false)
+
+	if Encrypt {
+		Passphrase = PromptPassword(path.Join(RemoteFolder, CurrentDocument+".cache"))
+	}
+	cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
+	if err != nil {
+		logger.Error("Error updating cache: %s", err.Error())
+		return
+	}
 
 	logger.Debug("Getting ready to edit %s", CurrentDocument)
 	texts := []string{}

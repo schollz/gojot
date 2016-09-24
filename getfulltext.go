@@ -23,6 +23,9 @@ func getTextWorker(id int, jobs <-chan Entry, results chan<- Entry) {
 			logger.Error("git show %s:%s did not work", result.Branch, result.Document)
 		}
 		result.Text = strings.TrimSpace(string(stdout))
+		if Encrypt {
+			result.Text, _ = DecryptString(result.Text, Passphrase)
+		}
 
 		results <- *result
 	}

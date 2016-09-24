@@ -26,7 +26,8 @@ var (
 	DeleteDocument                  string
 	RemoteFolder, CacheFile         string
 	Extension                       string
-	Debug                           bool
+	Passphrase                      string
+	Debug, Encrypt                  bool
 )
 
 func main() {
@@ -125,6 +126,11 @@ EXAMPLE USAGE:
 			Name:        "delete",
 			Usage:       "Delete `document`",
 			Destination: &DeleteDocument,
+		},
+		cli.BoolFlag{
+			Name:        "encrypt, e",
+			Usage:       "Encrypt",
+			Destination: &Encrypt,
 		},
 	}
 	app.Run(os.Args)
