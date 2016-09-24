@@ -60,3 +60,11 @@ func TestDecryptFileWrongPassword(t *testing.T) {
 		t.Errorf("Expected NOT 'Some random text', and instead got '%s'", text)
 	}
 }
+
+// go test -run=Decrypt -bench=.
+func BenchmarkDecrypt(b *testing.B) {
+	encrypted := EncryptString("encrypt me", "test")
+	for n := 0; n < b.N; n++ {
+		DecryptString(encrypted, "test")
+	}
+}

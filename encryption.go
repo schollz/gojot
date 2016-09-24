@@ -63,14 +63,14 @@ func EncryptString(encryptionText string, encryptionPassphraseString string) str
 	return strings.TrimSpace(encbuf.String())
 }
 
-// decrypt returns the decrypted contents of a GPG symmetric encrypted file
+// DecryptFile returns the decrypted contents of a GPG symmetric encrypted file
 func DecryptFile(file string, passphrase string) (string, error) {
 	fileContents, _ := ioutil.ReadFile(file)
 	decrypted, err := DecryptString(string(fileContents), passphrase)
 	return decrypted, err
 }
 
-// Encrypt file creates an encrypted file with extension gpg
+// EncryptFile creates an encrypted file with extension gpg
 // and shreds old file
 func EncryptFile(file string, passphrase string) error {
 	fileContents, _ := ioutil.ReadFile(file)
@@ -79,6 +79,6 @@ func EncryptFile(file string, passphrase string) error {
 	if err != nil {
 		return err
 	}
-	Shred(file)
-	return nil
+	err = Shred(file)
+	return err
 }

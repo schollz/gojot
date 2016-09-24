@@ -1,6 +1,7 @@
 package main
 
 import (
+	"hash/fnv"
 	"math/rand"
 	"os"
 	"time"
@@ -38,6 +39,19 @@ func RandStringBytesMaskImprSrc(n int, seed int64) string {
 	}
 
 	return string(b)
+}
+
+// HashString generates a 6-character random string from integer hash of string
+func HashString(s string) string {
+	seed := integerHash(s)
+	return RandStringBytesMaskImprSrc(6, seed)
+}
+
+// integerHash generates a integer hash
+func integerHash(s string) int64 {
+	h := fnv.New64a()
+	h.Write([]byte(s))
+	return int64(h.Sum64())
 }
 
 // exists returns whether the given file or directory exists or not

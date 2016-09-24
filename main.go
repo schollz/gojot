@@ -5,17 +5,12 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
 	"github.com/urfave/cli"
 )
-
-// App parameters
-var Version string
-var BuildTime string
-var Build string
-var Extension string
 
 // Structures
 type Entry struct {
@@ -24,14 +19,14 @@ type Entry struct {
 
 // Global parameters
 var (
-	Cache map[string]Entry
+	Version, BuildTime, Build       string
+	Cache                           map[string]Entry
+	CachePath, ConfigPath, TempPath string
+	CurrentDocument, Editor, Remote string
+	RemoteFolder                    string
+	Extension                       string
+	Debug                           bool
 )
-
-var RuntimeArgs struct {
-	Debug      bool
-	CachePath  string
-	ConfigPath string
-}
 
 func main() {
 	// Delete temp files upon exit
@@ -46,9 +41,6 @@ func main() {
 		cleanUp()
 		os.Exit(1)
 	}()
-
-	// Setup paths
-	setup()
 
 	// App information
 	app := cli.NewApp()
@@ -78,19 +70,31 @@ EXAMPLE USAGE:
 
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
-		if RuntimeArgs.Debug == false {
+		if Debug == false {
 			logger.Level(2)
 		} else {
 			logger.Level(0)
 		}
 
+		workingFile := c.Args().Get(0)
+		if len(workingFile) > 0 {
+			CurrentDocument = workingFile
+		}
+
+		// Check if its Windows
+		if runtime.GOOS == "windows" {
+			Extension = ".exe"
+		} else {
+			Extension = ""
+		}
+		Run()
 		return nil
 	}
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
-			Destination: &RuntimeArgs.Debug,
+			Destination: &Debug,
 		},
 	}
 	app.Run(os.Args)

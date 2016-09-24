@@ -6,18 +6,13 @@ import (
 	"log"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	home "github.com/mitchellh/go-homedir"
 )
 
-var (
-	CachePath string
-)
-
 func CleanFolderName(gitfolder string) string {
-	return strings.Replace(strings.Replace(gitfolder, "/", "", -1), ".", "", -1)
+	return RemoteFolder
 }
 
 func init() {
@@ -38,13 +33,21 @@ func init() {
 			log.Fatal(err)
 		}
 	}
+
+	TempPath = path.Join(homeDir, ".cache", "gitsdees", "temp")
+	if !exists(TempPath) {
+		err := os.MkdirAll(TempPath, 0711)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func UpdateCache(gitfolder string, forceUpdate bool) (map[string]Entry, []string) {
 	defer timeTrack(time.Now(), "Updating cache")
 	cache := make(map[string]Entry)
-	cacheFile := path.Join(CachePath, CleanFolderName(gitfolder)+".cache")
-
+	cacheFile := RemoteFolder + ".cache"
+	logger.Debug("Using cacheFile: %s", cacheFile)
 	branchNames, _ := ListBranches(gitfolder)
 	entriesToUpdate := []Entry{} // which branches to update in cache
 	entries, _ := GetInfo(gitfolder, branchNames)
@@ -80,7 +83,7 @@ func UpdateCache(gitfolder string, forceUpdate bool) (map[string]Entry, []string
 }
 
 func WriteCache(gitfolder string, cache map[string]Entry) {
-	cacheFile := path.Join(CachePath, CleanFolderName(gitfolder)+".cache")
+	cacheFile := RemoteFolder + ".cache"
 	b, err := json.Marshal(cache)
 	if err != nil {
 		logger.Error("Error: " + err.Error())
@@ -94,7 +97,7 @@ func WriteCache(gitfolder string, cache map[string]Entry) {
 
 func LoadCache(gitfolder string) map[string]Entry {
 	defer timeTrack(time.Now(), "Loading cache")
-	cacheFile := path.Join(CachePath, CleanFolderName(gitfolder)+".cache")
+	cacheFile := RemoteFolder + ".cache"
 	b, _ := ioutil.ReadFile(cacheFile)
 	var cache map[string]Entry
 	err := json.Unmarshal(b, &cache)
