@@ -303,7 +303,7 @@ func createBranches(gitfolder string, numBranches int) {
 
 		d1 = []byte("hello, world branch #" + strconv.Itoa(i))
 		fileName = "test.txt"
-		if rand.Float32() < 0.5 {
+		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
 		err = ioutil.WriteFile(fileName, d1, 0644)

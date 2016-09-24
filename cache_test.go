@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path"
 	"testing"
 	"time"
 )
@@ -11,9 +12,9 @@ var CACHE_TEST_GITFOLDER = "./gittest10"
 
 func TestCreateCache(t *testing.T) {
 	log.Println("Testing CreateCache...")
-	UpdateCache(CACHE_TEST_GITFOLDER, "test.txt", true)
-	if !exists(CacheFile) {
-		t.Errorf("Error creating cache: %s", CacheFile)
+	_, _, err := UpdateCache(CACHE_TEST_GITFOLDER, "test.txt", true)
+	if !exists(path.Join(CACHE_TEST_GITFOLDER, "test.txt.cache")) || err != nil {
+		t.Errorf("Error creating cache: %s, %v", path.Join(CACHE_TEST_GITFOLDER, "test.txt.cache"), err)
 	}
 }
 
@@ -39,16 +40,16 @@ func TestUpdateCache(t *testing.T) {
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
 	_, updatedBranches, _ := UpdateCache(gitfolder, "test2.txt", false)
-	if len(updatedBranches) != 2 {
+	if len(updatedBranches) < 2 {
 		t.Errorf("Error updating branches, got %v", updatedBranches)
 	}
 }
 
 func TestLoadCache(t *testing.T) {
 	log.Println("Testing LoadCache...")
-	gitfolder := "testOld"
-	cache := LoadCache(gitfolder, "test.txt")
-	if _, ok := cache.Branch["test3"]; !ok {
+	UpdateCache(CACHE_TEST_GITFOLDER, "test.txt", true)
+	cache := LoadCache(CACHE_TEST_GITFOLDER, "test.txt")
+	if _, ok := cache.Branch["4"]; !ok {
 		t.Errorf("Error loading cache, got: %v", cache.Branch["test3"])
 	}
 }
