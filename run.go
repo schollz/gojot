@@ -16,7 +16,6 @@ func Run() {
 	} else {
 		Fetch(RemoteFolder)
 	}
-	CacheFile = path.Join(CachePath, CurrentDocument+".cache")
 	cache, _ := UpdateCache(RemoteFolder, CurrentDocument, false)
 
 	logger.Debug("Getting ready to edit %s", CurrentDocument)
@@ -24,12 +23,11 @@ func Run() {
 	if All {
 		texts = CombineEntries(cache)
 	}
-	texts = append(texts, HeadMatter(GetCurrentDate(), "NEW", RandStringBytesMaskImprSrc(6, time.Now().UnixNano())))
+	texts = append(texts, HeadMatter(GetCurrentDate(), " NEW ", RandStringBytesMaskImprSrc(5, time.Now().UnixNano())))
 	ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	fulltext := WriteEntry()
 	ProcessFullText(fulltext)
-	// NewDocument(RemoteFolder, CurrentDocument, fulltext, GetMessage(fulltext), GetCurrentDate(), "")
-	// Push(RemoteFolder)
+	Push(RemoteFolder)
 }
 
 func ProcessFullText(fulltext string) {

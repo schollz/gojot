@@ -9,7 +9,7 @@ import (
 // HashString generates a 6-character random string from integer hash of string
 func HashString(s string) string {
 	seed := integerHash(s)
-	return RandStringBytesMaskImprSrc(6, seed)
+	return RandStringBytesMaskImprSrc(5, seed)
 }
 
 // integerHash generates a integer hash
@@ -23,5 +23,5 @@ func integerHash(s string) int64 {
 func GetMD5Hash(text string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(text))
-	return b64.StdEncoding.EncodeToString([]byte(hasher.Sum(nil)))
+	return b64.StdEncoding.EncodeToString([]byte(hasher.Sum(nil)))[0:8]
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"path"
 	"testing"
 	"time"
 )
@@ -18,18 +17,9 @@ func TestCreateCache(t *testing.T) {
 	}
 }
 
-func TestLoadCache(t *testing.T) {
-	log.Println("Testing LoadCache...")
-	cache := LoadCache(CACHE_TEST_GITFOLDER)
-	if cache.Branch["6"].Text != "hello, world branch #6" {
-		t.Errorf("Error loading cache")
-	}
-}
-
 func TestUpdateCache(t *testing.T) {
 	log.Println("Testing Update...")
 	gitfolder := "testOld"
-	CacheFile = path.Join(CachePath, "test.txt"+".cache")
 	os.RemoveAll(gitfolder)
 	err := Clone(gitfolder, GITHUB_TEST_REPO)
 	if err != nil {
@@ -48,8 +38,17 @@ func TestUpdateCache(t *testing.T) {
 	}
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
-	_, updatedBranches := UpdateCache(gitfolder, "test.txt", false)
+	_, updatedBranches := UpdateCache(gitfolder, "test2.txt", false)
 	if len(updatedBranches) != 2 {
 		t.Errorf("Error updating branches, got %v", updatedBranches)
+	}
+}
+
+func TestLoadCache(t *testing.T) {
+	log.Println("Testing LoadCache...")
+	gitfolder := "testOld"
+	cache := LoadCache(gitfolder, "test.txt")
+	if _, ok := cache.Branch["test3"]; !ok {
+		t.Errorf("Error loading cache, got: %v", cache.Branch["test3"])
 	}
 }
