@@ -1,8 +1,12 @@
 package main
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-func ProcessEntries(fulltext string) {
+func ProcessEntries(fulltext string) []string {
+	var branchesUpdated []string
 	type Blob struct {
 		Date, Branch, Hash, Text string
 	}
@@ -31,22 +35,26 @@ func ProcessEntries(fulltext string) {
 	for _, blob := range blobs {
 		if blob.Branch == "NEW" {
 			if len(blob.Text) < 10 {
+				fmt.Println("No new data, not commiting new document.")
 				continue
 			}
 			logger.Debug("Writing new entry for " + blob.Branch)
-			_, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, "")
+			newBranch, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, "")
+			branchesUpdated = append(branchesUpdated, newBranch)
 			if err != nil {
 				logger.Error(err.Error())
 			}
 		} else if blob.Hash != GetMD5Hash(blob.Text) {
 			logger.Debug("Updating entry for " + blob.Branch)
 			_, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, blob.Branch)
+			branchesUpdated = append(branchesUpdated, blob.Branch)
 			if err != nil {
 				logger.Error(err.Error())
 			}
 		}
 	}
 
+	return branchesUpdated
 }
 
 func HeadMatter(date string, branch string, text string) string {

@@ -21,7 +21,7 @@ func setupConfig() {
 	if strings.TrimSpace(strings.ToLower(yesno)) == "y" {
 		fmt.Print("Enter remote (e.g.: git@github.com:USER/REPO.git): ")
 		fmt.Scanln(&configParamaters.Remote)
-		logger.Debug("configParamaters.Remote: [%v]", configParamaters.Remote)
+		// logger.Debug("configParamaters.Remote: %s", configParamaters.Remote)
 		if len(configParamaters.Remote) == 0 {
 			configParamaters.Remote = "local"
 		}
