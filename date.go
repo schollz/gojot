@@ -29,6 +29,12 @@ func ParseDate(date string) (time.Time, error) {
 	if err != nil {
 		newTime, err = time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", date)
 	}
+	if err != nil {
+		newTime, err = time.Parse("2006-01-02 15:04:05", date)
+	}
+	if err != nil {
+		newTime, err = time.Parse("2006-01-02 15:04", date)
+	}
 	return newTime, err
 }
 
