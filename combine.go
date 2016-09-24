@@ -25,19 +25,17 @@ func (p timeSlice) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-func CombineEntries(cache map[string]Entry) []string {
+func CombineEntries(cache Cache) []string {
 	logger.Debug("Combining entries")
 	var data = make(map[string]combineData)
-	for branch := range cache {
-		if cache[branch].Document == CurrentDocument {
-			textData := HeadMatter(cache[branch].Date, cache[branch].Branch, cache[branch].Text) + cache[branch].Text
-			parsedData, err := ParseDate(strings.TrimSpace(cache[branch].Date))
-			if err != nil {
-				logger.Debug(strings.TrimSpace(cache[branch].Date))
-				logger.Error(err.Error())
-			}
-			data[branch] = combineData{date: parsedData, text: textData}
+	for branch := range cache.Branch {
+		textData := HeadMatter(cache.Branch[branch].Date, cache.Branch[branch].Branch, cache.Branch[branch].Text) + cache.Branch[branch].Text
+		parsedData, err := ParseDate(strings.TrimSpace(cache.Branch[branch].Date))
+		if err != nil {
+			logger.Debug(strings.TrimSpace(cache.Branch[branch].Date))
+			logger.Error(err.Error())
 		}
+		data[branch] = combineData{date: parsedData, text: textData}
 	}
 
 	sortedCombineData := make(timeSlice, 0, len(data))

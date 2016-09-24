@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -17,7 +16,8 @@ func Run() {
 	} else {
 		Fetch(RemoteFolder)
 	}
-	cache, _ := UpdateCache(RemoteFolder, false)
+	CacheFile = path.Join(CachePath, CurrentDocument+".cache")
+	cache, _ := UpdateCache(RemoteFolder, CurrentDocument, false)
 
 	logger.Debug("Getting ready to edit %s", CurrentDocument)
 	texts := []string{}
@@ -59,7 +59,6 @@ func ProcessFullText(fulltext string) {
 		blobs = append(blobs, currentBlob)
 	}
 	for _, blob := range blobs {
-		fmt.Println(blob.Hash, GetMD5Hash(blob.Text), blob.Hash == GetMD5Hash(blob.Text))
 		if blob.Branch == "NEW" {
 			if len(blob.Text) < 10 {
 				continue

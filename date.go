@@ -18,9 +18,18 @@ func ParseDate(date string) (time.Time, error) {
 		newTime, err = time.Parse("Mon Jan 02 15:04:05 2006 -0700", date)
 	}
 	if err != nil {
-		return newTime, err
+		newTime, err = time.Parse("Mon Jan 2 15:04:05 2006 -0700", date)
 	}
-	return newTime, nil
+	if err != nil {
+		newTime, err = time.Parse("Mon, Jan 02 15:04:05 2006 -0700", date)
+	}
+	if err != nil {
+		newTime, err = time.Parse("Mon 02 Jan 2006 15:04:05 -0700", date)
+	}
+	if err != nil {
+		newTime, err = time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", date)
+	}
+	return newTime, err
 }
 
 func FormatDate(date time.Time) string {

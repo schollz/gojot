@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"testing"
 	"time"
@@ -20,6 +22,14 @@ func TestMain(m *testing.M) {
 		log.Println("Creating branches for testing...")
 		createBranches("./gittest", 100)
 	}
+	if _, err := os.Stat("./gittest10"); os.IsNotExist(err) {
+		log.Println("Creating branches for testing...")
+		createBranches("./gittest10", 10)
+	}
+	setupPaths()
+	RemoteFolder = "./gittest10"
+	CurrentDocument = "test.txt"
+	CacheFile = path.Join(CachePath, CurrentDocument+".cache")
 
 	exitVal := m.Run()
 
@@ -275,7 +285,12 @@ func createBranches(gitfolder string, numBranches int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	cmd = exec.Command("git", "add", "test.txt")
+
+	fileName := "test.txt"
+	if rand.Float32() < 0.5 {
+		fileName = "other.txt"
+	}
+	cmd = exec.Command("git", "add", fileName)
 	_, err = cmd.Output()
 
 	cmd = exec.Command("git", "commit", "-am", "'added test.txt'")
@@ -287,15 +302,19 @@ func createBranches(gitfolder string, numBranches int) {
 		_, err := cmd.Output()
 
 		d1 = []byte("hello, world branch #" + strconv.Itoa(i))
-		err = ioutil.WriteFile("test.txt", d1, 0644)
+		fileName = "test.txt"
+		if rand.Float32() < 0.5 {
+			fileName = "other.txt"
+		}
+		err = ioutil.WriteFile(fileName, d1, 0644)
 		if err != nil {
 			fmt.Println("Can't checkout")
 			log.Fatal(err)
 		}
-		cmd = exec.Command("git", "add", "test.txt")
+		cmd = exec.Command("git", "add", fileName)
 		_, err = cmd.Output()
 
-		cmd = exec.Command("git", "commit", "-am", "'added test.txt'")
+		cmd = exec.Command("git", "commit", "-am", "'added "+fileName+"'")
 		_, err = cmd.Output()
 	}
 

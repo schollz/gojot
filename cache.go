@@ -3,106 +3,97 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
-	"os"
-	"path"
+	"strings"
 	"time"
-
-	home "github.com/mitchellh/go-homedir"
 )
 
 func CleanFolderName(gitfolder string) string {
-	return RemoteFolder
+	return strings.Replace(strings.Replace(RemoteFolder, ".", "", -1), "/", "", -1)
 }
 
-func init() {
-	// Set the paths
-	homeDir, _ := home.Dir()
-
-	if !exists(path.Join(homeDir, ".cache")) {
-		err := os.MkdirAll(path.Join(homeDir, ".cache"), 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	CachePath = path.Join(homeDir, ".cache", "gitsdees")
-	if !exists(CachePath) {
-		err := os.MkdirAll(CachePath, 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	TempPath = path.Join(homeDir, ".cache", "gitsdees", "temp")
-	if !exists(TempPath) {
-		err := os.MkdirAll(TempPath, 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+type Cache struct {
+	Branch map[string]Entry
+	Ignore map[string]bool
 }
 
-func UpdateCache(gitfolder string, forceUpdate bool) (map[string]Entry, []string) {
-	defer timeTrack(time.Now(), "Updating cache")
-	cache := make(map[string]Entry)
-	cacheFile := RemoteFolder + ".cache"
-	logger.Debug("Using cacheFile: %s", cacheFile)
+func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []string) {
+	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
+	logger.Debug("[%s]Updating cache for document %s in %s", id, document, gitfolder)
+	defer timeTrack(time.Now(), "["+id+"]Updating cache")
+	var cache Cache
+
+	// FIrst colelct branches to get info from
 	branchNames, _ := ListBranches(gitfolder)
-	entriesToUpdate := []Entry{} // which branches to update in cache
-	entries, _ := GetInfo(gitfolder, branchNames)
-
-	if !exists(cacheFile) || forceUpdate {
-		// Generate new cache
+	var branchesToGetInfo []string
+	if !exists(CacheFile) || forceUpdate {
 		logger.Debug("Generating new cache")
-		entriesToUpdate = entries
+		branchesToGetInfo = branchNames
+		cache.Ignore = make(map[string]bool)
+		cache.Branch = make(map[string]Entry)
 	} else {
-		// Load current cache
-		logger.Debug("Loading and updating cache")
+		logger.Debug("Using CacheFile: %s", CacheFile)
 		cache = LoadCache(gitfolder)
-		for _, info := range entries {
-			if _, ok := cache[info.Branch]; !ok {
-				entriesToUpdate = append(entriesToUpdate, info)
-				continue
-			}
-			if info.Hash != cache[info.Branch].Hash {
-				entriesToUpdate = append(entriesToUpdate, info)
+		for _, branch := range branchNames {
+			ignore, ok := cache.Ignore[branch]
+			if !ok || !ignore {
+				branchesToGetInfo = append(branchesToGetInfo, branch)
 			}
 		}
 	}
 
+	// From those branches, determine which entries need fulltext updating
+	entriesToUpdate := []Entry{} // which branches to update in cache
+	entries, _ := GetInfo(gitfolder, branchesToGetInfo)
+	for _, entry := range entries {
+		cache.Ignore[entry.Branch] = entry.Document != document
+		ignore, ok := cache.Ignore[entry.Branch]
+		if !ok {
+			continue
+		}
+		if !ignore && entry.Hash != cache.Branch[entry.Branch].Hash {
+			entriesToUpdate = append(entriesToUpdate, entry)
+		}
+	}
+
+	// Update the fulltext of entries
 	entriesToUpdate, _ = GetText(gitfolder, entriesToUpdate)
 	updatedBranches := make([]string, len(entriesToUpdate))
-	for i, info := range entriesToUpdate {
-		logger.Debug("Updating branch %s", info.Branch)
-		cache[info.Branch] = info
-		updatedBranches[i] = info.Branch
+	if len(entriesToUpdate) > 10 {
+		logger.Debug("Updating many entries")
 	}
-	go WriteCache(gitfolder, cache)
+	for i, entry := range entriesToUpdate {
+		if len(entriesToUpdate) <= 10 {
+			logger.Debug("Updating branch %s", entry.Branch)
+		}
+		cache.Branch[entry.Branch] = entry
+		updatedBranches[i] = entry.Branch
+	}
+
+	// Save
+	WriteCache(gitfolder, cache)
+
 	return cache, updatedBranches
 }
 
-func WriteCache(gitfolder string, cache map[string]Entry) {
-	cacheFile := RemoteFolder + ".cache"
+func WriteCache(gitfolder string, cache Cache) {
 	b, err := json.Marshal(cache)
 	if err != nil {
-		logger.Error("Error: " + err.Error())
+		logger.Error("Error marshaling " + CacheFile + ": " + err.Error())
 	}
-	err = ioutil.WriteFile(cacheFile, b, 0644)
+	err = ioutil.WriteFile(CacheFile, b, 0644)
 	if err != nil {
-		logger.Error("Error: " + err.Error())
+		logger.Error("Error writing " + CacheFile + ": " + err.Error())
 	}
-	logger.Debug("Wrote config file: %s", cacheFile)
+	logger.Debug("Wrote cache file: %s", CacheFile)
 }
 
-func LoadCache(gitfolder string) map[string]Entry {
+func LoadCache(gitfolder string) Cache {
 	defer timeTrack(time.Now(), "Loading cache")
-	cacheFile := RemoteFolder + ".cache"
-	b, _ := ioutil.ReadFile(cacheFile)
-	var cache map[string]Entry
+	b, _ := ioutil.ReadFile(CacheFile)
+	var cache Cache
 	err := json.Unmarshal(b, &cache)
 	if err != nil {
-		logger.Error("Error: " + err.Error())
+		logger.Error("Error loading " + CacheFile + ": " + err.Error())
 	}
 	return cache
 }

@@ -5,39 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"path"
 	"strings"
-
-	home "github.com/mitchellh/go-homedir"
 )
 
 type Config struct {
 	Remote, Editor, CurrentDocument string
-}
-
-func init() {
-	// Set the paths
-	homeDir, _ := home.Dir()
-
-	if !exists(path.Join(homeDir, ".config")) {
-		err := os.MkdirAll(path.Join(homeDir, ".config"), 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	ConfigPath = path.Join(homeDir, ".config", "gitsdees")
-	if !exists(ConfigPath) {
-		err := os.MkdirAll(ConfigPath, 0711)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	if !exists(path.Join(ConfigPath, "config.json")) {
-		setupConfig()
-	}
 }
 
 func setupConfig() {

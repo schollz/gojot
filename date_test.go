@@ -10,7 +10,7 @@ func TestParseDate(t *testing.T) {
 }
 
 func TestFormatDate(t *testing.T) {
-	testDate := "Thu, 07 Apr 2005 22:13:13 +0200"
+	testDate := "Thu Apr 07 22:13:13 2005 +0200"
 	date, err := ParseDate(testDate)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -19,7 +19,7 @@ func TestFormatDate(t *testing.T) {
 		t.Errorf("Expected %s and got %s", testDate, FormatDate(date))
 	}
 
-	testDate = "Fri, Sep 23 21:50:57 2016 -0400"
+	testDate = "Fri Sep 23 21:50:57 2016 -0400"
 	date, err = ParseDate(testDate)
 	if err != nil {
 		t.Errorf(err.Error())

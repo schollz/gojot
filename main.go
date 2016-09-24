@@ -20,12 +20,11 @@ type Entry struct {
 // Global parameters
 var (
 	Version, BuildTime, Build       string
-	Cache                           map[string]Entry
 	CachePath, ConfigPath, TempPath string
 	CurrentDocument, Editor, Remote string
 	All                             bool
 	DeleteDocument                  string
-	RemoteFolder                    string
+	RemoteFolder, CacheFile         string
 	Extension                       string
 	Debug                           bool
 )
