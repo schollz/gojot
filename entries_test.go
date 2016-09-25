@@ -18,7 +18,8 @@ Another new entry
 Sat Sep 24 15:13:52 2016 -0400 -==-  NEW  -==- rsNLD0eL
 
 jlkjlkjl sadflkja sdflkajsdf alkjs`
-	branchesUpdated := ProcessEntries(testEntry)
+	var branchHashes map[string]string
+	branchesUpdated := ProcessEntries(testEntry, branchHashes)
 	if branchesUpdated[0] != "AwIZ5" && branchesUpdated[1] != "qQx0X" {
 		t.Errorf("Error processing files")
 	}

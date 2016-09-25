@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
-	"time"
 )
 
 func Run() {
@@ -28,12 +27,13 @@ func Run() {
 
 	logger.Debug("Getting ready to edit %s", CurrentDocument)
 	texts := []string{}
+	var branchHashes map[string]string
 	if All {
-		texts = CombineEntries(cache)
+		texts, branchHashes = CombineEntries(cache)
 	}
-	texts = append(texts, HeadMatter(GetCurrentDate(), " NEW ", RandStringBytesMaskImprSrc(5, time.Now().UnixNano())))
+	texts = append(texts, HeadMatter(GetCurrentDate(), ""))
 	ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	fulltext := WriteEntry()
-	ProcessEntries(fulltext)
+	ProcessEntries(fulltext, branchHashes)
 	Push(RemoteFolder)
 }
