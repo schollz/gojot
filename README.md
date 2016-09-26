@@ -4,6 +4,38 @@
 
 # Notes
 
+# Setup git server
+
+## Server setup
+
+```
+sudo apt-get install git-core
+sudo useradd git
+sudo passwd git
+sudo mkdir /home/git
+sudo chown git:git /home/git
+```
+
+## Make new git
+
+First add key,
+
+```
+cat ~/.ssh/id_rsa.pub | ssh git@remote "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+```
+
+Then make new repo on the remote server,
+
+```
+ssh git@remote "mkdir -p ~/new2.git && git init --bare new2.git/ && rm -rf clonetest && git clone new2.git clonetest && cd clonetest && touch README.md && git add . && git commit -m 'added master' && git push origin master"
+```
+
+Then add the remote to `gitsdees` using
+
+```
+git@remote:new.git
+```
+
 # master branch
 
 The `master` branch only contains README.md about what the repo is?
