@@ -18,6 +18,7 @@ var (
 	Debug                     bool
 	DontEncrypt               bool
 	DeleteDocument            string
+	ResetConfig               bool
 )
 
 func main() {
@@ -85,16 +86,7 @@ EXAMPLE USAGE:
 
 		// Process some flags
 		if len(DeleteDocument) > 0 {
-			err := sdees.Delete(RemoteFolder, DeleteDocument)
-			if err != nil {
-				logger.Error(err.Error())
-				return err
-			}
-			err = sdees.Push(RemoteFolder)
-			if err != nil {
-				logger.Error(err.Error())
-				return err
-			}
+			return sdees.DeleteAndPush(DeleteDocument)
 		} else if ResetConfig {
 			sdees.SetupConfig()
 		} else {

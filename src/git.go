@@ -2,6 +2,7 @@ package gitsdees
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -133,6 +134,21 @@ func Delete(gitfolder string, branch string) error {
 	// Create empty file and commit to same branch
 	NewDocument(gitfolder, ".deleted", "", "deleted", "Thu, 07 Apr 2005 22:13:13 +0200", branch)
 
+	return nil
+}
+
+func DeleteAndPush(document string) error {
+	fmt.Printf("Are you sure you want to delete %s? ") // TODO: PROMPT USER
+	err := Delete(RemoteFolder, document)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+	err = Push(RemoteFolder)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
 	return nil
 }
 
