@@ -11,6 +11,8 @@ func MakeAlliteration() string {
 	dataNoun, _ := Asset("bin/nouns.txt")
 	adjectives := strings.Split(string(dataAdj), "\n")
 	nouns := strings.Split(string(dataNoun), "\n")
+	adjectives = adjectives[0 : len(adjectives)-1]
+	nouns = adjectives[0 : len(nouns)-1]
 	alliterate := make(map[string]map[string][]string)
 	for _, word := range adjectives {
 		word = strings.Title(strings.TrimSpace(word))
