@@ -1,6 +1,6 @@
 SOURCEDIR=.
 
-BINARY=sdees
+BINARY=gitsdees
 
 VERSION=2.0.0
 BUILD_TIME=`date +%FT%T%z`
@@ -15,14 +15,12 @@ $(BINARY): $(SOURCES)
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get github.com/jteeuwen/go-bindata/...
-	rm -rf bin
-	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
 	go build ${LDFLAGS} -o ${BINARY}
 
 .PHONY: install
 install:
-	sudo mv sdees /usr/local/bin/
+	sudo mv gitsdees /usr/local/bin/
 
 .PHONY: clean
 clean:
@@ -32,8 +30,6 @@ clean:
 
 .PHONY: windows
 windows:
-	rm -rf bin
-	mkdir bin
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
 	unzip vim80w32.zip
 	mv vim/vim80/vim.exe ./bin/
@@ -47,7 +43,6 @@ binaries:
 	go get github.com/jteeuwen/go-bindata/...
 	rm -rf binaries
 	mkdir binaries
-	rm -rf bin
 	mkdir bin
 	$(GOPATH)/bin/go-bindata bin
 	## OS X
@@ -66,8 +61,6 @@ binaries:
 	zip -j binaries/sdees_linux_arm64.zip binaries/sdees
 	rm binaries/sdees
 	## WINDOWS
-	rm -rf bin
-	mkdir bin
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
 	unzip vim80w32.zip
 	mv vim/vim80/vim.exe ./bin/
@@ -78,6 +71,4 @@ binaries:
 	zip -j binaries/sdees_windows_amd64.zip binaries/sdees.exe
 	rm -rf binaries/vim.exe
 	rm -rf ./vim/
-	rm -rf ./bin/
-	rm -rf bindata.go
 	rm binaries/sdees.exe
