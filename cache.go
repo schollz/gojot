@@ -30,14 +30,15 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	// FIrst colelct branches to get info from
 	branchNames, _ := ListBranches(gitfolder)
 	var branchesToGetInfo []string
-	if (!exists(cacheFile) && !exists(cacheFile+".gpg")) || forceUpdate {
+	logger.Debug("Using cacheFile: %s", cacheFile)
+	cacheTest, err2 := LoadCache(gitfolder, document)
+	if err2 != nil || forceUpdate {
 		logger.Debug("Generating new cache")
 		branchesToGetInfo = branchNames
 		cache.Ignore = make(map[string]bool)
 		cache.Branch = make(map[string]Entry)
 	} else {
-		logger.Debug("Using cacheFile: %s", cacheFile)
-		cache = LoadCache(gitfolder, document)
+		cache = cacheTest
 		for _, branch := range branchNames {
 			ignore, ok := cache.Ignore[branch]
 			if !ok || !ignore {
@@ -103,23 +104,26 @@ func WriteCache(gitfolder string, document string, cache Cache) {
 	logger.Debug("Wrote cache file: %s", cacheFile)
 }
 
-func LoadCache(gitfolder string, document string) Cache {
+func LoadCache(gitfolder string, document string) (Cache, error) {
+	var cache Cache
 	cacheFile := path.Join(RemoteFolder, document+".cache")
 	if Encrypt {
 		err := DecryptFile(cacheFile, Passphrase)
 		if err != nil {
 			logger.Error("Error decrypting %s", cacheFile)
+			return cache, err
 		}
 	}
 	defer timeTrack(time.Now(), "Loading cache")
 	b, err := ioutil.ReadFile(cacheFile)
 	if err != nil {
 		logger.Error("Error loading " + cacheFile + ": " + err.Error())
+		return cache, err
 	}
-	var cache Cache
 	err = json.Unmarshal(b, &cache)
 	if err != nil {
 		logger.Error("Error umarshling " + cacheFile + ": " + err.Error())
+		return cache, err
 	}
-	return cache
+	return cache, err
 }

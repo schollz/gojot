@@ -55,6 +55,6 @@ func setupPaths() {
 	}
 
 	if !exists(path.Join(ConfigPath, "config.json")) {
-		setupConfig()
+		SetupConfig()
 	}
 }

@@ -277,7 +277,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 
 	newBranch := branchNameOverride
 	if len(branchNameOverride) == 0 {
-		newBranch = RandStringBytesMaskImprSrc(5, time.Now().UnixNano())
+		newBranch = MakeAlliteration()
 	}
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()

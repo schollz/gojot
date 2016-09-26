@@ -13,7 +13,7 @@ type Config struct {
 	Remote, Editor, CurrentDocument string
 }
 
-func setupConfig() {
+func SetupConfig() {
 	var yesno string
 	var configParamaters Config
 	fmt.Print("sdees has capability to use a remote git repository to keep documents in sync.\nWould you like to set this up? (y/n) ")

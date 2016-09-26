@@ -27,7 +27,7 @@ var (
 	RemoteFolder, CacheFile         string
 	Extension                       string
 	Passphrase                      string
-	Debug, Encrypt                  bool
+	Debug, Encrypt, ResetConfig     bool
 )
 
 func main() {
@@ -105,10 +105,11 @@ EXAMPLE USAGE:
 				logger.Error(err.Error())
 				return err
 			}
-			return nil
+		} else if ResetConfig {
+			SetupConfig()
+		} else {
+			Run()
 		}
-
-		Run()
 		return nil
 	}
 	app.Flags = []cli.Flag{
@@ -116,6 +117,11 @@ EXAMPLE USAGE:
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
 			Destination: &Debug,
+		},
+		cli.BoolFlag{
+			Name:        "config",
+			Usage:       "Configure",
+			Destination: &ResetConfig,
 		},
 		cli.BoolFlag{
 			Name:        "all, a",
