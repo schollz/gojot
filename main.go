@@ -9,16 +9,20 @@ import (
 	"syscall"
 	"time"
 
+	sdees "github.com/schollz/gitsdees/src"
 	"github.com/urfave/cli"
 )
 
 var (
 	Version, BuildTime, Build string
+	Debug                     bool
+	DontEncrypt               bool
+	DeleteDocument            string
 )
 
 func main() {
 	// Delete temp files upon exit
-	defer CleanUp()
+	defer sdees.CleanUp()
 
 	// Handle Ctl+C for cleanUp
 	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
@@ -26,7 +30,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		CleanUp()
+		sdees.CleanUp()
 		os.Exit(1)
 	}()
 
@@ -58,45 +62,43 @@ EXAMPLE USAGE:
 
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
-		if Debug == false {
-			logger.Level(2)
-		} else {
-			logger.Level(0)
+		if Debug {
+			sdees.DebugMode()
 		}
 
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
-			CurrentDocument = workingFile
+			sdees.CurrentDocument = workingFile
 		}
 
 		// Check if its Windows
 		if runtime.GOOS == "windows" {
-			Extension = ".exe"
+			sdees.Extension = ".exe"
 		} else {
-			Extension = ""
+			sdees.Extension = ""
 		}
 
-		Encrypt = !DontEncrypt
+		sdees.Encrypt = !DontEncrypt
 
 		// Load configuration
-		LoadConfiguration()
+		sdees.LoadConfiguration()
 
 		// Process some flags
 		if len(DeleteDocument) > 0 {
-			err := Delete(RemoteFolder, DeleteDocument)
+			err := sdees.Delete(RemoteFolder, DeleteDocument)
 			if err != nil {
 				logger.Error(err.Error())
 				return err
 			}
-			err = Push(RemoteFolder)
+			err = sdees.Push(RemoteFolder)
 			if err != nil {
 				logger.Error(err.Error())
 				return err
 			}
 		} else if ResetConfig {
-			SetupConfig()
+			sdees.SetupConfig()
 		} else {
-			Run()
+			sdees.Run()
 		}
 		return nil
 	}
@@ -114,12 +116,12 @@ EXAMPLE USAGE:
 		cli.BoolFlag{
 			Name:        "all, a",
 			Usage:       "Edit all of the document",
-			Destination: &All,
+			Destination: &sdees.All,
 		},
 		cli.StringFlag{
 			Name:        "delete",
 			Usage:       "Delete `document`",
-			Destination: &DeleteDocument,
+			Destination: &sdees.DeleteDocument,
 		},
 		cli.BoolFlag{
 			Name:        "plaintext",

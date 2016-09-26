@@ -1,4 +1,4 @@
-package main
+package gitsdees
 
 // Structures
 type Entry struct {
