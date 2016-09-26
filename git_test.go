@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -106,10 +105,10 @@ func TestPush(t *testing.T) {
 
 func TestGetText(t *testing.T) {
 	log.Println("Testing GetText()...")
-	branchNames, _ := ListBranches("./gittest")
-	entries, _ := GetInfo("./gittest", branchNames)
+	branchNames, _ := ListBranches("gittest")
+	entries, _ := GetInfo("gittest", branchNames)
 
-	entries, _ = GetText("./gittest", entries)
+	entries, _ = GetText("gittest", entries)
 	for _, entry := range entries {
 		if entry.Branch == "12" {
 			if entry.Text != "hello, world branch #12" {
@@ -287,35 +286,37 @@ func createBranches(gitfolder string, numBranches int) {
 	}
 
 	fileName := "test.txt"
-	if rand.Float32() < 0.5 {
-		fileName = "other.txt"
-	}
 	cmd = exec.Command("git", "add", fileName)
 	_, err = cmd.Output()
-
 	cmd = exec.Command("git", "commit", "-am", "'added test.txt'")
 	_, err = cmd.Output()
 
+	rand.Seed(18)
 	start := time.Now()
 	for i := 0; i < numBranches; i++ {
-		cmd := exec.Command("git", "checkout", "--orphan", strconv.Itoa(i))
-		_, err := cmd.Output()
-
-		d1 = []byte("hello, world branch #" + strconv.Itoa(i))
+		// cmd := exec.Command("git", "checkout", "--orphan", strconv.Itoa(i))
+		// _, err := cmd.Output()
+		//
+		// d1 = []byte("hello, world branch #" + strconv.Itoa(i))
+		// fileName = "test.txt"
+		// if rand.Float32() < 0.1 {
+		// 	fileName = "other.txt"
+		// }
+		// err = ioutil.WriteFile(fileName, d1, 0644)
+		// if err != nil {
+		// 	fmt.Println("Can't checkout")
+		// 	log.Fatal(err)
+		// }
+		// cmd = exec.Command("git", "add", fileName)
+		// _, err = cmd.Output()
+		//
+		// cmd = exec.Command("git", "commit", "-am", "'added "+fileName+"'")
+		// _, err = cmd.Output()
 		fileName = "test.txt"
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
-		err = ioutil.WriteFile(fileName, d1, 0644)
-		if err != nil {
-			fmt.Println("Can't checkout")
-			log.Fatal(err)
-		}
-		cmd = exec.Command("git", "add", fileName)
-		_, err = cmd.Output()
-
-		cmd = exec.Command("git", "commit", "-am", "'added "+fileName+"'")
-		_, err = cmd.Output()
+		NewDocument(gitfolder, fileName, "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), strconv.Itoa(i))
 	}
 
 	elapsed := time.Since(start)
