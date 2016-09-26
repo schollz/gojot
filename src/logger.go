@@ -6,9 +6,9 @@ var logger *lumber.ConsoleLogger
 
 func init() {
 	logger = lumber.NewConsoleLogger(lumber.DEBUG)
-	logger.Level(0)
+	logger.Level(2)
 }
 
 func DebugMode() {
-	logger.Level(2)
+	logger.Level(0)
 }
