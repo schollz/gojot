@@ -1,26 +1,23 @@
 package main
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestProcessFiles(t *testing.T) {
-	testEntry := `Sat Sep 24 15:12:50 2016 -0400 -==- AwIZ5 -==- HknvYLLB
-
-Another entry EDITED
-
-Sat Sep 24 15:13:22 2016 -0400 -==- b3VrS -==- LZHOGD1A
-
-New new entry
-
-Sat Sep 24 15:13:31 2016 -0400 -==- 3qgd9 -==- STWCnX8k
-
-Another new entry
-
-Sat Sep 24 15:13:52 2016 -0400 -==-  NEW  -==- rsNLD0eL
-
-jlkjlkjl sadflkja sdflkajsdf alkjs`
-	var branchHashes map[string]string
-	branchesUpdated := ProcessEntries(testEntry, branchHashes)
-	if branchesUpdated[0] != "AwIZ5" && branchesUpdated[1] != "qQx0X" {
+	var cache Cache
+	cache.Branch = make(map[string]Entry)
+	cache.Branch["1"] = Entry{Date: "Thu, 07 Apr 2005 22:13:13 +0200", Text: "one"}
+	cache.Branch["2"] = Entry{Date: "Fri, 08 Apr 2005 22:13:13 +0200", Text: "two"}
+	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: "three"}
+	_, hashes := CombineEntries(cache)
+	cache.Branch["1"] = Entry{Date: "Thu, 07 Apr 2005 22:13:13 +0200", Text: "oneEDIT7"}
+	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: "threeEDIT7"}
+	combined, _ := CombineEntries(cache)
+	testEntry := strings.Join(combined, "\n\n")
+	branchesUpdated := ProcessEntries(testEntry, hashes)
+	if branchesUpdated[0] != "1" && branchesUpdated[1] != "3" {
 		t.Errorf("Error processing files")
 	}
 }

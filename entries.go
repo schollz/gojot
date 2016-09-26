@@ -14,22 +14,23 @@ func ProcessEntries(fulltext string, branchHashes map[string]string) []string {
 	var blobs []Blob
 	var currentBlob Blob
 	for _, line := range strings.Split(fulltext, "\n") {
-		if strings.Count(line, " -==- ") == 2 && len(strings.Split(line, " -==- ")) == 3 {
-			if len(currentBlob.Hash) > 0 {
+		if strings.Count(line, " -==- ") == 1 && len(strings.Split(line, " -==- ")) == 2 {
+			if len(currentBlob.Date) > 0 {
 				currentBlob.Text = strings.TrimSpace(currentBlob.Text)
+				currentBlob.Hash = GetMD5Hash(currentBlob.Text)
 				blobs = append(blobs, currentBlob)
 				currentBlob.Text = ""
 			}
 			items := strings.Split(line, " -==- ")
 			currentBlob.Date = strings.TrimSpace(items[0])
 			currentBlob.Branch = strings.TrimSpace(items[1])
-			currentBlob.Hash = strings.TrimSpace(items[2])
 		} else {
 			currentBlob.Text = currentBlob.Text + line + "\n"
 		}
 	}
-	if len(currentBlob.Hash) > 0 {
+	if len(currentBlob.Date) > 0 {
 		currentBlob.Text = strings.TrimSpace(currentBlob.Text)
+		currentBlob.Hash = GetMD5Hash(currentBlob.Text)
 		blobs = append(blobs, currentBlob)
 	}
 	for _, blob := range blobs {

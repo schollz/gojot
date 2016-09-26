@@ -26,11 +26,11 @@ func (p timeSlice) Swap(i, j int) {
 }
 
 func CombineEntries(cache Cache) ([]string, map[string]string) {
-	var branchHashes map[string]string
 	logger.Debug("Combining entries")
+	var branchHashes = make(map[string]string)
 	var data = make(map[string]combineData)
 	for branch := range cache.Branch {
-		textData := HeadMatter(cache.Branch[branch].Date, cache.Branch[branch].Branch) + cache.Branch[branch].Text
+		textData := HeadMatter(cache.Branch[branch].Date, branch) + cache.Branch[branch].Text
 		branchHashes[branch] = GetMD5Hash(cache.Branch[branch].Text)
 		parsedData, err := ParseDate(strings.TrimSpace(cache.Branch[branch].Date))
 		if err != nil {

@@ -269,9 +269,7 @@ func Fetch(gitfolder string) error {
 }
 
 func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string, branchNameOverride string) (string, error) {
-	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
-	logger.Debug("[%s]NewDocument %s", id, documentname)
-	defer timeTrack(time.Now(), "["+id+"]NewDocument")
+	defer timeTrack(time.Now(), "NewDocument")
 	var err error
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -313,7 +311,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	cmd = exec.Command("git", "commit", "--date", datestring, "-m", message, documentname)
 	_, err = cmd.Output()
 	if err != nil {
-		return newBranch, errors.New("Cannot commit " + documentname)
+		return newBranch, errors.New("Cannot commit " + documentname + " error: " + err.Error())
 	}
 
 	logger.Debug("Updated document %s in branch %s", documentname, newBranch)

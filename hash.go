@@ -23,5 +23,5 @@ func integerHash(s string) int64 {
 func GetMD5Hash(text string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(text))
-	return b64.StdEncoding.EncodeToString([]byte(hasher.Sum(nil)))[0:8]
+	return b64.StdEncoding.EncodeToString([]byte(hasher.Sum(nil)))[0:7]
 }
