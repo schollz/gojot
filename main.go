@@ -19,15 +19,15 @@ type Entry struct {
 
 // Global parameters
 var (
-	Version, BuildTime, Build       string
-	CachePath, ConfigPath, TempPath string
-	CurrentDocument, Editor, Remote string
-	All                             bool
-	DeleteDocument                  string
-	RemoteFolder, CacheFile         string
-	Extension                       string
-	Passphrase                      string
-	Debug, Encrypt, ResetConfig     bool
+	Version, BuildTime, Build                string
+	CachePath, ConfigPath, TempPath          string
+	CurrentDocument, Editor, Remote          string
+	All                                      bool
+	DeleteDocument                           string
+	RemoteFolder, CacheFile                  string
+	Extension                                string
+	Passphrase                               string
+	Debug, Encrypt, DontEncrypt, ResetConfig bool
 )
 
 func main() {
@@ -90,6 +90,8 @@ EXAMPLE USAGE:
 			Extension = ""
 		}
 
+		Encrypt = !DontEncrypt
+
 		// Load configuration
 		LoadConfiguration()
 
@@ -134,9 +136,9 @@ EXAMPLE USAGE:
 			Destination: &DeleteDocument,
 		},
 		cli.BoolFlag{
-			Name:        "encrypt, e",
-			Usage:       "Encrypt",
-			Destination: &Encrypt,
+			Name:        "plaintext",
+			Usage:       "Turns off encryption",
+			Destination: &DontEncrypt,
 		},
 	}
 	app.Run(os.Args)

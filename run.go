@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -13,7 +14,12 @@ func Run() {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
 		Clone(RemoteFolder, Remote)
 	} else {
-		Fetch(RemoteFolder)
+		errFetch := Fetch(RemoteFolder)
+		if errFetch == nil {
+			fmt.Println("Fetched latest")
+		} else {
+			fmt.Println("No internet, not fetching")
+		}
 	}
 
 	if Encrypt {
@@ -31,9 +37,14 @@ func Run() {
 	if All {
 		texts, branchHashes = CombineEntries(cache)
 	}
-	texts = append(texts, HeadMatter(GetCurrentDate(), ""))
+	texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
 	ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	fulltext := WriteEntry()
 	ProcessEntries(fulltext, branchHashes)
-	Push(RemoteFolder)
+	err = Push(RemoteFolder)
+	if err == nil {
+		fmt.Println("Pushed changes")
+	} else {
+		fmt.Println("No internet, not pushing")
+	}
 }

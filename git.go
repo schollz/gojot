@@ -149,9 +149,9 @@ func Fetch(gitfolder string) error {
 
 	// Fetch all
 	cmd := exec.Command("git", "fetch", "--all", "--force", "--prune")
-	_, err = cmd.Output()
-	if err != nil {
-		logger.Error("Problem fetching all")
+	_, err2 := cmd.Output()
+	if err2 != nil {
+		logger.Debug("Problem fetching all")
 	}
 
 	// Get branchces
@@ -265,7 +265,7 @@ func Fetch(gitfolder string) error {
 	// 	}
 	// }
 
-	return nil
+	return err2
 }
 
 func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string, branchNameOverride string) (string, error) {

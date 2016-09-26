@@ -15,6 +15,7 @@ func PromptPassword(gitfolder string, document string) string {
 	password1 := "1"
 	textToTest, err := GetTextOfOne(gitfolder, "master", "sdees-"+document+".gpg")
 	if err != nil {
+		fmt.Printf("Creating new document %s\n", document)
 		logger.Debug("Error: %s, creating %s", err.Error(), "sdees-"+document+".gpg")
 		password2 := "2"
 		for password1 != password2 {
