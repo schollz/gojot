@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 )
 
-// cleanUp deletes all temporary files and also deletes documents that were
+// CleanUp deletes all temporary files and also deletes documents that were
 // made accidently (documents with no data)
-func cleanUp() error {
+func CleanUp() error {
 	logger.Debug("Cleaning...")
 	dir := TempPath
 	d, err := os.Open(dir)

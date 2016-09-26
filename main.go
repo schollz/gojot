@@ -12,27 +12,13 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Structures
-type Entry struct {
-	Document, Branch, Date, Hash, Message, Text string
-}
-
-// Global parameters
 var (
-	Version, BuildTime, Build                string
-	CachePath, ConfigPath, TempPath          string
-	CurrentDocument, Editor, Remote          string
-	All                                      bool
-	DeleteDocument                           string
-	RemoteFolder, CacheFile                  string
-	Extension                                string
-	Passphrase                               string
-	Debug, Encrypt, DontEncrypt, ResetConfig bool
+	Version, BuildTime, Build string
 )
 
 func main() {
 	// Delete temp files upon exit
-	defer cleanUp()
+	defer CleanUp()
 
 	// Handle Ctl+C for cleanUp
 	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
@@ -40,7 +26,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		cleanUp()
+		CleanUp()
 		os.Exit(1)
 	}()
 
