@@ -58,7 +58,7 @@ func TestGetInfo(t *testing.T) {
 	entries, _ := GetInfo("./gittest", branchNames)
 	foundOne := false
 	for _, entry := range entries {
-		if entry.Document == "test.txt" && entry.Message == "added test.txt" {
+		if entry.Document == "test.txt" {
 			foundOne = true
 			break
 		}
@@ -260,8 +260,8 @@ func TestGetLatest(t *testing.T) {
 		t.Errorf("Error while deleting %s, got %v", branch, info[0])
 	}
 
-	// os.RemoveAll("testNew")
-	// os.RemoveAll("testOld")
+	os.RemoveAll("testNew")
+	os.RemoveAll("testOld")
 
 }
 

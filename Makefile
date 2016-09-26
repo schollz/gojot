@@ -26,7 +26,11 @@ test:
 	go get github.com/jteeuwen/go-bindata/...
 	$(GOPATH)/bin/go-bindata bin
 	go test -v -cover
-	echo `grep -v "^$" *.go | grep -v "//" | wc -l` lines of code
+
+.PHONY: cloc
+cloc:
+	echo `grep -v "^$$" *.go | grep -v "//" | wc -l` lines of code
+	echo `grep -v "^$$" *_test.go | grep -v "//" | wc -l` lines of testing code
 
 
 .PHONY: install
