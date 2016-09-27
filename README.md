@@ -7,35 +7,8 @@
 
 ## SDEES is for Distributed Editing of Encrypted Stuff
 
-Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized.
+Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to encrypted documents (like a notebook or journal) while keeping the entire document synchronized.
 
-This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`. Before `sdees` I had to do this:
-
-```
-$ rsync -arq --update user@remote:encrypted_notes encrypted_notes
-$ gpg -d encrypted_notes > notes
-Enter passphrase: *******
-$ vim notes
-$ gpg --symmetric notes -o encrypted_notes
-Enter passphrase: *******
-Repeat passphrase: *******
-File encrypted_notes exists. Overwrite? (y/N) y
-$ rm notes
-$ rsync -arq --update encrypted_notes user@remote:encrypted_notes
-```
-
-Now, with `sdees` (which has `gpg` and `rsync` capabilities built-in) I can do this:
-
-```
-$ sdees
-Pulling from remote...done.
-Enter password for editing 'notes.txt': ******
-Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
-+410 words.
-Pushing to remote...done.
-```
-
-More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L29).
 
 ## Features
 
@@ -45,10 +18,15 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 - Version control (all versions are saved, currently only newest is shown).
 - Temp files are shredded (random bytes written before deletion).
 
+## How it works
+
+Each entry in a doucment is symmetrically encrypted and then inserted into a new orphan branch in a supplied `git` repository. Each edited entry will commit a new (encrytped) change onto that document in the respective branch. The many orphan branches ensures that each document will not have merge collisions when editing on different local copies, so that the same document can have new entries created on multiple offline computers without merging.
+
+Multiple documents can be stored in a single `git` repository. A single document is reconstructed by first fetching all remote branches, then filtering out which ones contain entries for the document of interest, decrypting each entry, and sorting the entries by date.
+
 # Install
 
-The simplest way to install is to just download the [latest release](https://github.com/schollz/sdees/releases/latest). To install from source you must install Go 1.6+.
-
+You can install by downloading [the latest release](https://github.com/schollz/sdees/releases/latest) or installing with Go 1.7+:
 ```
 go get -u github.com/schollz/gitsdees
 ```
@@ -59,7 +37,7 @@ The first time you run you can configure your remote system and editor.
 
 ```
 sdees new.txt # edit a new document, new.txt
-sdees --summary -n 5 # list a summary of last five entries
+sdees --summary # list a summary
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 sdees --help # for more information
 ```
