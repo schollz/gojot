@@ -19,6 +19,7 @@ var (
 	DontEncrypt               bool
 	DeleteDocument            string
 	ResetConfig               bool
+	ImportOldFile             string
 )
 
 func main() {
@@ -89,6 +90,8 @@ EXAMPLE USAGE:
 			return sdees.DeleteAndPush(DeleteDocument)
 		} else if ResetConfig {
 			sdees.SetupConfig()
+		} else if len(ImportOldFile) > 0 {
+			sdees.ImportOld(ImportOldFile)
 		} else {
 			sdees.Run()
 		}
@@ -99,6 +102,11 @@ EXAMPLE USAGE:
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
 			Destination: &Debug,
+		},
+		cli.StringFlag{
+			Name:        "importold",
+			Usage:       "Import an oldstyle file",
+			Destination: &ImportOldFile,
 		},
 		cli.BoolFlag{
 			Name:        "config",
@@ -113,7 +121,7 @@ EXAMPLE USAGE:
 		cli.StringFlag{
 			Name:        "delete",
 			Usage:       "Delete `document`",
-			Destination: &sdees.DeleteDocument,
+			Destination: &DeleteDocument,
 		},
 		cli.BoolFlag{
 			Name:        "plaintext",

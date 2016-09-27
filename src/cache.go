@@ -17,6 +17,14 @@ type Cache struct {
 	Ignore map[string]bool
 }
 
+func DeleteCache() error {
+	cacheFile := path.Join(RemoteFolder, CurrentDocument+".cache")
+	if Encrypt {
+		cacheFile += ".gpg"
+	}
+	return Shred(cacheFile)
+}
+
 func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []string, error) {
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Updating cache for document %s in %s", id, document, gitfolder)

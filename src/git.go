@@ -137,9 +137,14 @@ func Delete(gitfolder string, branch string) error {
 	return nil
 }
 
-func DeleteAndPush(document string) error {
-	fmt.Printf("Are you sure you want to delete %s? ") // TODO: PROMPT USER
-	err := Delete(RemoteFolder, document)
+func DeleteAndPush(branch string) error {
+	fmt.Printf("Are you sure you want to delete %s in %s? \n", branch, CurrentDocument) // TODO: PROMPT USER
+	err := Delete(RemoteFolder, branch)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+	err = DeleteCache()
 	if err != nil {
 		logger.Error(err.Error())
 		return err
