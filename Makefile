@@ -32,8 +32,8 @@ test:
 
 .PHONY: cloc
 cloc:
-	echo `grep -v "^$$" *.go | grep -v "//" | wc -l` lines of code
-	echo `grep -v "^$$" *_test.go | grep -v "//" | wc -l` lines of testing code
+	echo `grep -v "^$$" src/*.go | grep -v "//" | wc -l` lines of code
+	echo `grep -v "^$$" src/*_test.go | grep -v "//" | wc -l` lines of testing code
 
 
 .PHONY: install
