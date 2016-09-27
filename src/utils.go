@@ -3,6 +3,7 @@ package gitsdees
 import (
 	"math/rand"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -78,4 +79,9 @@ func Shred(fileName string) error {
 		return err
 	}
 	return nil
+}
+
+func GetWordsFromText(text string) []string {
+	words := regexp.MustCompile("\\w+")
+	return words.FindAllString(text, -1)
 }

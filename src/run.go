@@ -67,11 +67,16 @@ func Run() {
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 {
 		texts, branchHashes = CombineEntries(cache)
+		// Conduct the search
 		if len(Search) > 0 {
+			searchWords := GetWordsFromText(Search)
 			textFoo := []string{}
 			for i := range texts {
-				if strings.Contains(texts[i], Search) {
-					textFoo = append(textFoo, texts[i])
+				for _, searchWord := range searchWords {
+					if strings.Contains(texts[i], searchWord) {
+						textFoo = append(textFoo, texts[i])
+						break
+					}
 				}
 			}
 			texts = textFoo
