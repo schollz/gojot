@@ -10,15 +10,16 @@ import (
 func Run() {
 
 	// Check if cloning needs to occur
+	fmt.Print("Fetching latest...")
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
 		Clone(RemoteFolder, Remote)
 	} else {
 		errFetch := Fetch(RemoteFolder)
 		if errFetch == nil {
-			fmt.Println("Fetched latest")
+			fmt.Println("...done")
 		} else {
-			fmt.Println("No internet, not fetching")
+			fmt.Println("..no internet, not fetching")
 		}
 	}
 
@@ -46,10 +47,11 @@ func Run() {
 	}
 	fulltext := WriteEntry()
 	UpdateEntryFromText(fulltext, branchHashes)
+	fmt.Print("Pushing changes...")
 	err = Push(RemoteFolder)
 	if err == nil {
-		fmt.Println("Pushed changes")
+		fmt.Println("...done")
 	} else {
-		fmt.Println("No internet, not pushing")
+		fmt.Println("...no internet, not pushing")
 	}
 }
