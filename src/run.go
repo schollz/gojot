@@ -68,12 +68,12 @@ func Run() {
 	if All || Export {
 		texts, branchHashes = CombineEntries(cache)
 	}
-	texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
 	if Export {
 		fmt.Println("Exporting to " + CurrentDocument)
 		ioutil.WriteFile(CurrentDocument, []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 		return
 	} else {
+		texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}
 	fulltext := WriteEntry()

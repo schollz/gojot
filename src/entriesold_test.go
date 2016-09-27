@@ -7,7 +7,7 @@ func TestProcessOld(t *testing.T) {
 
 Some Text1
 
-2015-09-26 5:01 Another entry
+2015-09-26 Another entry
 
 Another text2
 
@@ -24,7 +24,7 @@ Some Text1` {
 Another text2` {
 		t.Errorf(texts[1])
 	}
-	if dates[1] != "Sat Sep 26 05:01:00 2015 +0000" {
+	if dates[1] != "Sat Sep 26 00:00:00 2015 +0000" {
 		t.Errorf(dates[1])
 	}
 }
