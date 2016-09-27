@@ -9,7 +9,7 @@ type Entry struct {
 var (
 	CachePath, ConfigPath, TempPath          string
 	CurrentDocument, Editor, Remote          string
-	All                                      bool
+	All, Export                              bool
 	DeleteDocument                           string
 	RemoteFolder, CacheFile                  string
 	Extension                                string

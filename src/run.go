@@ -31,14 +31,19 @@ func Run() {
 		return
 	}
 
-	logger.Debug("Getting ready to edit %s", CurrentDocument)
 	texts := []string{}
 	var branchHashes map[string]string
-	if All {
+	if All || Export {
 		texts, branchHashes = CombineEntries(cache)
 	}
 	texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
-	ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+	if Export {
+		fmt.Println("Exporting to " + CurrentDocument)
+		ioutil.WriteFile(CurrentDocument, []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		return
+	} else {
+		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+	}
 	fulltext := WriteEntry()
 	ProcessEntries(fulltext, branchHashes)
 	err = Push(RemoteFolder)

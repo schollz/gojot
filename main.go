@@ -111,6 +111,11 @@ EXAMPLE USAGE:
 			Destination: &ImportOldFile,
 		},
 		cli.BoolFlag{
+			Name:        "export",
+			Usage:       "Export the document",
+			Destination: &sdees.Export,
+		},
+		cli.BoolFlag{
 			Name:        "config",
 			Usage:       "Configure",
 			Destination: &ResetConfig,
