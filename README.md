@@ -7,7 +7,7 @@
 
 ## SDEES is for Distributed Editing of Encrypted Stuff
 
-Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
+Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized.
 
 This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`. Before `sdees` I had to do this:
 
@@ -40,10 +40,8 @@ More information [in the code](https://github.com/schollz/sdees/blob/master/main
 ## Features
 
 - Cross-compatibility (Windows/Linux/OS X).
-- _Only one_ dependency: `git`.
-- Encryption, compatible with `gpg`.
-- Remote document transfer.
-- Searching and summaries.
+- _Only two_ dependencies: `git` and a text editor (`vim` is bundled in Windows binary).
+- Built-in encryption, compatible with `gpg`.
 - Version control (all versions are saved, currently only newest is shown).
 - Temp files are shredded (random bytes written before deletion).
 

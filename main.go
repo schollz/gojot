@@ -146,6 +146,11 @@ EXAMPLE USAGE:
 			Usage:       "Turns off encryption",
 			Destination: &DontEncrypt,
 		},
+		cli.BoolFlag{
+			Name:        "summary",
+			Usage:       "Gets summary",
+			Destination: &sdees.Summarize,
+		},
 	}
 	app.Run(os.Args)
 }

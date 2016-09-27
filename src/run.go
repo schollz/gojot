@@ -63,14 +63,22 @@ func Run() {
 		return
 	}
 
+	// if Summarize {
+	// 	SummarizeCache(cache)
+	// }
+
 	texts := []string{}
 	var branchHashes map[string]string
-	if All || Export {
+	if All || Export || Summarize {
 		texts, branchHashes = CombineEntries(cache)
 	}
 	if Export {
 		fmt.Println("Exporting to " + CurrentDocument)
 		ioutil.WriteFile(CurrentDocument, []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		return
+	} else if Summarize {
+		fmt.Println("\nSummary:")
+		fmt.Println(SummarizeEntries(cache))
 		return
 	} else {
 		texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
