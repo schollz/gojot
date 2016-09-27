@@ -100,11 +100,11 @@ func WriteCache(gitfolder string, document string, cache Cache) {
 	cacheFile := path.Join(RemoteFolder, document+".cache")
 	b, err := json.Marshal(cache)
 	if err != nil {
-		logger.Error("Error marshaling " + cacheFile + ": " + err.Error())
+		logger.Debug("Error marshaling " + cacheFile + ": " + err.Error())
 	}
 	err = ioutil.WriteFile(cacheFile, b, 0644)
 	if err != nil {
-		logger.Error("Error writing " + cacheFile + ": " + err.Error())
+		logger.Debug("Error writing " + cacheFile + ": " + err.Error())
 	}
 	if Encrypt {
 		EncryptFile(cacheFile, Passphrase)
@@ -118,19 +118,19 @@ func LoadCache(gitfolder string, document string) (Cache, error) {
 	if Encrypt {
 		err := DecryptFile(cacheFile, Passphrase)
 		if err != nil {
-			logger.Error("Error decrypting %s", cacheFile)
+			logger.Debug("Error decrypting %s", cacheFile)
 			return cache, err
 		}
 	}
 	defer timeTrack(time.Now(), "Loading cache")
 	b, err := ioutil.ReadFile(cacheFile)
 	if err != nil {
-		logger.Error("Error loading " + cacheFile + ": " + err.Error())
+		logger.Debug("Error loading " + cacheFile + ": " + err.Error())
 		return cache, err
 	}
 	err = json.Unmarshal(b, &cache)
 	if err != nil {
-		logger.Error("Error umarshling " + cacheFile + ": " + err.Error())
+		logger.Debug("Error umarshling " + cacheFile + ": " + err.Error())
 		return cache, err
 	}
 	return cache, err

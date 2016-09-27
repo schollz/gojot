@@ -54,7 +54,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 			if err != nil {
 				logger.Error(err.Error())
 			} else {
-				fmt.Printf("Created entry %s\n", blob.Branch)
+				fmt.Printf("Created entry %s (+%d words)\n", blob.Branch, len(strings.Split(blob.Text, " ")))
 			}
 		} else if blob.Hash != branchHashes[blob.Branch] {
 			logger.Debug("Current hash (%s) != Previous hash (%s), updating entry for %s ", blob.Hash, branchHashes[blob.Branch], blob.Branch)

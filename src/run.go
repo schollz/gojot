@@ -5,11 +5,13 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
+	"time"
 )
 
 func Run() {
 
 	// Check if cloning needs to occur
+	measureTime := time.Now()
 	fmt.Print("Fetching latest")
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
@@ -17,25 +19,26 @@ func Run() {
 	} else {
 		errFetch := Fetch(RemoteFolder)
 		if errFetch == nil {
-			fmt.Println("...done")
+			fmt.Print("...done")
 		} else {
-			fmt.Println("..no internet, not fetching")
+			fmt.Print("...no internet, not fetching")
 		}
 	}
+	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
 	// Get files
 	if len(InputDocument) == 0 {
 		var editDocument string
-		fmt.Printf("Currently available documents: ")
+		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", CurrentDocument)
 		availableFiles := ListFiles(RemoteFolder)
 		for _, file := range availableFiles {
-			fmt.Printf("\n%s ", file)
+			fmt.Printf("\n- %s ", file)
 			if file == CurrentDocument {
 				fmt.Print("(default) ")
 			}
 		}
-		fmt.Print("\nWhat is the name of the document you want to edit (enter for default)? ")
+		fmt.Print("\n\nWhat is the name of the document you want to edit (enter for default)? ")
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
@@ -75,11 +78,14 @@ func Run() {
 	}
 	fulltext := WriteEntry()
 	UpdateEntryFromText(fulltext, branchHashes)
-	fmt.Print("Pushing changes...")
+
+	measureTime = time.Now()
+	fmt.Print("Pushing changes")
 	err = Push(RemoteFolder)
 	if err == nil {
-		fmt.Println("...done")
+		fmt.Print("...done")
 	} else {
-		fmt.Println("...no internet, not pushing")
+		fmt.Print("...no internet, not pushing")
 	}
+	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 }

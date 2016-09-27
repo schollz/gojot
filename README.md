@@ -1,11 +1,11 @@
 # gitsdees
 
 
-[![Build Status](https://travis-ci.org/schollz/gitsdees.svg?branch=master)](https://travis-ci.org/schollz/gitsdees)
-![](https://img.shields.io/badge/coverage-54.1%25-yellow.svg)
 [![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/gitsdees/releases/latest)
+[![Build Status](https://travis-ci.org/schollz/gitsdees.svg?branch=master)](https://travis-ci.org/schollz/gitsdees)
+![](https://img.shields.io/badge/coverage-56.8%25-yellow.svg)
 
-## SDEES Does Editing, Encryption, and Synchronization
+## SDEES is for Distributed Editing of Encrypted Stuff
 
 Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
 
