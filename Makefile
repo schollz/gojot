@@ -15,6 +15,9 @@ $(BINARY): $(SOURCES)
 	go get github.com/jcelliott/lumber
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
+	go get golang.org/x/crypto/ssh/terminal
+	go get golang.org/x/crypto/openpgp/armor
+	go get golang.org/x/crypto/openpgp
 	go build ${LDFLAGS} -o ${BINARY}
 
 .PHONY: test
