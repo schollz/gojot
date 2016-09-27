@@ -88,8 +88,18 @@ EXAMPLE USAGE:
 
 		// Process some flags
 		if len(DeleteEntry) > 0 {
-			fmt.Printf("Deleting entry %s\n", DeleteEntry)
-			return sdees.DeleteAndPush(DeleteEntry)
+			var yesno string
+			fmt.Printf("Are you sure you want to delete the entry %s in document %s? (y/n) ", DeleteEntry, sdees.CurrentDocument)
+			fmt.Scanln(&yesno)
+			if string(yesno) == "y" {
+				if sdees.DeleteBranch(DeleteEntry) != nil {
+					fmt.Printf("Error deleting %s, does it exist?\n", DeleteEntry)
+				} else {
+					fmt.Printf("Deleting entry %s\n", DeleteEntry)
+				}
+			} else {
+				fmt.Printf("Did not delete %s\n", DeleteEntry)
+			}
 		} else if ResetConfig {
 			sdees.SetupConfig()
 		} else if len(ImportOldFile) > 0 {

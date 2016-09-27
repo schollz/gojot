@@ -2,7 +2,6 @@ package gitsdees
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -137,21 +136,20 @@ func Delete(gitfolder string, branch string) error {
 	return nil
 }
 
-func DeleteAndPush(branch string) error {
-	fmt.Printf("Are you sure you want to delete %s in %s? \n", branch, CurrentDocument) // TODO: PROMPT USER
+func DeleteBranch(branch string) error {
 	err := Delete(RemoteFolder, branch)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Debug(err.Error())
 		return err
 	}
 	err = DeleteCache()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Debug(err.Error())
 		return err
 	}
 	err = Push(RemoteFolder)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Debug(err.Error())
 		return err
 	}
 	return nil
