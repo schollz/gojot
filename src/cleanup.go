@@ -25,3 +25,10 @@ func CleanUp() error {
 	}
 	return nil
 }
+
+func CleanAll() {
+	logger.Debug("Removing cache: %s", CachePath)
+	os.RemoveAll(CachePath)
+	logger.Debug("Removing config: %s", ConfigPath)
+	os.RemoveAll(ConfigPath)
+}

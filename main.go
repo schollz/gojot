@@ -17,7 +17,7 @@ import (
 var (
 	Version, BuildTime, Build   string
 	Debug                       bool
-	DontEncrypt                 bool
+	DontEncrypt, Clean          bool
 	DeleteDocument, DeleteEntry string
 	ResetConfig                 bool
 	ImportOldFile, ImportFile   string
@@ -100,6 +100,8 @@ EXAMPLE USAGE:
 			fmt.Printf("Importing %s\n", ImportFile)
 			sdees.CurrentDocument = ImportFile
 			sdees.Import(ImportFile)
+		} else if Clean {
+			sdees.CleanAll()
 		} else {
 			sdees.Run()
 		}
@@ -110,6 +112,11 @@ EXAMPLE USAGE:
 			Name:        "debug",
 			Usage:       "Turn on debug mode",
 			Destination: &Debug,
+		},
+		cli.BoolFlag{
+			Name:        "clean",
+			Usage:       "Deletes all gitsdees files",
+			Destination: &Clean,
 		},
 		cli.StringFlag{
 			Name:        "search",
