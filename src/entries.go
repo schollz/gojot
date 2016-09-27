@@ -2,18 +2,8 @@ package gitsdees
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 )
-
-func ImportOld(filename string) error {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return err
-	}
-	fmt.Println(ProcessEntriesOld(string(data)))
-	return nil
-}
 
 func ProcessEntries(fulltext string, branchHashes map[string]string) []string {
 	var branchesUpdated []string

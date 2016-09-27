@@ -1,6 +1,35 @@
 package gitsdees
 
-import "strings"
+import (
+	"fmt"
+	"io/ioutil"
+	"strings"
+)
+
+func ImportOld(filename string) error {
+	if Encrypt {
+		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
+	}
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		logger.Error("Error reading file: %s", err.Error())
+		return err
+	}
+	texts, dates := ProcessEntriesOld(string(data))
+	for i := range texts {
+		_, err = NewDocument(RemoteFolder, CurrentDocument, texts[i], GetMessage(texts[i]), dates[i], "")
+		if err != nil {
+			logger.Error("Error creating new document: %s", err.Error())
+		}
+	}
+	err = Push(RemoteFolder)
+	if err == nil {
+		fmt.Println("Pushed changes")
+	} else {
+		fmt.Println("No internet, not pushing")
+	}
+	return nil
+}
 
 func ProcessEntriesOld(fulltext string) ([]string, []string) {
 	type Blob struct {

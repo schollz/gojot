@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -91,6 +92,7 @@ EXAMPLE USAGE:
 		} else if ResetConfig {
 			sdees.SetupConfig()
 		} else if len(ImportOldFile) > 0 {
+			fmt.Println("Importing old file")
 			sdees.ImportOld(ImportOldFile)
 		} else {
 			sdees.Run()
