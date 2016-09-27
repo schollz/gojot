@@ -23,8 +23,9 @@ test:
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get github.com/jteeuwen/go-bindata/...
-	$(GOPATH)/bin/go-bindata bin
-	go test -v -cover
+	cd src && $(GOPATH)/bin/go-bindata bin
+	cd src && sed -i -- 's/package main/package gitsdees/g' bindata.go
+	cd src && go test -v -cover
 
 .PHONY: cloc
 cloc:
