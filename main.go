@@ -15,12 +15,12 @@ import (
 )
 
 var (
-	Version, BuildTime, Build string
-	Debug                     bool
-	DontEncrypt               bool
-	DeleteDocument            string
-	ResetConfig               bool
-	ImportOldFile, ImportFile string
+	Version, BuildTime, Build   string
+	Debug                       bool
+	DontEncrypt                 bool
+	DeleteDocument, DeleteEntry string
+	ResetConfig                 bool
+	ImportOldFile, ImportFile   string
 )
 
 func main() {
@@ -87,9 +87,9 @@ EXAMPLE USAGE:
 		sdees.LoadConfiguration()
 
 		// Process some flags
-		if len(DeleteDocument) > 0 {
-			fmt.Printf("Deleting branch %s\n", DeleteDocument)
-			return sdees.DeleteAndPush(DeleteDocument)
+		if len(DeleteEntry) > 0 {
+			fmt.Printf("Deleting entry %s\n", DeleteEntry)
+			return sdees.DeleteAndPush(DeleteEntry)
 		} else if ResetConfig {
 			sdees.SetupConfig()
 		} else if len(ImportOldFile) > 0 {
@@ -143,8 +143,8 @@ EXAMPLE USAGE:
 		},
 		cli.StringFlag{
 			Name:        "delete",
-			Usage:       "Delete `document`",
-			Destination: &DeleteDocument,
+			Usage:       "Delete `entry`",
+			Destination: &DeleteEntry,
 		},
 		cli.BoolFlag{
 			Name:        "plaintext",
