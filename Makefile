@@ -49,12 +49,12 @@ windows:
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
 	unzip vim80w32.zip
 	mv vim/vim80/vim.exe ./src/bin/
-	$(GOPATH)/bin/go-bindata ./src/bin
-	sed -i -- 's/package main/package gitsdees/g' bindata.go
-	mv bindata.go ./src/bindata.go
-	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o gitsdees-vim.exe
-	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	cd src && sed -i -- 's/package main/package gitsdees/g' bindata.go
+	# mv bindata.go ./src/bindata.go
+	# env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o gitsdees-vim.exe
+	# cd src && git reset --hard HEAD
+	# rm -rf ./src/bin/vim.exe
 
 .PHONY: nightly
 nightly:
