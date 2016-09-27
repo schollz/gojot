@@ -45,7 +45,7 @@ func Run() {
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}
 	fulltext := WriteEntry()
-	ProcessEntries(fulltext, branchHashes)
+	UpdateEntryFromText(fulltext, branchHashes)
 	err = Push(RemoteFolder)
 	if err == nil {
 		fmt.Println("Pushed changes")

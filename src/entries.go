@@ -2,37 +2,44 @@ package gitsdees
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 )
 
-func ProcessEntries(fulltext string, branchHashes map[string]string) []string {
-	var branchesUpdated []string
-	type Blob struct {
-		Date, Branch, Hash, Text string
+func Import(filename string) error {
+	logger.Debug("Importing %s", filename)
+	if Encrypt {
+		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
 	}
-
-	var blobs []Blob
-	var currentBlob Blob
-	for _, line := range strings.Split(fulltext, "\n") {
-		if strings.Count(line, " -==- ") == 1 && len(strings.Split(line, " -==- ")) == 2 {
-			if len(currentBlob.Date) > 0 {
-				currentBlob.Text = strings.TrimSpace(currentBlob.Text)
-				currentBlob.Hash = GetMD5Hash(currentBlob.Text)
-				blobs = append(blobs, currentBlob)
-				currentBlob.Text = ""
-			}
-			items := strings.Split(line, " -==- ")
-			currentBlob.Date = strings.TrimSpace(items[0])
-			currentBlob.Branch = strings.TrimSpace(items[1])
-		} else {
-			currentBlob.Text = currentBlob.Text + line + "\n"
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		logger.Error("Error reading file: %s", err.Error())
+		return err
+	}
+	blobs := ProcessEntries(string(data))
+	fmt.Println(blobs)
+	for i := range blobs {
+		_, err = NewDocument(RemoteFolder, CurrentDocument, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, "")
+		if err != nil {
+			logger.Error("Error creating new document: %s", err.Error())
 		}
 	}
-	if len(currentBlob.Date) > 0 {
-		currentBlob.Text = strings.TrimSpace(currentBlob.Text)
-		currentBlob.Hash = GetMD5Hash(currentBlob.Text)
-		blobs = append(blobs, currentBlob)
+	err = Push(RemoteFolder)
+	if err == nil {
+		fmt.Println("Pushed changes")
+	} else {
+		fmt.Println("No internet, not pushing")
 	}
+	return nil
+}
+
+type BlobEntry struct {
+	Date, Branch, Hash, Text string
+}
+
+func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []string {
+	var branchesUpdated []string
+	blobs := ProcessEntries(fulltext)
 	for _, blob := range blobs {
 		if _, ok := branchHashes[blob.Branch]; !ok {
 			logger.Debug("Branch not present updating entry for branch %s ", blob.Branch)
@@ -60,6 +67,33 @@ func ProcessEntries(fulltext string, branchHashes map[string]string) []string {
 	}
 
 	return branchesUpdated
+}
+
+func ProcessEntries(fulltext string) []BlobEntry {
+	var blobs []BlobEntry
+	var currentBlob BlobEntry
+	for _, line := range strings.Split(fulltext, "\n") {
+		if strings.Count(line, " -==- ") == 1 && len(strings.Split(line, " -==- ")) == 2 {
+			if len(currentBlob.Date) > 0 {
+				currentBlob.Text = strings.TrimSpace(currentBlob.Text)
+				currentBlob.Hash = GetMD5Hash(currentBlob.Text)
+				blobs = append(blobs, currentBlob)
+				currentBlob.Text = ""
+			}
+			items := strings.Split(line, " -==- ")
+			currentBlob.Date = strings.TrimSpace(items[0])
+			currentBlob.Branch = strings.TrimSpace(items[1])
+		} else {
+			currentBlob.Text = currentBlob.Text + line + "\n"
+		}
+	}
+	if len(currentBlob.Date) > 0 {
+		currentBlob.Text = strings.TrimSpace(currentBlob.Text)
+		currentBlob.Hash = GetMD5Hash(currentBlob.Text)
+		blobs = append(blobs, currentBlob)
+	}
+
+	return blobs
 }
 
 func HeadMatter(date string, branch string) string {

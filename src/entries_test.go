@@ -16,8 +16,8 @@ func TestProcessFiles(t *testing.T) {
 	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: "threeEDIT7"}
 	combined, _ := CombineEntries(cache)
 	testEntry := strings.Join(combined, "\n\n")
-	branchesUpdated := ProcessEntries(testEntry, hashes)
-	if branchesUpdated[0] != "1" && branchesUpdated[1] != "3" {
+	branchesUpdated := UpdateEntryFromText(testEntry, hashes)
+	if branchesUpdated[0] != "1" && branchesUpdated[1] != "3" && len(branchesUpdated) == 2 {
 		t.Errorf("Error processing files")
 	}
 }

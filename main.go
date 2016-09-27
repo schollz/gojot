@@ -20,7 +20,7 @@ var (
 	DontEncrypt               bool
 	DeleteDocument            string
 	ResetConfig               bool
-	ImportOldFile             string
+	ImportOldFile, ImportFile string
 )
 
 func main() {
@@ -94,6 +94,9 @@ EXAMPLE USAGE:
 		} else if len(ImportOldFile) > 0 {
 			fmt.Println("Importing old file")
 			sdees.ImportOld(ImportOldFile)
+		} else if len(ImportFile) > 0 {
+			fmt.Println("Importing file")
+			sdees.Import(ImportFile)
 		} else {
 			sdees.Run()
 		}
@@ -109,6 +112,11 @@ EXAMPLE USAGE:
 			Name:        "importold",
 			Usage:       "Import an oldstyle file",
 			Destination: &ImportOldFile,
+		},
+		cli.StringFlag{
+			Name:        "import",
+			Usage:       "Import an file",
+			Destination: &ImportFile,
 		},
 		cli.BoolFlag{
 			Name:        "export",
