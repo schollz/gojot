@@ -63,10 +63,6 @@ func Run() {
 		return
 	}
 
-	// if Summarize {
-	// 	SummarizeCache(cache)
-	// }
-
 	texts := []string{}
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 {
