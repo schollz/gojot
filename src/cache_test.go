@@ -49,7 +49,7 @@ func TestLoadCache(t *testing.T) {
 	log.Println("Testing LoadCache...")
 	UpdateCache(CACHE_TEST_GITFOLDER, "test.txt", true)
 	cache, _ := LoadCache(CACHE_TEST_GITFOLDER, "test.txt")
-	if _, ok := cache.Branch["0"]; !ok {
+	if len(cache.Branch) == 0 {
 		t.Errorf("Error loading cache, got: %v", cache.Branch["test3"])
 	}
 }
