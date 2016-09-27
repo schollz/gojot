@@ -1,153 +1,83 @@
-# sdees
+# gitsdees
 
+
+[![Build Status](https://travis-ci.org/schollz/gitsdees.svg?branch=master)](https://travis-ci.org/schollz/gitsdees)
 ![](https://img.shields.io/badge/coverage-54.1%25-yellow.svg)
+[![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/gitsdees/releases/latest)
 
-# Notes
+## SDEES Does Editing, Encryption, and Synchronization
 
-# Setup git server
+Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to an encrypted document (like a notebook or journal) while keeping the entire document synchronized remotely.
 
-## Server setup
-
-```
-sudo apt-get install git-core
-sudo useradd git
-sudo passwd git
-sudo mkdir /home/git
-sudo chown git:git /home/git
-```
-
-## Make new git
-
-First add key,
+This program grew out of constant utilization of `gpg`, `rsync`, and `vim`/`nano`/`emacs`. Before `sdees` I had to do this:
 
 ```
-cat ~/.ssh/id_rsa.pub | ssh git@remote "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+$ rsync -arq --update user@remote:encrypted_notes encrypted_notes
+$ gpg -d encrypted_notes > notes
+Enter passphrase: *******
+$ vim notes
+$ gpg --symmetric notes -o encrypted_notes
+Enter passphrase: *******
+Repeat passphrase: *******
+File encrypted_notes exists. Overwrite? (y/N) y
+$ rm notes
+$ rsync -arq --update encrypted_notes user@remote:encrypted_notes
 ```
 
-Then make new repo on the remote server,
+Now, with `sdees` (which has `gpg` and `rsync` capabilities built-in) I can do this:
 
 ```
-ssh git@remote "mkdir -p ~/new2.git && git init --bare new2.git/ && rm -rf clonetest && git clone new2.git clonetest && cd clonetest && touch README.md && git add . && git commit -m 'added master' && git push origin master"
+$ sdees
+Pulling from remote...done.
+Enter password for editing 'notes.txt': ******
+Wrote M6nWWLw.fNfEqs.0qPJJeZ.gpg.
++410 words.
+Pushing to remote...done.
 ```
 
-Then add the remote to `gitsdees` using
+More information [in the code](https://github.com/schollz/sdees/blob/master/main.go#L1-L29).
+
+## Features
+
+- Cross-compatibility (Windows/Linux/OS X).
+- _Only one_ dependency: `git`.
+- Encryption, compatible with `gpg`.
+- Remote document transfer.
+- Searching and summaries.
+- Version control (all versions are saved, currently only newest is shown).
+- Temp files are shredded (random bytes written before deletion).
+
+# Install
+
+The simplest way to install is to just download the [latest release](https://github.com/schollz/sdees/releases/latest). To install from source you must install Go 1.6+.
 
 ```
-git@remote:new.git
+go get -u github.com/schollz/gitsdees
 ```
 
-# master branch
+# Usage
 
-The `master` branch only contains README.md about what the repo is?
-
-## Reading entries
-
-Here, we'd like to pull particular entry without checking out (to avoid lots of file writing).
-
-`git show branch_name:file` gets the current text of the `file` in `branch_name`
-
-`git ls-tree --name-only branch_name` returns the names document in that branch
-
-`git log --pretty=format:"%H -=- %ad -=- %s" branch_name` returns hash, date, and the subject for the latest in that branch
-
-
-## Creating new entry
-
-After document is written:
+The first time you run you can configure your remote system and editor.
 
 ```
-git checkout --orphan 'randombranchid'
-git add document_a
-git commit --date "Thu, 07 Apr 2005 22:13:13 +0200" -am "GPG-encoded text of first line in document_a"
+sdees new.txt # edit a new document, new.txt
+sdees --summary -n 5 # list a summary of last five entries
+sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
+sdees --help # for more information
 ```
 
-And then the commit can be pushed.
+![sdees usage](/branding/help2.gif)
 
-## Pulling latest
+# Acknowledgements
 
-Things can be pulled with
-```
-# get list of branches on remote
-git branch -r  
-# track each branch
-git branch --track 'branch_name1' 'origin/branch_name1'
-git branch --track 'branch_name2' 'origin/branch_name2'
-# fetch/pull all of them
-git fetch --all
-```
+Logo graphic from [logodust](http://logodust.com).
 
-## Cache
+Inspiration from [jrnl](http://jrnl.sh/).
 
-Cache should look like:
+Southwest Airlines for providing two mechanical failures that gave me 8+ extra hours to code this.
 
-```json
-{
-  "document_a.txt": {
-    "branch_1": {
-      "fulltext":"some text",
-      "message": "some message",
-      "date": "2016",
-      "latest_commit": "asbaklsdjclasdifasdf"
-    },
-    "branch_2": {
-      "fulltext":"some different text",
-      "message": "some message",
-      "date": "2016",
-      "latest_commit": "asdfaskcoeckoekasec"
-    },
-  },
-  "document_b.txt": {
-    "branch_2": {
-      "fulltext":"some text",
-      "message": "some message",
-      "date": "2016",
-      "latest_commit": "asbaklsdjclasdifasdf"
-    },
-    "branch_3": {
-      "fulltext":"some text",
-      "message": "some message",
-      "date": "2016",
-      "latest_commit": "asbaklsdjclasdifasdf"
-    },
-  },
-}
-```
+Stack overflow (see code for attributions).
 
-This cache can then keep track of all branches (all unique keys of the set of all keys in all documents).
+# License
 
-Cache is updated on two conditions:
-
-1. Any branch is added/deleted should be updated in cache.
-2. Any branch which has a different commit should be updated in the cache.
-
-
-## Deletion
-
-Things can be deleted using `git branch -D <branch_name> && git push origin --delete <branch_name>`
-
-## Stitching document
-
-The whole document is recapitulated by looping over every branch and finding any file that matches and concatenating them in a file using `git show branch:document`:
-```
->>> 45b5d58f89d415589a08c4c7f545f2804ef19aee Mon Sep 19 07:18:49 2016 -0400
-
-Some text about the entry
-
->>> ced7eb3425b9bf409d47b4394eb75ba4605d6e75 Tue Sep 19 07:18:49 2016 -0400
-
-Some other entry
-```
-Like original SDEES, each entry will be checked for changes, and if there is a change, then it will checkout that branch and commit a new encrypted entry.
-
-## Config file
-
-```json
-{
-  "editor":"vim",
-  "remote":"github.com/somename/somerepo"
-}
-```
-
-# Quetions
-- Can git.exe be bundled for windows?
-- libgit vs. command line. How fast is it to do command line stuff?
+MIT
