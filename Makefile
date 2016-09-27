@@ -44,7 +44,11 @@ install:
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf binaries
+	rm -rf vim
 	rm -rf tempsdees
+	rm -rf src/gittest
+	rm -rf src/test
+	rm -rf src/gittest10
 
 .PHONY: windows
 windows:
