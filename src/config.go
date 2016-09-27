@@ -7,6 +7,7 @@ import (
 	"log"
 	"path"
 	"strings"
+	"time"
 )
 
 type Config struct {
@@ -48,6 +49,7 @@ func SetupConfig() {
 }
 
 func LoadConfiguration() {
+	defer timeTrack(time.Now(), "Loaded and saved configuration")
 	var c Config
 	data, err := ioutil.ReadFile(path.Join(ConfigPath, "config.json"))
 	if err != nil {
@@ -57,19 +59,21 @@ func LoadConfiguration() {
 	json.Unmarshal(data, &c)
 	if len(CurrentDocument) == 0 {
 		CurrentDocument = c.CurrentDocument
+	} else {
+		c.CurrentDocument = CurrentDocument
 	}
 	Editor = c.Editor
 	Remote = c.Remote
 	RemoteFolder = path.Join(CachePath, HashString(Remote))
-	if len(CurrentDocument) == 0 {
-		fmt.Print("What is the name of the document you want to edit? ")
-		fmt.Scanln(&CurrentDocument)
-	}
-	c.CurrentDocument = CurrentDocument
+	SaveConfiguration(Editor, Remote, CurrentDocument)
+}
+
+func SaveConfiguration(editor string, remote string, currentdoc string) {
+	defer timeTrack(time.Now(), "Saved configuration")
+	c := Config{Editor: editor, Remote: remote, CurrentDocument: currentdoc}
 	b, err := json.Marshal(c)
 	if err != nil {
 		log.Println(err)
 	}
 	ioutil.WriteFile(path.Join(ConfigPath, "config.json"), b, 0644)
-
 }
