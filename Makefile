@@ -61,6 +61,7 @@ windows:
 
 .PHONY: nightly
 nightly:
+	go get github.com/aktau/github-release
 	echo "Deleting old release"
 	github-release delete \
 	    --user schollz \
