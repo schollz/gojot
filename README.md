@@ -20,9 +20,9 @@ Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`ema
 
 ## How it works
 
-Each entry in a doucment is symmetrically encrypted and then inserted into a new orphan branch in a supplied `git` repository. Each edited entry will commit a new (encrytped) change onto that document in the respective branch. The many orphan branches ensures that each document will not have merge collisions when editing on different local copies, so that the same document can have new entries created on multiple offline computers without merging.
+Each new entry in a document is symmetrically encrypted and inserted into a new orphan branch in the supplied `git` repository. The benefit of each entry having its own orphan branch is that each document will not have merge collisions when creating new entries on different local copies. Thus, `sdees` makes it perfectly safe to make new entries without internet access. Additional edits to an entry will commit a new (encrypted) change onto that document in the respective branch.
 
-Multiple documents can be stored in a single `git` repository. A single document is reconstructed by first fetching all remote branches, then filtering out which ones contain entries for the document of interest, decrypting each entry, and sorting the entries by date.
+A single document is reconstructed by first fetching all remote branches, then filtering out which ones contain entries for the document of interest, decrypting each entry, and sorting the entries by date. Multiple documents can be stored in a single `git` repository. 
 
 # Install
 
