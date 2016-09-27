@@ -10,7 +10,7 @@ import (
 func Run() {
 
 	// Check if cloning needs to occur
-	fmt.Print("Fetching latest...")
+	fmt.Print("Fetching latest")
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
 		Clone(RemoteFolder, Remote)

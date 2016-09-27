@@ -1,8 +1,12 @@
 package gitsdees
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 func ListFiles(gitfolder string) []string {
+	defer timeTrack(time.Now(), "Listing files")
 	branchNames, _ := ListBranches(gitfolder)
 	infos, _ := GetInfo(gitfolder, branchNames)
 	foundDocuments := make(map[string]bool)
