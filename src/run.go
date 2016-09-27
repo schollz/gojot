@@ -69,8 +69,17 @@ func Run() {
 
 	texts := []string{}
 	var branchHashes map[string]string
-	if All || Export || Summarize {
+	if All || Export || Summarize || len(Search) > 0 {
 		texts, branchHashes = CombineEntries(cache)
+		if len(Search) > 0 {
+			textFoo := []string{}
+			for i := range texts {
+				if strings.Contains(texts[i], Search) {
+					textFoo = append(textFoo, texts[i])
+				}
+			}
+			texts = textFoo
+		}
 	}
 	if Export {
 		fmt.Println("Exporting to " + CurrentDocument)
@@ -78,7 +87,7 @@ func Run() {
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")
-		fmt.Println(SummarizeEntries(cache))
+		fmt.Println(SummarizeEntries(texts))
 		return
 	} else {
 		texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))

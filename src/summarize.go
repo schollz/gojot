@@ -5,9 +5,8 @@ import (
 	"unicode/utf8"
 )
 
-func SummarizeEntries(cache Cache) string {
+func SummarizeEntries(texts []string) string {
 	var summarized []string
-	texts, _ := CombineEntries(cache)
 	for _, text := range texts {
 		dateInfo := strings.TrimSpace(strings.Split(text, " -==- ")[0])
 		dateInfo = strings.Join(strings.Split(dateInfo, " ")[:5], " ")

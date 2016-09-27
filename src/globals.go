@@ -10,7 +10,7 @@ var (
 	CachePath, ConfigPath, TempPath                string
 	CurrentDocument, Editor, Remote, InputDocument string
 	All, Export, Summarize                         bool
-	DeleteDocument                                 string
+	DeleteDocument, Search                         string
 	RemoteFolder, CacheFile                        string
 	Extension                                      string
 	Passphrase                                     string

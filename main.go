@@ -112,6 +112,11 @@ EXAMPLE USAGE:
 			Destination: &Debug,
 		},
 		cli.StringFlag{
+			Name:        "search",
+			Usage:       "Search for word",
+			Destination: &sdees.Search,
+		},
+		cli.StringFlag{
 			Name:        "importold",
 			Usage:       "Import an oldstyle file",
 			Destination: &ImportOldFile,
