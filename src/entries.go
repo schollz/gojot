@@ -17,7 +17,9 @@ func Import(filename string) error {
 		return err
 	}
 	blobs := ProcessEntries(string(data))
-	fmt.Println(blobs)
+	if len(blobs) < 2 {
+		fmt.Println("No entries found, perhaps you should run with --importold")
+	}
 	for i := range blobs {
 		_, err = NewDocument(RemoteFolder, CurrentDocument, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, "")
 		if err != nil {

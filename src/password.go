@@ -12,6 +12,7 @@ import (
 // PromptPassword prompts for password and tests against the file in input,
 // use "" for no file, in which a new password will be generated
 func PromptPassword(gitfolder string, document string) string {
+	fmt.Println("Working on " + document)
 	password1 := "1"
 	textToTest, err := GetTextOfOne(gitfolder, "master", "sdees-"+document+".gpg")
 	if err != nil {
