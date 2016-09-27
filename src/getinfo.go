@@ -41,7 +41,7 @@ func getInfoInParallel(branchNames []string) []Entry {
 	jobs := make(chan string, len(branchNames))
 	results := make(chan Entry, len(branchNames))
 	//This starts up 50 workers, initially blocked because there are no jobs yet.
-	for w := 0; w < 50; w++ {
+	for w := 0; w < 100; w++ {
 		go getInfoWorker(w, jobs, results)
 	}
 	//Here we send len(branchNames) jobs and then close that channel to indicate that’s all the work we have.

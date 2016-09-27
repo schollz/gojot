@@ -94,9 +94,11 @@ EXAMPLE USAGE:
 			sdees.SetupConfig()
 		} else if len(ImportOldFile) > 0 {
 			fmt.Printf("Importing %s using deprecated import file\n", ImportOldFile)
+			sdees.CurrentDocument = ImportOldFile
 			sdees.ImportOld(ImportOldFile)
 		} else if len(ImportFile) > 0 {
 			fmt.Printf("Importing %s\n", ImportFile)
+			sdees.CurrentDocument = ImportFile
 			sdees.Import(ImportFile)
 		} else {
 			sdees.Run()
