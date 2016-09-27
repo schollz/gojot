@@ -71,7 +71,7 @@ EXAMPLE USAGE:
 
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
-			sdees.CurrentDocument = workingFile
+			sdees.InputDocument = workingFile
 		}
 
 		// Check if its Windows

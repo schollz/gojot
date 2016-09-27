@@ -59,13 +59,10 @@ func LoadConfiguration() {
 	json.Unmarshal(data, &c)
 	if len(CurrentDocument) == 0 {
 		CurrentDocument = c.CurrentDocument
-	} else {
-		c.CurrentDocument = CurrentDocument
 	}
 	Editor = c.Editor
 	Remote = c.Remote
 	RemoteFolder = path.Join(CachePath, HashString(Remote))
-	SaveConfiguration(Editor, Remote, CurrentDocument)
 }
 
 func SaveConfiguration(editor string, remote string, currentdoc string) {

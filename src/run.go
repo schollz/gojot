@@ -24,26 +24,30 @@ func Run() {
 	}
 
 	// Get files
-	var editDocument string
-	fmt.Printf("Currently available documents: ")
-	logger.Debug("Last documents was %s", CurrentDocument)
-	availableFiles := ListFiles(RemoteFolder)
-	for _, file := range availableFiles {
-		fmt.Printf("\n%s ", file)
-		if file == CurrentDocument {
-			fmt.Print("(default) ")
+	if len(InputDocument) == 0 {
+		var editDocument string
+		fmt.Printf("Currently available documents: ")
+		logger.Debug("Last documents was %s", CurrentDocument)
+		availableFiles := ListFiles(RemoteFolder)
+		for _, file := range availableFiles {
+			fmt.Printf("\n%s ", file)
+			if file == CurrentDocument {
+				fmt.Print("(default) ")
+			}
 		}
-	}
-	fmt.Print("\nWhat is the name of the document you want to edit (enter for default)? ")
-	fmt.Scanln(&editDocument)
-	if len(editDocument) == 0 && len(CurrentDocument) > 0 {
-		// Pass
-	} else if len(editDocument) == 0 && len(availableFiles) > 0 {
-		CurrentDocument = availableFiles[0]
-	} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
-		CurrentDocument = "notes.txt"
-	} else if len(editDocument) > 0 {
-		CurrentDocument = editDocument
+		fmt.Print("\nWhat is the name of the document you want to edit (enter for default)? ")
+		fmt.Scanln(&editDocument)
+		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
+			// Pass
+		} else if len(editDocument) == 0 && len(availableFiles) > 0 {
+			CurrentDocument = availableFiles[0]
+		} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
+			CurrentDocument = "notes.txt"
+		} else if len(editDocument) > 0 {
+			CurrentDocument = editDocument
+		}
+	} else {
+		CurrentDocument = InputDocument
 	}
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
