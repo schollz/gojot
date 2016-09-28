@@ -11,6 +11,8 @@
 
 Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to encrypted documents (like a notebook or journal) while keeping the entire document synchronized.
 
+_Note_: The previous non-`git` version of `sdees` can [be found here](https://github.com/schollz/sdees/tree/1.X).
+
 
 ## Features
 
@@ -43,8 +45,6 @@ sdees --summary # list a summary
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 sdees --help # for more information
 ```
-
-![sdees usage](/branding/help2.gif)
 
 # Acknowledgements
 
