@@ -1,8 +1,8 @@
-# gitsdees
+# sdees
 
 
-[![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/gitsdees/releases/latest)
-[![Build Status](https://travis-ci.org/schollz/gitsdees.svg?branch=master)](https://travis-ci.org/schollz/gitsdees)
+[![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
+[![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-56.8%25-yellow.svg)
 
 ## SDEES is for Distributed Editing of Encrypted Stuff
@@ -28,7 +28,7 @@ A single document is reconstructed by first fetching all remote branches, then f
 
 You can install by downloading [the latest release](https://github.com/schollz/sdees/releases/latest) or installing with Go 1.7+:
 ```
-go get -u github.com/schollz/gitsdees
+go get -u github.com/schollz/sdees
 ```
 
 # Usage
