@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
-	"log"
 	"strings"
 
 	"golang.org/x/crypto/openpgp"
@@ -48,12 +47,12 @@ func EncryptString(encryptionText string, encryptionPassphraseString string) str
 	encbuf := bytes.NewBuffer(nil)
 	w, err := armor.Encode(encbuf, "PGP SIGNATURE", nil)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("Error encrypting:" + err.Error())
 	}
 
 	plaintext, err := openpgp.SymmetricallyEncrypt(w, encryptionPassphrase, nil, nil)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("Error opengpg encrypting:" + err.Error())
 	}
 	message := []byte(encryptionText)
 	_, err = plaintext.Write(message)
