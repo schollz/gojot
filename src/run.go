@@ -11,11 +11,15 @@ import (
 func Run() {
 
 	// Check if cloning needs to occur
+	logger.Debug("Current remote: %s", Remote)
 	measureTime := time.Now()
 	fmt.Print("Fetching latest")
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
-		Clone(RemoteFolder, Remote)
+		err := Clone(RemoteFolder, Remote)
+		if err != nil {
+			logger.Warn("Problems cloning remote '%s': %s", Remote, err.Error())
+		}
 	} else {
 		errFetch := Fetch(RemoteFolder)
 		if errFetch == nil {

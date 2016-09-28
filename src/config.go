@@ -72,6 +72,9 @@ func LoadConfiguration() {
 	Editor = c.Editor
 	Remote = c.Remote
 	RemoteFolder = path.Join(CachePath, HashString(Remote))
+	if len(Remote) == 0 {
+		SetupConfig()
+	}
 }
 
 func SaveConfiguration(editor string, remote string, currentdoc string) {

@@ -3,7 +3,6 @@ package sdees
 import (
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -368,8 +367,7 @@ func Clone(folder string, remote string) error {
 	cmd := exec.Command("git", "clone", remote, folder)
 	_, err = cmd.Output()
 	if err != nil {
-		log.Println(err)
-		return errors.New("Cannot clone into " + folder)
+		return errors.New("Cloning command failed: '" + strings.Join([]string{"git", "clone", remote, folder}, " ") + "'")
 	}
 
 	Fetch(folder)

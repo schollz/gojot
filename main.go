@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -42,14 +41,14 @@ func main() {
 	app.Name = "sdees"
 	if len(Build) == 0 {
 		Build = "dev"
-		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
-		if err != nil {
-			log.Fatal(err)
-		}
-		bString := string(out)
-		Build = bString[0:7]
 		Version = "dev"
 		BuildTime = time.Now().String()
+		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
+		if err == nil {
+			bString := string(out)
+			Build = bString[0:7]
+
+		}
 	} else {
 		Build = Build[0:7]
 	}
