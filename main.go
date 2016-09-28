@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	sdees "github.com/schollz/gitsdees/src"
+	sdees "github.com/schollz/sdees/src"
 	"github.com/urfave/cli"
 )
 
@@ -112,7 +112,7 @@ EXAMPLE USAGE:
 		},
 		cli.BoolFlag{
 			Name:        "clean",
-			Usage:       "Deletes all gitsdees files",
+			Usage:       "Deletes all sdees files",
 			Destination: &Clean,
 		},
 		cli.StringFlag{
