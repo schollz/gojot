@@ -87,20 +87,7 @@ EXAMPLE USAGE:
 		sdees.LoadConfiguration()
 
 		// Process some flags
-		if len(DeleteEntry) > 0 {
-			var yesno string
-			fmt.Printf("Are you sure you want to delete the entry %s in document %s? (y/n) ", DeleteEntry, sdees.CurrentDocument)
-			fmt.Scanln(&yesno)
-			if string(yesno) == "y" {
-				if sdees.DeleteBranch(DeleteEntry) != nil {
-					fmt.Printf("Error deleting %s, does it exist?\n", DeleteEntry)
-				} else {
-					fmt.Printf("Deleting entry %s\n", DeleteEntry)
-				}
-			} else {
-				fmt.Printf("Did not delete %s\n", DeleteEntry)
-			}
-		} else if ResetConfig {
+		if ResetConfig {
 			sdees.SetupConfig()
 		} else if len(ImportOldFile) > 0 {
 			fmt.Printf("Importing %s using deprecated import file\n", ImportOldFile)
@@ -161,7 +148,12 @@ EXAMPLE USAGE:
 		cli.StringFlag{
 			Name:        "delete",
 			Usage:       "Delete `entry`",
-			Destination: &DeleteEntry,
+			Destination: &sdees.DeleteEntry,
+		},
+		cli.BoolFlag{
+			Name:        "ddelete",
+			Usage:       "Delete `document`",
+			Destination: &sdees.DeleteDocument,
 		},
 		cli.BoolFlag{
 			Name:        "plaintext",

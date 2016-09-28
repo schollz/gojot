@@ -63,6 +63,15 @@ func Run() {
 		return
 	}
 
+	// Do deletions
+	if DeleteDocument {
+		GoDeleteDocument(cache)
+		return
+	} else if len(DeleteEntry) > 0 {
+		GoDeleteEntry(cache)
+		return
+	}
+
 	texts := []string{}
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 {
