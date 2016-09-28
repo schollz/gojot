@@ -1,4 +1,4 @@
-package gitsdees
+package sdees
 
 import (
 	"os"
@@ -22,19 +22,19 @@ func setupPaths() {
 		}
 	}
 
-	CachePath = path.Join(homeDir, ".cache", "gitsdees")
+	CachePath = path.Join(homeDir, ".cache", "sdees")
 	if !exists(CachePath) {
 		err := os.MkdirAll(CachePath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gitsdees"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "sdees"))
 		}
 	}
 
-	TempPath = path.Join(homeDir, ".cache", "gitsdees", "temp")
+	TempPath = path.Join(homeDir, ".cache", "sdees", "temp")
 	if !exists(TempPath) {
 		err := os.MkdirAll(TempPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gitsdees", "temp"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "sdees", "temp"))
 		}
 	}
 
@@ -45,11 +45,11 @@ func setupPaths() {
 		}
 	}
 
-	ConfigPath = path.Join(homeDir, ".config", "gitsdees")
+	ConfigPath = path.Join(homeDir, ".config", "sdees")
 	if !exists(ConfigPath) {
 		err := os.MkdirAll(ConfigPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".config", "gitsdees"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".config", "sdees"))
 		}
 	}
 

@@ -4,7 +4,7 @@
 // bin/nouns.txt
 // DO NOT EDIT!
 
-package gitsdees
+package sdees
 
 import (
 	"bytes"

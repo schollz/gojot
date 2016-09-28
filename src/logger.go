@@ -1,4 +1,4 @@
-package gitsdees
+package sdees
 
 import "github.com/jcelliott/lumber"
 
