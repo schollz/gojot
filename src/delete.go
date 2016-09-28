@@ -53,11 +53,12 @@ func GoDeleteDocument(cache Cache) error {
 		logger.Debug(err.Error())
 		return err
 	}
-
+	fmt.Print("Deleting on remote")
 	err = Push(RemoteFolder)
 	if err != nil {
 		logger.Debug(err.Error())
 		return err
 	}
+	fmt.Println("...done")
 	return nil
 }

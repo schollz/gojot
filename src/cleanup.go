@@ -1,6 +1,7 @@
 package gitsdees
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -27,8 +28,14 @@ func CleanUp() error {
 }
 
 func CleanAll() {
-	logger.Debug("Removing cache: %s", CachePath)
-	os.RemoveAll(CachePath)
-	logger.Debug("Removing config: %s", ConfigPath)
-	os.RemoveAll(ConfigPath)
+	var yesno string
+	fmt.Print("\n\nThis will remove all local files, but not remote. Are you sure? (y/n) ")
+	fmt.Scanln(&yesno)
+	if yesno == "y" {
+		logger.Debug("Removing cache: %s", CachePath)
+		os.RemoveAll(CachePath)
+		logger.Debug("Removing config: %s", ConfigPath)
+		os.RemoveAll(ConfigPath)
+		fmt.Println("All local files removed")
+	}
 }
