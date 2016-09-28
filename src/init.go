@@ -1,7 +1,6 @@
 package gitsdees
 
 import (
-	"log"
 	"os"
 	"path"
 
@@ -19,7 +18,7 @@ func setupPaths() {
 	if !exists(path.Join(homeDir, ".cache")) {
 		err := os.MkdirAll(path.Join(homeDir, ".cache"), 0711)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache"))
 		}
 	}
 
@@ -27,7 +26,7 @@ func setupPaths() {
 	if !exists(CachePath) {
 		err := os.MkdirAll(CachePath, 0711)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gitsdees"))
 		}
 	}
 
@@ -35,14 +34,14 @@ func setupPaths() {
 	if !exists(TempPath) {
 		err := os.MkdirAll(TempPath, 0711)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gitsdees", "temp"))
 		}
 	}
 
 	if !exists(path.Join(homeDir, ".config")) {
 		err := os.MkdirAll(path.Join(homeDir, ".config"), 0711)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("Error creating %s", path.Join(homeDir, ".config"))
 		}
 	}
 
@@ -50,7 +49,7 @@ func setupPaths() {
 	if !exists(ConfigPath) {
 		err := os.MkdirAll(ConfigPath, 0711)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("Error creating %s", path.Join(homeDir, ".config", "gitsdees"))
 		}
 	}
 
