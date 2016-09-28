@@ -13,6 +13,7 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.Buil
 
 $(BINARY): $(SOURCES)
 	go get github.com/jcelliott/lumber
+	go get -u github.com/schollz/sdees/src
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get golang.org/x/crypto/ssh/terminal
@@ -22,6 +23,7 @@ $(BINARY): $(SOURCES)
 
 .PHONY: test
 test:
+	go get -u github.com/schollz/sdees/src
 	go get github.com/jcelliott/lumber
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
@@ -64,6 +66,7 @@ windows:
 
 .PHONY: nightly
 nightly:
+	go get -u github.com/schollz/sdees/src
 	go get github.com/aktau/github-release
 	echo "Deleting old release"
 	github-release delete \
