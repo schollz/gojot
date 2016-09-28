@@ -2,9 +2,12 @@ package gitsdees
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"time"
@@ -15,33 +18,39 @@ type Config struct {
 }
 
 func SetupConfig() {
+	var configParameters Config
+
 	var yesno string
-	var configParamaters Config
-	fmt.Print("sdees has capability to use a remote git repository to keep documents in sync.\nWould you like to set this up? (y/n) ")
-	fmt.Scanln(&yesno)
-	if strings.TrimSpace(strings.ToLower(yesno)) == "y" {
+	err := errors.New("Incorrect remote")
+	for {
 		fmt.Print("Enter remote (e.g.: git@github.com:USER/REPO.git): ")
-		fmt.Scanln(&configParamaters.Remote)
-		// logger.Debug("configParamaters.Remote: %s", configParamaters.Remote)
-		if len(configParamaters.Remote) == 0 {
-			configParamaters.Remote = "local"
+		fmt.Scanln(&yesno)
+		cwd, _ := os.Getwd()
+		os.Chdir(CachePath)
+		os.RemoveAll(HashString(yesno))
+		cmd := exec.Command("git", "clone", yesno, HashString(yesno))
+		_, err := cmd.Output()
+		os.Chdir(cwd)
+		if err != nil {
+			fmt.Println("Could not clone, please re-enter")
+		} else {
+			break
 		}
-	} else {
-		configParamaters.Remote = "local"
 	}
+	configParameters.Remote = yesno
 
 	fmt.Printf("Which editor do you want to use: vim (default), nano, or emacs? ")
 	fmt.Scanln(&yesno)
 	if strings.TrimSpace(strings.ToLower(yesno)) == "nano" {
-		configParamaters.Editor = "nano"
+		configParameters.Editor = "nano"
 	} else if strings.TrimSpace(strings.ToLower(yesno)) == "emacs" {
-		configParamaters.Editor = "emacs"
+		configParameters.Editor = "emacs"
 	} else {
-		configParamaters.Editor = "vim"
+		configParameters.Editor = "vim"
 	}
-	configParamaters.CurrentDocument = ""
+	configParameters.CurrentDocument = ""
 
-	b, err := json.Marshal(configParamaters)
+	b, err := json.Marshal(configParameters)
 	if err != nil {
 		log.Println(err)
 	}
