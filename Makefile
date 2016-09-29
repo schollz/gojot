@@ -92,7 +92,7 @@ prerelease:
 	    --tag nightly \
 	    --name "sdees-${BUILDSHORT}-win64.exe" \
 	    --file sdees_windows_amd64.zip
-	rm sdees.exe
+	rm sdees-${BUILDSHORT}.exe
 	echo "Uploading Windows 64 binary, bundled with VIM"
 	rm -rf vim*
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
@@ -108,7 +108,7 @@ prerelease:
 			--tag nightly \
 			--name "sdees-${BUILDSHORT}-win64-vim.exe" \
 			--file sdees_windows_amd64_withvim.zip
-	rm sdees.exe
+	rm sdees-${BUILDSHORT}.exe
 	cd src && git reset --hard HEAD
 	rm -rf ./src/bin/vim.exe
 
