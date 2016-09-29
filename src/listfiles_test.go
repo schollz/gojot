@@ -9,8 +9,8 @@ func TestListFiles(t *testing.T) {
 	}
 }
 
-func BenchmarkListFiles(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		ListFiles("gittest")
-	}
-}
+// func BenchmarkListFiles(b *testing.B) {
+// 	for n := 0; n < b.N; n++ {
+// 		ListFiles("gittest")
+// 	}
+// }

@@ -316,7 +316,7 @@ func createBranches(gitfolder string, numBranches int) {
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
-		NewDocument(gitfolder, fileName, "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), strconv.Itoa(i))
+		NewDocument(gitfolder, fileName, "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), strconv.Itoa(i)) // TODO: WHY DOESN"T THIS WORK??
 	}
 
 	elapsed := time.Since(start)

@@ -1,25 +1,27 @@
 package sdees
 
 import (
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 )
 
 func ListFiles(gitfolder string) []string {
 	defer timeTrack(time.Now(), "Listing files")
-	branchNames, _ := ListBranches(gitfolder)
-	infos, _ := GetInfo(gitfolder, branchNames)
-	foundDocuments := make(map[string]bool)
-	documents := []string{}
-	for _, info := range infos {
-		fileName := strings.Replace(info.Document, ".gpg", "", -1)
-		if fileName == ".deleted" {
-			continue
-		}
-		if _, ok := foundDocuments[fileName]; !ok {
-			foundDocuments[fileName] = true
-			documents = append(documents, fileName)
-		}
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	err := os.Chdir(gitfolder)
+	if err != nil {
+		logger.Error("Cannot chdir into " + gitfolder)
 	}
+
+	cmd := exec.Command("git", "ls-tree", "--name-only", "master")
+	stdout, err := cmd.Output()
+	if err != nil {
+		logger.Error("Problem doing ls-tree")
+	}
+	documents := strings.Split(string(stdout), "\n")
+
 	return documents
 }
