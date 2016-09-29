@@ -57,6 +57,10 @@ func main() {
 
 	 https://github.com/schollz/sdees
 
+FOLDERS:
+	'` + sdees.CachePath + `' stores all encrypted files and repositories
+	'` + sdees.ConfigPath + `' stores all configuration files
+
 EXAMPLE USAGE:
    sdees new.txt # edit a new document, new.txt
    sdees --summary -n 5 # list a summary of last five entries
