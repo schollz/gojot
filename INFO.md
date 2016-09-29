@@ -1,6 +1,8 @@
-# How-to setup git server
+# Setting up `git` server
 
-You can definetly use github.com or bitbucket.org or similar. If you want to make a personal one you can also do it locally or remotely.
+You can just use a [Github](https://github.com/) or [Bitbucket](https://bitbucket.org/) repository and skip this.
+
+You can also make your own personal `git` server by following these steps.
 
 ## Remote server
 
