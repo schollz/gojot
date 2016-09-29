@@ -61,7 +61,7 @@ func Run() {
 	}
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
-	if !All && !Summarize {
+	if !All && !Summarize && !Export {
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
 		fmt.Scanln(&yesnoall)
