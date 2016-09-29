@@ -30,7 +30,7 @@ func Run() {
 	}
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
-	// Get files
+	// List available documents to choose from
 	availableFiles, encrypted := ListFiles(RemoteFolder)
 	if len(InputDocument) == 0 {
 		var editDocument string
@@ -59,8 +59,10 @@ func Run() {
 	} else {
 		CurrentDocument = InputDocument
 	}
+	// Save choice of current document
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
+	// Prompt for whether to load whole document
 	if !All && !Summarize && !Export {
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
@@ -70,6 +72,7 @@ func Run() {
 		}
 	}
 
+	// Check if encryption is needed
 	isNew := true
 	Encrypt = false
 	for i, file := range availableFiles {
@@ -79,6 +82,7 @@ func Run() {
 			break
 		}
 	}
+	// Prompt whether encryption is wanted for new files
 	if isNew {
 		var yesencryption string
 		fmt.Print("\nDo you want to add encryption (default: y)? (y/n) ")
@@ -89,9 +93,13 @@ func Run() {
 			Encrypt = true
 		}
 	}
+
+	// Prompt for passphrase if encrypted
 	if Encrypt {
 		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
 	}
+
+	// Update the cache using the passphrase if needed
 	cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
 	if err != nil {
 		logger.Error("Error updating cache: %s", err.Error())
@@ -107,6 +115,7 @@ func Run() {
 		return
 	}
 
+	// Load fulltext
 	texts := []string{}
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 {
@@ -126,6 +135,8 @@ func Run() {
 			texts = textFoo
 		}
 	}
+
+	// Case-switch for what to do with fulltext
 	if Export {
 		fmt.Println("Exporting to " + CurrentDocument)
 		ioutil.WriteFile(CurrentDocument, []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
@@ -141,6 +152,7 @@ func Run() {
 	fulltext := WriteEntry()
 	UpdateEntryFromText(fulltext, branchHashes)
 
+	// Push new changes
 	measureTime = time.Now()
 	fmt.Print("Pushing changes")
 	err = Push(RemoteFolder)
