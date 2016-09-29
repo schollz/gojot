@@ -1,7 +1,6 @@
 package sdees
 
 import (
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -17,6 +16,7 @@ import (
 var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
 
 func TestMain(m *testing.M) {
+	DebugMode()
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
 		createBranches("./gittest", 100)
@@ -279,18 +279,6 @@ func createBranches(gitfolder string, numBranches int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	d1 := []byte("hello, world")
-	err = ioutil.WriteFile("test.txt", d1, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fileName := "test.txt"
-	cmd = exec.Command("git", "add", fileName)
-	_, err = cmd.Output()
-	cmd = exec.Command("git", "commit", "-am", "'added test.txt'")
-	_, err = cmd.Output()
-
 	rand.Seed(18)
 	start := time.Now()
 	for i := 0; i < numBranches; i++ {
@@ -312,7 +300,7 @@ func createBranches(gitfolder string, numBranches int) {
 		//
 		// cmd = exec.Command("git", "commit", "-am", "'added "+fileName+"'")
 		// _, err = cmd.Output()
-		fileName = "test.txt"
+		fileName := "test.txt"
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}

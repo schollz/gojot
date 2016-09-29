@@ -8,6 +8,7 @@ import (
 )
 
 func ListFiles(gitfolder string) []string {
+
 	defer timeTrack(time.Now(), "Listing files")
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -21,7 +22,6 @@ func ListFiles(gitfolder string) []string {
 	if err != nil {
 		logger.Error("Problem doing ls-tree")
 	}
-	documents := strings.Split(string(stdout), "\n")
-
+	documents := strings.Split(strings.TrimSpace(string(stdout)), "\n")
 	return documents
 }
