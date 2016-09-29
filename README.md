@@ -46,6 +46,30 @@ sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 sdees --help # for more information
 ```
 
+# Setup git server (optional)
+
+On the server use:
+
+```
+sudo apt-get install git-core
+sudo useradd git
+sudo passwd git
+sudo mkdir /home/git
+sudo chown git:git /home/git
+```
+
+Then from the client, add your key:
+
+```
+cat ~/.ssh/id_rsa.pub | ssh git@remote "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+```
+and create a new repo:
+
+```
+ssh git@remote "mkdir -p ~/newrepo.git && git init --bare newrepo.git/ && rm -rf clonetest && git clone newrepo.git clonetest && cd clonetest && touch .new && git add . && git commit -m 'added master' && git push origin master"
+```
+which you can add to sdees as `git@remote:newrepo.git`.
+
 # Acknowledgements
 
 Logo graphic from [logodust](http://logodust.com).
