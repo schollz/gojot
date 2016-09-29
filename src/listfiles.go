@@ -8,7 +8,6 @@ import (
 )
 
 func ListFiles(gitfolder string) []string {
-
 	defer timeTrack(time.Now(), "Listing files")
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -22,6 +21,12 @@ func ListFiles(gitfolder string) []string {
 	if err != nil {
 		logger.Error("Problem doing ls-tree")
 	}
-	documents := strings.Split(strings.TrimSpace(string(stdout)), "\n")
+	documents := []string{}
+	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
+		if document[0] == '.' {
+			continue
+		}
+		documents = append(documents, strings.Replace(document, ".gpg", "", -1))
+	}
 	return documents
 }
