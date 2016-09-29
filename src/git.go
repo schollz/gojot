@@ -334,6 +334,35 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 
 	logger.Debug("Updated document %s in branch %s", documentname, newBranch)
 
+	// Check if its a new document
+	_, errExistence := GetTextOfOne(gitfolder, "master", documentname)
+	if errExistence != nil {
+		logger.Debug("It seems %s doesn't exist yet, making a index file for it in master", documentname)
+		cmd2 := exec.Command("git", "checkout", "master")
+		_, err2 := cmd2.Output()
+		if err2 != nil {
+			logger.Warn("Something wrong checking out master")
+		}
+		text := "Yay some text!"
+		if Encrypt {
+			text = EncryptString(text, Passphrase)
+		}
+		err2 = ioutil.WriteFile(documentname, []byte(text), 0644)
+		if err != nil {
+			logger.Warn("Something wrong with writing " + documentname)
+		}
+		cmd2 = exec.Command("git", "add", documentname)
+		_, err2 = cmd2.Output()
+		if err2 != nil {
+			logger.Warn("Something wrong checking out master")
+		}
+		cmd2 = exec.Command("git", "commit", "--date", datestring, "-m", message, documentname)
+		_, err2 = cmd2.Output()
+		if err2 != nil {
+			logger.Warn("Something wrong checking out master")
+		}
+	}
+
 	return newBranch, err
 }
 

@@ -13,10 +13,9 @@ import (
 // use "" for no file, in which a new password will be generated
 func PromptPassword(gitfolder string, document string) string {
 	password1 := "1"
-	textToTest, err := GetTextOfOne(gitfolder, "master", "sdees-"+document+".gpg")
+	textToTest, err := GetTextOfOne(gitfolder, "master", document+".gpg")
 	if err != nil {
-		fmt.Printf("Creating new document %s\n", document)
-		logger.Debug("Error: %s, creating %s", err.Error(), "sdees-"+document+".gpg")
+		fmt.Printf("Getting new password for %s\n", document)
 		password2 := "2"
 		for password1 != password2 {
 			fmt.Printf("Enter new password for %s: ", document)
@@ -30,13 +29,8 @@ func PromptPassword(gitfolder string, document string) string {
 			}
 		}
 		Passphrase = password1
-		_, err := NewDocument(gitfolder, "sdees-"+document, "Yay!", "Added sdees", GetCurrentDate(), "master")
-		if err != nil {
-			logger.Error("Error creating new document: %s", err.Error())
-		}
-		Push(gitfolder)
 	} else {
-		logger.Debug("Testing with master:sdees-%s.gpg", document)
+		logger.Debug("Testing with master:%s.gpg", document)
 		passwordAccepted := false
 		for passwordAccepted == false {
 			fmt.Printf("Enter password to open %s: ", document)
