@@ -34,6 +34,8 @@ You can install by downloading [the latest release](https://github.com/schollz/s
 go get -u github.com/schollz/sdees
 ```
 
+Info about using a `git` repository other than Github/Bitbucket can [be found in INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
+
 # Usage
 
 The first time you run you can configure your remote system and editor.
