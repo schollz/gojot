@@ -93,6 +93,7 @@ prerelease:
 	    --name "sdees-${BUILDSHORT}-win64.zip" \
 	    --file sdees_windows_amd64.zip
 	rm sdees-${BUILDSHORT}.exe
+	rm -f *.zip
 	echo "Uploading Windows 64 binary, bundled with VIM"
 	rm -rf vim*
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
@@ -111,6 +112,7 @@ prerelease:
 	rm sdees-${BUILDSHORT}.exe
 	cd src && git reset --hard HEAD
 	rm -rf ./src/bin/vim.exe
+	rm -f *.zip
 	echo "Uploading Linux"
 	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o sdees-${BUILDSHORT}
 	zip -j sdees_linux_amd64.zip sdees-${BUILDSHORT}
@@ -121,6 +123,7 @@ prerelease:
 	    --name "sdees-${BUILDSHORT}-amd64.zip" \
 	    --file sdees_linux_amd64.zip
 	rm sdees-${BUILDSHORT}
+	rm -f *.zip
 
 
 .PHONY: binaries
