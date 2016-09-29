@@ -66,7 +66,6 @@ windows:
 
 .PHONY: prerelease
 prerelease:
-	go get -u github.com/schollz/sdees/src
 	go get github.com/aktau/github-release
 	echo "Deleting old release"
 	github-release delete \
