@@ -338,7 +338,9 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	_, errExistence := GetTextOfOne("./", "master", documentname)
 	if errExistence != nil {
 		logger.Debug("It seems %s doesn't exist yet, making a index file for it in master", documentname)
-		cmd2 := exec.Command("git", "checkout", "master")
+		dir, _ := os.Getwd()
+		logger.Debug("Current DIR: %s", dir)
+		cmd2 := exec.Command("git", "checkout", "-f", "master")
 		_, err2 := cmd2.Output()
 		if err2 != nil {
 			cmd2 = exec.Command("git", "checkout", "--orphan", "master")

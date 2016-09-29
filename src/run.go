@@ -31,13 +31,16 @@ func Run() {
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
 	// Get files
+	availableFiles, encrypted := ListFiles(RemoteFolder)
 	if len(InputDocument) == 0 {
 		var editDocument string
 		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", CurrentDocument)
-		availableFiles := ListFiles(RemoteFolder)
-		for _, file := range availableFiles {
+		for i, file := range availableFiles {
 			fmt.Printf("\n- %s ", file)
+			if encrypted[i] {
+				fmt.Print("[encrypted] ")
+			}
 			if file == CurrentDocument {
 				fmt.Print("(default) ")
 			}
@@ -58,6 +61,25 @@ func Run() {
 	}
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
+	isNew := true
+	Encrypt = false
+	for i, file := range availableFiles {
+		if CurrentDocument == file {
+			isNew = false
+			Encrypt = encrypted[i]
+			break
+		}
+	}
+	if isNew {
+		var yesencryption string
+		fmt.Print("\nDo you want to add encryption (default: y)? (y/n) ")
+		fmt.Scanln(&yesencryption)
+		if yesencryption == "n" {
+			Encrypt = false
+		} else {
+			Encrypt = true
+		}
+	}
 	if Encrypt {
 		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
 	}

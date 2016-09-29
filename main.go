@@ -80,8 +80,6 @@ EXAMPLE USAGE:
 			sdees.Extension = ""
 		}
 
-		sdees.Encrypt = !DontEncrypt
-
 		// Load configuration
 		sdees.LoadConfiguration()
 
@@ -153,11 +151,6 @@ EXAMPLE USAGE:
 			Name:        "ddelete",
 			Usage:       "Delete `document`",
 			Destination: &sdees.DeleteDocument,
-		},
-		cli.BoolFlag{
-			Name:        "plaintext",
-			Usage:       "Turns off encryption",
-			Destination: &DontEncrypt,
 		},
 		cli.BoolFlag{
 			Name:        "summary",

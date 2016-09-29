@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func ListFiles(gitfolder string) []string {
+func ListFiles(gitfolder string) ([]string, []bool) {
 	defer timeTrack(time.Now(), "Listing files")
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -22,11 +22,13 @@ func ListFiles(gitfolder string) []string {
 		logger.Error("Problem doing ls-tree")
 	}
 	documents := []string{}
+	encrypted := []bool{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
 		if document[0] == '.' {
 			continue
 		}
+		encrypted = append(encrypted, strings.Contains(document, ".gpg"))
 		documents = append(documents, strings.Replace(document, ".gpg", "", -1))
 	}
-	return documents
+	return documents, encrypted
 }
