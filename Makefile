@@ -137,7 +137,7 @@ prerelease:
 	rm -f *.zip
 	echo "Uploading Linux Arm64"
 	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o sdees
-	zip -j sdees_linux_arm.zip sdees
+	zip -j sdees_linux_arm64.zip sdees
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
