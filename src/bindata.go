@@ -84,7 +84,7 @@ func binAdjectivesTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/adjectives.txt", size: 9106, mode: os.FileMode(436), modTime: time.Unix(1474982590, 0)}
+	info := bindataFileInfo{name: "bin/adjectives.txt", size: 9106, mode: os.FileMode(436), modTime: time.Unix(1475068381, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -104,7 +104,7 @@ func binNounsTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/nouns.txt", size: 4036, mode: os.FileMode(436), modTime: time.Unix(1474982590, 0)}
+	info := bindataFileInfo{name: "bin/nouns.txt", size: 4036, mode: os.FileMode(436), modTime: time.Unix(1475068381, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
