@@ -45,7 +45,7 @@ func Run() {
 				fmt.Print("(default) ")
 			}
 		}
-		fmt.Print("\n\nWhat is the name of the document you want to edit (enter for default)? ")
+		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", CurrentDocument)
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
@@ -60,6 +60,15 @@ func Run() {
 		CurrentDocument = InputDocument
 	}
 	SaveConfiguration(Editor, Remote, CurrentDocument)
+
+	if !All {
+		var yesnoall string
+		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
+		fmt.Scanln(&yesnoall)
+		if yesnoall == "y" {
+			All = true
+		}
+	}
 
 	isNew := true
 	Encrypt = false
