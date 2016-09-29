@@ -90,7 +90,7 @@ prerelease:
 	    --user schollz \
 	    --repo sdees \
 	    --tag nightly \
-	    --name "sdees-${BUILDSHORT}-win64.exe" \
+	    --name "sdees-${BUILDSHORT}-win64.zip" \
 	    --file sdees_windows_amd64.zip
 	rm sdees-${BUILDSHORT}.exe
 	echo "Uploading Windows 64 binary, bundled with VIM"
@@ -106,12 +106,21 @@ prerelease:
 			--user schollz \
 			--repo sdees \
 			--tag nightly \
-			--name "sdees-${BUILDSHORT}-win64-vim.exe" \
+			--name "sdees-${BUILDSHORT}-win64-vim.zip" \
 			--file sdees_windows_amd64_withvim.zip
 	rm sdees-${BUILDSHORT}.exe
 	cd src && git reset --hard HEAD
 	rm -rf ./src/bin/vim.exe
-
+	echo "Uploading Linux"
+	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o sdees-${BUILDSHORT}
+	zip -j sdees_linux_amd64.zip sdees-${BUILDSHORT}
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag nightly \
+	    --name "sdees-${BUILDSHORT}-amd64.zip" \
+	    --file sdees_linux_amd64.zip
+	rm sdees-${BUILDSHORT}
 
 
 .PHONY: binaries
