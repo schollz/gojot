@@ -5,7 +5,6 @@
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-53%25-yellow.svg)
 
-![Sdees](https://camo.githubusercontent.com/4e8c3264d9656edef93de9749f152b18314f780e/687474703a2f2f692e696d6775722e636f6d2f4936457a4544482e6a7067)
 
 ## SDEES is for Distributed Editing of Encrypted Stuff
 
@@ -24,7 +23,7 @@ _Note_: The previous non-`git` version of `sdees` can [be found here](https://gi
 
 ## How it works
 
-Each new entry in a document is symmetrically encrypted and inserted into a new orphan branch in the supplied `git` repository. The benefit of each entry having its own orphan branch is that each document will not have merge collisions when creating new entries on different local copies. Thus, `sdees` makes it perfectly safe to make new entries without internet access. Additional edits to an entry will commit a new (encrypted) change onto that document in the respective branch.
+Upon startup a `git` repository is requested. Each new entry in a document is symmetrically encrypted and inserted into a new orphan branch in the supplied `git` repository. The benefit of each entry having its own orphan branch is that each document will not have merge collisions when creating new entries on different local copies. Thus, `sdees` makes it perfectly safe to make new entries without internet access. Additional edits to an entry will commit a new (encrypted) change onto that document in the respective branch.
 
 A single document is reconstructed by first fetching all remote branches, then filtering out which ones contain entries for the document of interest, decrypting each entry, and sorting the entries by date. Multiple documents can be stored in a single `git` repository.
 

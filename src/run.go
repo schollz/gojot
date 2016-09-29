@@ -45,6 +45,9 @@ func Run() {
 				fmt.Print("(default) ")
 			}
 		}
+		if len(CurrentDocument) == 0 {
+			CurrentDocument = "notes.txt"
+		}
 		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", CurrentDocument)
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
@@ -62,16 +65,6 @@ func Run() {
 	// Save choice of current document
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
-	// Prompt for whether to load whole document
-	if !All && !Summarize && !Export {
-		var yesnoall string
-		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
-		fmt.Scanln(&yesnoall)
-		if yesnoall == "y" {
-			All = true
-		}
-	}
-
 	// Check if encryption is needed
 	isNew := true
 	Encrypt = false
@@ -82,8 +75,8 @@ func Run() {
 			break
 		}
 	}
-	// Prompt whether encryption is wanted for new files
 	if isNew {
+		// Prompt whether encryption is wanted for new files
 		var yesencryption string
 		fmt.Print("\nDo you want to add encryption (default: y)? (y/n) ")
 		fmt.Scanln(&yesencryption)
@@ -91,6 +84,14 @@ func Run() {
 			Encrypt = false
 		} else {
 			Encrypt = true
+		}
+	} else if !All && !Summarize && !Export {
+		// Prompt for whether to load whole document
+		var yesnoall string
+		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
+		fmt.Scanln(&yesnoall)
+		if yesnoall == "y" {
+			All = true
 		}
 	}
 
