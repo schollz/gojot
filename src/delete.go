@@ -1,6 +1,11 @@
 package sdees
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+)
 
 func GoDeleteEntry(cache Cache) {
 	var yesno string
@@ -48,11 +53,45 @@ func GoDeleteDocument(cache Cache) error {
 		fmt.Printf("Did not delete %s\n", CurrentDocument)
 	}
 
+
+	logger.Debug("Deleting cache")
 	err := DeleteCache()
 	if err != nil {
 		logger.Debug(err.Error())
 		return err
 	}
+
+	logger.Debug("Deleting master index file: %s", CurrentDocument)
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	os.Chdir(RemoteFolder)
+
+	// Make sure we aren't on that branch
+	cmd := exec.Command("git", "checkout", "master")
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Problem switching to master")
+	}
+
+	document := CurrentDocument
+	if Encrypt {
+		document += ".gpg"
+	}
+	// Remove file from index
+	logger.Debug("git rm -f %s",document)
+	cmd = exec.Command("git", "rm", "-f", document)
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Problem git rm -f ")
+	}
+
+	logger.Debug("git commit -m %s",document)
+	cmd = exec.Command("git", "commit", "-m", "removed '"+document+"'")
+	_, err = cmd.Output()
+	if err != nil {
+		return errors.New("Problem git commit -m ")
+	}
+
 	fmt.Print("Deleting on remote")
 	err = Push(RemoteFolder)
 	if err != nil {
