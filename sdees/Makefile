@@ -6,7 +6,7 @@ VERSION=2.0.0
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
-
+OS=something
 LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME}"
 
 .DEFAULT_GOAL: $(BINARY)
@@ -83,6 +83,7 @@ release:
 	    --description "This is a standalone binary of sdees (no internal updating)" \
 	    --pre-release
 	echo "Uploading Windows 64 binary"
+	OS=windows_amd64_novim
 	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o sdees.exe
 	zip -j sdees_windows_amd64_novim.zip sdees.exe
 	github-release upload \
@@ -100,7 +101,8 @@ release:
 	mv vim/vim80/vim.exe ./src/bin/
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o sdees.exe
+	OS=windows_amd64
+	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.OS=${OS}" -o sdees.exe
 	zip -j sdees_windows_amd64.zip sdees.exe
 	github-release upload \
 			--user schollz \
@@ -113,7 +115,8 @@ release:
 	rm -rf ./src/bin/vim.exe
 	rm -f *.zip
 	echo "Uploading Linux Amd64"
-	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o sdees
+	OS=linux_amd64
+	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.OS=${OS}" -o sdees
 	zip -j sdees_linux_amd64.zip sdees
 	github-release upload \
 	    --user schollz \
@@ -124,7 +127,8 @@ release:
 	rm sdees
 	rm -f *.zip
 	echo "Uploading Linux Arm"
-	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -o sdees
+	OS=linux_arm
+	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -ldflags "-X main.OS=${OS}" -o sdees
 	zip -j sdees_linux_arm.zip sdees
 	github-release upload \
 	    --user schollz \
@@ -135,7 +139,8 @@ release:
 	rm sdees
 	rm -f *.zip
 	echo "Uploading Linux Arm64"
-	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o sdees
+	OS=linux_arm64
+	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -ldflags "-X main.OS=${OS}" -o sdees
 	zip -j sdees_linux_arm64.zip sdees
 	github-release upload \
 	    --user schollz \
@@ -146,13 +151,14 @@ release:
 	rm sdees
 	rm -f *.zip
 	echo "Uploading OSX"
-	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o sdees
+	OS=osx
+	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.OS=${OS}" -o sdees
 	zip -j sdees_osx.zip sdees
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag binary \
-	    --name "sdees-osx.zip" \
+	    --name "sdees_osx.zip" \
 	    --file sdees_osx.zip
 	rm sdees
 	rm -f *.zip

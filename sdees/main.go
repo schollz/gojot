@@ -14,12 +14,12 @@ import (
 )
 
 var (
-	Version, BuildTime, Build   string
-	Debug                       bool
-	DontEncrypt, Clean          bool
-	DeleteDocument, DeleteEntry string
-	ResetConfig                 bool
-	ImportOldFile, ImportFile   string
+	Version, BuildTime, Build, OS string
+	Debug                         bool
+	DontEncrypt, Clean            bool
+	DeleteDocument, DeleteEntry   string
+	ResetConfig                   bool
+	ImportOldFile, ImportFile     string
 )
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 	} else {
 		Build = Build[0:7]
 	}
-	app.Version = Version + " " + Build + " " + BuildTime
+	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
 	app.Usage = `SDEES Does Editing, Encryption, and Synchronization
 
 	 https://github.com/schollz/sdees
