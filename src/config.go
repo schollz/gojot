@@ -40,7 +40,7 @@ func SetupConfig() {
 		cmd.Wait()
 		os.Chdir(cwd)
 		fmt.Println(strings.TrimSpace(string(out2b)))
-		if !strings.Contains(string(out2b), "Cloning into ") {
+		if strings.Contains(string(out2b), "fatal: ") {
 			// logger.Debug("Tried command '%s' in path %s", "git clone "+yesno+" "+HashString(yesno), CachePath)
 			fmt.Println("Could not clone, please re-enter")
 		} else {
