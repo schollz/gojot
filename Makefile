@@ -223,7 +223,7 @@ release:
 	github-release upload \
 			--user schollz \
 			--repo sdees \
-			--tag latest \
+			--tag ${VERSION} \
 			--name "sdees_windows_386.zip" \
 			--file sdees_windows_386.zip
 	rm sdees.exe
