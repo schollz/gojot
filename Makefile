@@ -170,7 +170,7 @@ release:
 	    --repo sdees \
 	    --tag ${VERSION} \
 	    --name "${VERSION}" \
-	    --description "This is a standalone latest of sdees." \
+	    --description "This is a standalone latest of sdees." 
 	echo "Uploading Windows 64 latest"
 	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64_novim" -o sdees.exe
 	zip -j sdees_windows_amd64_novim.zip sdees.exe
