@@ -92,6 +92,7 @@ func CheckNewVersion(program string, version string, osType string) {
 
 	newVersion, versionName := checkGithub(version)
 	if !newVersion {
+		logger.Debug("Current version is up to date: %s / %s", version, versionName)
 		return
 	}
 	var yesnoall string
@@ -166,10 +167,10 @@ func checkGithub(version string) (bool, string) {
 
 	newVersionAvailable := false
 	for i := range majorMinor {
-		if majorMinor[i] >= majorMinorWeb[i] {
+		if majorMinorWeb[i] > majorMinor[i] {
+			newVersionAvailable = true
 			break
 		}
-		newVersionAvailable = true
 	}
 
 	return newVersionAvailable, newVersion
