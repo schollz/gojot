@@ -327,7 +327,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 		return newBranch, errors.New("Cannot add file " + documentname)
 	}
 
-	cmd = exec.Command("git", "commit", "--date", datestring, "-m", message, documentname)
+	cmd = exec.Command("git", "commit", "--date", datestring, "-m", "'"+message+"'", documentname)
 	out2, _ := cmd.StderrPipe()
 	cmd.Start()
 	out2b, _ := ioutil.ReadAll(out2)
