@@ -113,7 +113,7 @@ release:
 	rm -rf ./src/bin/vim.exe
 	rm -f *.zip
 	echo "Uploading Linux Amd64"
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64_novim" "-X main.OS=linux_amd64" -o sdees
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o sdees
 	zip -j sdees_linux_amd64.zip sdees
 	github-release upload \
 	    --user schollz \
