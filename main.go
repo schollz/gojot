@@ -85,7 +85,7 @@ EXAMPLE USAGE:
 		}
 
 		// Check new Version
-		sdees.CheckNewVersion(Version, OS)
+		sdees.CheckNewVersion(os.Args[0], Version, OS)
 
 		// Load configuration
 		sdees.LoadConfiguration()

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -79,7 +80,13 @@ type GithubJson struct {
 	Body       string `json:"body"`
 }
 
-func CheckNewVersion(version string, os string) {
+func CheckNewVersion(program string, version string, os string) {
+	dir, err := filepath.Abs(filepath.Dir(program))
+	if err != nil {
+		log.Fatal("Could not get filepath: " + err.Error())
+	}
+	logger.Debug("Current executable path: %s", dir)
+
 	url := "https://api.github.com/repos/schollz/sdees/releases/latest"
 	r, err := http.Get(url)
 	if err != nil {
