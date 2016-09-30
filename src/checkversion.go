@@ -166,7 +166,7 @@ func checkGithub(version string) (bool, string) {
 
 	newVersionAvailable := false
 	for i := range majorMinor {
-		if majorMinor[i] > majorMinorWeb[i] {
+		if majorMinor[i] >= majorMinorWeb[i] {
 			break
 		}
 		newVersionAvailable = true
