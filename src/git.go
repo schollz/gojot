@@ -2,6 +2,7 @@ package sdees
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -327,8 +328,12 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	}
 
 	cmd = exec.Command("git", "commit", "--date", datestring, "-m", message, documentname)
-	_, err = cmd.Output()
-	if err != nil {
+	out2, _ := cmd.StderrPipe()
+	cmd.Start()
+	out2b, _ := ioutil.ReadAll(out2)
+	cmd.Wait()
+	if strings.Contains(string(out2b), "error") {
+		fmt.Println(string(out2b))
 		return newBranch, errors.New("Cannot commit " + documentname + " error: " + err.Error())
 	}
 
