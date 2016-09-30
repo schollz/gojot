@@ -1,6 +1,6 @@
 SOURCEDIR=.
 
-BINARY=sdees
+BINARY=sdeescli
 
 VERSION=2.0.0
 BUILD_TIME=`date +%FT%T%z`
@@ -18,7 +18,12 @@ $(BINARY): $(SOURCES)
 	go get golang.org/x/crypto/ssh/terminal
 	go get golang.org/x/crypto/openpgp/armor
 	go get golang.org/x/crypto/openpgp
+	# Start make
+	cd sdees && make
+	rm -rf ./bin && mkdir ./bin && cp sdees/sdees ./bin/
+	$(GOPATH)/bin/go-bindata ./bin
 	go build ${LDFLAGS} -o ${BINARY}
+	rm -rf ./bin && rm -rf bindata.go
 
 .PHONY: test
 test:
