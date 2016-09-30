@@ -66,11 +66,11 @@ windows:
 .PHONY: release
 release:
 	go get github.com/aktau/github-release
-	# echo "Deleting old release"
-	# github-release delete \
-	#     --user schollz \
-	#     --repo sdees \
-	#     --tag binary
+	echo "Deleting old release"
+	github-release delete \
+	    --user schollz \
+	    --repo sdees \
+	    --tag binary
 	echo "Moving tag"
 	git tag --force binary ${BUILD}
 	git push --force --tags
@@ -84,7 +84,7 @@ release:
 	    --pre-release
 	echo "Uploading Windows 64 binary"
 	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o sdees.exe
-	zip -j sdees_windows_amd64.zip sdees.exe
+	zip -j sdees_windows_amd64_novim.zip sdees.exe
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
