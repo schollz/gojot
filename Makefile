@@ -162,7 +162,7 @@ latest:
 release:
 	go get github.com/aktau/github-release
 	echo "Moving tag"
-	git tag --force ${VERSION} ${BUILD}
+	git tag --force latest ${BUILD}
 	git push --force --tags
 	echo "Creating new release"
 	github-release release \
