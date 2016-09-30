@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=2.0.0
+VERSION=1.1.9
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
@@ -18,7 +18,7 @@ $(BINARY): $(SOURCES)
 	go get golang.org/x/crypto/ssh/terminal
 	go get golang.org/x/crypto/openpgp/armor
 	go get golang.org/x/crypto/openpgp
-	go build ${LDFLAGS} -o ${BINARY}
+	go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o ${BINARY}
 
 .PHONY: test
 test:

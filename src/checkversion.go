@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -80,13 +83,55 @@ type GithubJson struct {
 	Body       string `json:"body"`
 }
 
-func CheckNewVersion(program string, version string, os string) {
+func CheckNewVersion(program string, version string, osType string) {
 	dir, err := filepath.Abs(filepath.Dir(program))
 	if err != nil {
 		log.Fatal("Could not get filepath: " + err.Error())
 	}
 	logger.Debug("Current executable path: %s", dir)
 
+	newVersion, versionName := checkGithub(version)
+	if !newVersion {
+		return
+	}
+	var yesnoall string
+	fmt.Printf("\nVersion %s is available. Download? (y/n) ", versionName)
+	fmt.Scanln(&yesnoall)
+	if yesnoall == "n" {
+		return
+	}
+	downloadVersion := versionName + "/sdees_" + osType + ".zip"
+	os.Remove("sdees_" + osType + ".zip")
+	fmt.Printf("\nDownloading %s...", downloadVersion)
+	cmd := exec.Command("wget", "https://github.com/schollz/sdees/releases/download/"+downloadVersion)
+	_, err = cmd.Output()
+	if err != nil {
+		logger.Error("Problem downloading, do you have internet?")
+		log.Fatal(err)
+	}
+
+	logger.Debug("Removing old version: %s", path.Join(dir, program))
+	err = os.Remove(path.Join(dir, program))
+	if err != nil {
+		logger.Error("Problem removing file, do you need sudo?")
+		log.Fatal(err)
+	}
+
+	logger.Debug("Unzipping new version")
+	cmd = exec.Command("unzip", "sdees_"+osType+".zip")
+	_, err = cmd.Output()
+	if err != nil {
+		logger.Error("Problem unzipping, do you have zip?")
+		log.Fatal(err)
+	}
+
+	logger.Debug("Cleaning...")
+	os.Remove("sdees_" + osType + ".zip")
+	fmt.Printf("\n\nsdees Version %s installed!\n", versionName)
+	os.Exit(0)
+}
+
+func checkGithub(version string) (bool, string) {
 	url := "https://api.github.com/repos/schollz/sdees/releases/latest"
 	r, err := http.Get(url)
 	if err != nil {
@@ -101,25 +146,23 @@ func CheckNewVersion(program string, version string, os string) {
 	newVersion := j.TagName
 	versions := strings.Split(newVersion, ".")
 	if len(versions) != 3 {
-		return
+		return false, ""
 	}
 	majorMinorWeb := []int{}
 	for i := 0; i < 3; i++ {
 		i, _ := strconv.Atoi(versions[i])
 		majorMinorWeb = append(majorMinorWeb, i)
 	}
-	fmt.Println(majorMinorWeb)
 
 	versions = strings.Split(version, ".")
 	if len(versions) != 3 {
-		return
+		return false, ""
 	}
 	majorMinor := []int{}
 	for i := 0; i < 3; i++ {
 		i, _ := strconv.Atoi(versions[i])
 		majorMinor = append(majorMinor, i)
 	}
-	fmt.Println(majorMinor)
 
 	newVersionAvailable := false
 	for i := range majorMinor {
@@ -129,6 +172,5 @@ func CheckNewVersion(program string, version string, os string) {
 		newVersionAvailable = true
 	}
 
-	fmt.Println(version, os, newVersionAvailable)
-
+	return newVersionAvailable, newVersion
 }
