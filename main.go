@@ -84,6 +84,9 @@ EXAMPLE USAGE:
 			sdees.Extension = ""
 		}
 
+		// Check new Version
+		sdees.CheckNewVersion(Version, OS)
+
 		// Load configuration
 		sdees.LoadConfiguration()
 
