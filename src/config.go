@@ -32,6 +32,8 @@ func SetupConfig() {
 		_, err := cmd.Output()
 		os.Chdir(cwd)
 		if err != nil {
+			logger.Debug("Tried command '%s' in path %s", strings.Join([]string{"git", "clone", yesno, HashString(yesno)}, " "), CachePath)
+			logger.Debug("which resulted in error: %s", err.Error())
 			fmt.Println("Could not clone, please re-enter")
 		} else {
 			break
