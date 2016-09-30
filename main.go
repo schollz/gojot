@@ -1,62 +1,166 @@
 package main
 
 import (
-	"io/ioutil"
-	"log"
+	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"os/signal"
+	"runtime"
+	"syscall"
+	"time"
 
-	home "github.com/mitchellh/go-homedir"
+	sdees "github.com/schollz/sdees/sdees/src"
+	"github.com/urfave/cli"
 )
 
 var (
-	Version, BuildTime, Build, OS, Program string
+	Version, BuildTime, Build, OS string
+	Debug                         bool
+	DontEncrypt, Clean            bool
+	DeleteDocument, DeleteEntry   string
+	ResetConfig                   bool
+	ImportOldFile, ImportFile     string
 )
 
 func main() {
-	// Set the paths
-	Program = "sdees"
-	homeDir, _ := home.Dir()
-	if !exists(path.Join(homeDir, ".cache")) {
-		err := os.MkdirAll(path.Join(homeDir, ".cache"), 0711)
-		if err != nil {
-			log.Fatal("Could not create cache path: " + path.Join(homeDir, ".cache"))
-		}
-	}
-	programPath := path.Join(homeDir, ".cache", "sdees-binary")
-	if !exists(programPath) {
-		err := os.MkdirAll(programPath, 0711)
-		if err != nil {
-			log.Fatal("Could not create program path: " + programPath)
-		}
-	}
+	// Delete temp files upon exit
+	defer sdees.CleanUp()
 
-	if !exists(path.Join(programPath, Program)) {
-		data, err := Asset("bin/" + Program)
+	// Handle Ctl+C for cleanUp
+	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		sdees.CleanUp()
+		os.Exit(1)
+	}()
+
+	// App information
+	app := cli.NewApp()
+	app.Name = "sdees"
+	if len(Build) == 0 {
+		Build = "dev"
+		Version = "dev"
+		BuildTime = time.Now().String()
+		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
 		if err == nil {
-			err = ioutil.WriteFile(path.Join(programPath, Program), data, 0755)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			log.Fatal("Could not extract program: '" + Program + "'")
-		}
-	}
-	cmd := exec.Command(path.Join(programPath, Program))
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+			bString := string(out)
+			Build = bString[0:7]
 
-func exists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
+		}
+	} else {
+		Build = Build[0:7]
 	}
-	if os.IsNotExist(err) {
-		return false
+	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
+	app.Usage = `SDEES Does Editing, Encryption, and Synchronization
+
+	 https://github.com/schollz/sdees
+
+FOLDERS:
+	'` + sdees.CachePath + `' stores all encrypted files and repositories
+	'` + sdees.ConfigPath + `' stores all configuration files
+
+EXAMPLE USAGE:
+   sdees new.txt # edit a new document, new.txt
+   sdees --summary -n 5 # list a summary of last five entries
+   sdees --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
+
+	app.Action = func(c *cli.Context) error {
+		// Set the log level
+		if Debug {
+			sdees.DebugMode()
+		}
+
+		workingFile := c.Args().Get(0)
+		if len(workingFile) > 0 {
+			sdees.InputDocument = workingFile
+		}
+
+		// Check if its Windows
+		if runtime.GOOS == "windows" {
+			sdees.Extension = ".exe"
+		} else {
+			sdees.Extension = ""
+		}
+
+		// Load configuration
+		sdees.LoadConfiguration()
+
+		// Process some flags
+		if ResetConfig {
+			sdees.SetupConfig()
+		} else if len(ImportOldFile) > 0 {
+			fmt.Printf("Importing %s using deprecated import file\n", ImportOldFile)
+			sdees.CurrentDocument = ImportOldFile
+			sdees.ImportOld(ImportOldFile)
+		} else if len(ImportFile) > 0 {
+			fmt.Printf("Importing %s\n", ImportFile)
+			sdees.CurrentDocument = ImportFile
+			sdees.Import(ImportFile)
+		} else if Clean {
+			sdees.CleanAll()
+		} else {
+			sdees.Run()
+		}
+		return nil
 	}
-	return true
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:        "debug",
+			Usage:       "Turn on debug mode",
+			Destination: &Debug,
+		},
+		cli.BoolFlag{
+			Name:        "clean",
+			Usage:       "Deletes all sdees files",
+			Destination: &Clean,
+		},
+		cli.StringFlag{
+			Name:        "search",
+			Usage:       "Search for `word`",
+			Destination: &sdees.Search,
+		},
+		cli.StringFlag{
+			Name:        "importold",
+			Usage:       "Import `document` (JRNL-format)",
+			Destination: &ImportOldFile,
+		},
+		cli.StringFlag{
+			Name:        "import",
+			Usage:       "Import `document`",
+			Destination: &ImportFile,
+		},
+		cli.BoolFlag{
+			Name:        "export",
+			Usage:       "Export `document`",
+			Destination: &sdees.Export,
+		},
+		cli.BoolFlag{
+			Name:        "config",
+			Usage:       "Configure",
+			Destination: &ResetConfig,
+		},
+		cli.BoolFlag{
+			Name:        "all, a",
+			Usage:       "Edit all of the document",
+			Destination: &sdees.All,
+		},
+		cli.StringFlag{
+			Name:        "delete",
+			Usage:       "Delete `entry`",
+			Destination: &sdees.DeleteEntry,
+		},
+		cli.BoolFlag{
+			Name:        "ddelete",
+			Usage:       "Delete `document`",
+			Destination: &sdees.DeleteDocument,
+		},
+		cli.BoolFlag{
+			Name:        "summary",
+			Usage:       "Gets summary",
+			Destination: &sdees.Summarize,
+		},
+	}
+	app.Run(os.Args)
 }
