@@ -114,13 +114,14 @@ func CheckNewVersion(version string, os string) {
 	}
 	fmt.Println(majorMinor)
 
+	newVersionAvailable := false
 	for i := range majorMinor {
 		if majorMinor[i] > majorMinorWeb[i] {
-			fmt.Println("New version available")
 			break
 		}
+		newVersionAvailable = true
 	}
 
-	fmt.Println(version, os)
+	fmt.Println(version, os, newVersionAvailable)
 
 }
