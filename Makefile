@@ -18,6 +18,7 @@ $(BINARY): $(SOURCES)
 	go get golang.org/x/crypto/ssh/terminal
 	go get golang.org/x/crypto/openpgp/armor
 	go get golang.org/x/crypto/openpgp
+	go get github.com/kardianos/osext
 	go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o ${BINARY}
 
 .PHONY: test
@@ -27,6 +28,7 @@ test:
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get github.com/jteeuwen/go-bindata/...
+	go get github.com/kardianos/osext
 	cd src && $(GOPATH)/bin/go-bindata bin
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	cd src && go test -v -cover
