@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -83,11 +81,7 @@ type GithubJson struct {
 	Body       string `json:"body"`
 }
 
-func CheckNewVersion(program string, version string, osType string) {
-	dir, err := filepath.Abs(filepath.Dir(program))
-	if err != nil {
-		log.Fatal("Could not get filepath: " + err.Error())
-	}
+func CheckNewVersion(dir string, version string, osType string) {
 	logger.Debug("Current executable path: %s", dir)
 
 	newVersion, versionName := checkGithub(version)
@@ -105,14 +99,14 @@ func CheckNewVersion(program string, version string, osType string) {
 	os.Remove("sdees_" + osType + ".zip")
 	fmt.Printf("\nDownloading %s...", downloadVersion)
 	cmd := exec.Command("wget", "https://github.com/schollz/sdees/releases/download/"+downloadVersion)
-	_, err = cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
 		logger.Error("Problem downloading, do you have internet?")
 		log.Fatal(err)
 	}
 
-	logger.Debug("Removing old version: %s", path.Join(dir, program))
-	err = os.Remove(path.Join(dir, program))
+	logger.Debug("Removing old version: %s", dir)
+	err = os.Remove(dir)
 	if err != nil {
 		logger.Error("Problem removing file, do you need sudo?")
 		log.Fatal(err)

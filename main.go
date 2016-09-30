@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kardianos/osext"
 	sdees "github.com/schollz/sdees/src"
 	"github.com/urfave/cli"
 )
@@ -85,7 +86,8 @@ EXAMPLE USAGE:
 		}
 
 		// Check new Version
-		sdees.CheckNewVersion(os.Args[0], Version, OS)
+		programPath, _ := osext.Executable()
+		sdees.CheckNewVersion(programPath, Version, OS)
 
 		// Load configuration
 		sdees.LoadConfiguration()
