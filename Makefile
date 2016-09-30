@@ -211,6 +211,25 @@ release:
 	    --file sdees_windows_amd64_novim.zip
 	rm sdees.exe
 	rm -f *.zip
+	echo "Uploading Windows 32 latest, bundled with VIM"
+	rm -rf vim*
+	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
+	unzip vim80w32.zip
+	mv vim/vim80/vim.exe ./src/bin/
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_386" -o sdees.exe
+	zip -j sdees_windows_386.zip sdees.exe
+	github-release upload \
+			--user schollz \
+			--repo sdees \
+			--tag latest \
+			--name "sdees_windows_386.zip" \
+			--file sdees_windows_386.zip
+	rm sdees.exe
+	cd src && git reset --hard HEAD
+	rm -rf ./src/bin/vim.exe
+	rm -f *.zip
 	echo "Uploading Windows 64 latest, bundled with VIM"
 	rm -rf vim*
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
