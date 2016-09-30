@@ -28,12 +28,20 @@ func SetupConfig() {
 		cwd, _ := os.Getwd()
 		os.Chdir(CachePath)
 		os.RemoveAll(HashString(yesno))
+		// cmd := exec.Command("git", "clone", yesno, HashString(yesno))
+		// _, err := cmd.Output()
+
 		cmd := exec.Command("git", "clone", yesno, HashString(yesno))
-		_, err := cmd.Output()
+		// out1, _ := cmd.StdoutPipe()
+		out2, _ := cmd.StderrPipe()
+		cmd.Start()
+		// _, _ := ioutil.ReadAll(out1)
+		out2b, _ := ioutil.ReadAll(out2)
+		cmd.Wait()
 		os.Chdir(cwd)
-		if err != nil {
-			logger.Debug("Tried command '%s' in path %s", strings.Join([]string{"git", "clone", yesno, HashString(yesno)}, " "), CachePath)
-			logger.Debug("which resulted in error: %s", err.Error())
+		fmt.Println(strings.TrimSpace(string(out2b)))
+		if !strings.Contains(string(out2b), "Cloning into ") {
+			// logger.Debug("Tried command '%s' in path %s", "git clone "+yesno+" "+HashString(yesno), CachePath)
 			fmt.Println("Could not clone, please re-enter")
 		} else {
 			break
