@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	sdees "github.com/schollz/sdees/src"
+	sdees "github.com/schollz/sdees/sdees/src"
 	"github.com/urfave/cli"
 )
 
