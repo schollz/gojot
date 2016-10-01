@@ -25,7 +25,8 @@ func Run() {
 		if errFetch == nil {
 			fmt.Print("...done")
 		} else {
-			fmt.Print("...no internet, not fetching")
+			fmt.Println("...unable to fetch:")
+			fmt.Println(errFetch.Error())
 		}
 	}
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
