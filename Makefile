@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=1.9.1001
+VERSION=1.9.1002
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
@@ -25,6 +25,7 @@ $(BINARY): $(SOURCES)
 test:
 	go get -u github.com/schollz/sdees/src
 	go get github.com/jcelliott/lumber
+	go get github.com/kardianos/osext
 	go get github.com/mitchellh/go-homedir
 	go get github.com/urfave/cli
 	go get github.com/jteeuwen/go-bindata/...
@@ -184,6 +185,7 @@ latest:
 
 .PHONY: release
 release:
+	go get github.com/kardianos/osext
 	go get github.com/aktau/github-release
 	echo "Deleting old release"
 	github-release delete \
