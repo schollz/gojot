@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -202,33 +201,17 @@ func updateDownloadVersion(dir string, version string, lastcommit string, osType
 	if yesnoall == "n" {
 		return
 	}
-	downloadVersion := versionName + "/sdees_" + osType + ".zip"
+	downloadVersion := versionName
+	downloadName := "sdees_" + osType + ".zip"
 	os.Remove("sdees_" + osType + ".zip")
-	fmt.Printf("\nDownloading %s...", downloadVersion)
-	cmd := exec.Command("wget", "https://github.com/schollz/sdees/releases/download/"+downloadVersion)
-	_, err := cmd.Output()
-	if err != nil {
-		logger.Error("Problem downloading, do you have internet?")
-		log.Fatal(err)
-	}
-
-	logger.Debug("Removing old version: %s", dir)
-	err = os.Remove(dir)
-	if err != nil {
-		logger.Error("Problem removing file, do you need sudo?")
-		log.Fatal(err)
-	}
+	fmt.Printf("\nDownloading %s/%s...", downloadVersion, downloadName)
+	DownloadFile(downloadName, "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
 
 	logger.Debug("Unzipping new version")
-	cmd = exec.Command("unzip", "sdees_"+osType+".zip")
-	_, err = cmd.Output()
-	if err != nil {
-		logger.Error("Problem unzipping, do you have zip?")
-		log.Fatal(err)
-	}
+	Unzip(downloadName, "./")
 
 	logger.Debug("Cleaning...")
-	os.Remove("sdees_" + osType + ".zip")
+	os.Remove(downloadName)
 	fmt.Printf("\n\nsdees Version %s installed!\n", versionName)
 	os.Exit(0)
 }
