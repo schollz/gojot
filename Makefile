@@ -88,17 +88,6 @@ latest:
 	    --name "Latest" \
 	    --description "This is a standalone latest of sdees." \
 	    --pre-release
-	echo "Uploading Windows 64 latest"
-	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64_novim" -o sdees.exe
-	zip -j sdees_windows_amd64_novim.zip sdees.exe
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "sdees_windows_amd64_novim.zip" \
-	    --file sdees_windows_amd64_novim.zip
-	rm sdees.exe
-	rm -f *.zip
 	echo "Uploading Windows 64 latest, bundled with VIM"
 	rm -rf vim*
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
@@ -197,17 +186,6 @@ release:
 	    --tag ${VERSION} \
 	    --name "${VERSION}" \
 	    --description "This is a standalone latest of sdees."
-	echo "Uploading Windows 64 latest"
-	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64_novim" -o sdees.exe
-	zip -j sdees_windows_amd64_novim.zip sdees.exe
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag ${VERSION} \
-	    --name "sdees_windows_amd64_novim.zip" \
-	    --file sdees_windows_amd64_novim.zip
-	rm sdees.exe
-	rm -f *.zip
 	echo "Uploading Windows 32 latest, bundled with VIM"
 	rm -rf vim*
 	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
