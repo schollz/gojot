@@ -3,7 +3,7 @@
 
 [![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
-![](https://img.shields.io/badge/coverage-51%25-yellow.svg)
+![](https://img.shields.io/badge/coverage-45%25-yellow.svg)
 
 
 ## SDEES is for Distributed Editing of Encrypted Stuff
