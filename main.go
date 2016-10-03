@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
 	"runtime"
 	"syscall"
 	"time"
@@ -38,21 +39,9 @@ func main() {
 	}()
 
 	// App information
+	setBuild()
 	app := cli.NewApp()
 	app.Name = "sdees"
-	if len(Build) == 0 {
-		Build = "dev"
-		Version = "dev"
-		BuildTime = time.Now().String()
-		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
-		if err == nil {
-			bString := string(out)
-			Build = bString[0:7]
-
-		}
-	} else {
-		Build = Build[0:7]
-	}
 	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
 	app.Usage = `SDEES Does Editing, Encryption, and Synchronization
 
@@ -168,4 +157,27 @@ EXAMPLE USAGE:
 		},
 	}
 	app.Run(os.Args)
+}
+
+func setBuild() {
+	if len(Build) == 0 {
+		cwd, _ := os.Getwd()
+		defer os.Chdir(cwd)
+		Build = "dev"
+		Version = "dev"
+		BuildTime = time.Now().String()
+		err := os.Chdir(path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "sdees"))
+		if err != nil {
+			return
+		}
+		fmt.Println("Trying gopath)")
+		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
+		if err != nil {
+			return
+		}
+		bString := string(out)
+		Build = bString[0:7]
+	} else {
+		Build = Build[0:7]
+	}
 }
