@@ -176,6 +176,11 @@ latest:
 release:
 	go get github.com/kardianos/osext
 	go get github.com/aktau/github-release
+	echo "Deleting old release"
+	github-release delete \
+			--user schollz \
+			--repo sdees \
+			--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
