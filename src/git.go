@@ -166,11 +166,21 @@ func Fetch(gitfolder string) error {
 	defer os.Chdir(cwd)
 	os.Chdir(gitfolder)
 
-	// Fetch all
-	cmd := exec.Command("git", "fetch", "--all", "--force", "--prune")
+	// Get clean DIR
+	cmd := exec.Command("git", "reset", "--hard", "HEAD")
 	out2, _ := cmd.StderrPipe()
 	cmd.Start()
 	out2b, _ := ioutil.ReadAll(out2)
+	cmd.Wait()
+	if strings.Contains(string(out2b), "fatal:") {
+		return errors.New(strings.TrimSpace(string(out2b)))
+	}
+
+	// Fetch all
+	cmd = exec.Command("git", "fetch", "--all", "--force", "--prune")
+	out2, _ = cmd.StderrPipe()
+	cmd.Start()
+	out2b, _ = ioutil.ReadAll(out2)
 	cmd.Wait()
 	if strings.Contains(string(out2b), "fatal:") {
 		return errors.New(strings.TrimSpace(string(out2b)))

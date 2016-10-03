@@ -86,7 +86,7 @@ func Run() {
 		} else {
 			Encrypt = true
 		}
-	} else if !All && !Summarize && !Export {
+	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
