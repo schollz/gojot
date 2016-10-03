@@ -3,6 +3,8 @@ package sdees
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -201,17 +203,54 @@ func updateDownloadVersion(dir string, version string, lastcommit string, osType
 	if yesnoall == "n" {
 		return
 	}
+	err := mkdir("tmp11")
+	if err != nil {
+		logger.Debug("Couldn't make tmp directory!")
+		return
+	}
+	cwd, _ := os.Getwd()
+	os.Chdir("tmp11")
+	defer os.Chdir(cwd)
+
+	// Download
 	downloadVersion := versionName
 	downloadName := "sdees_" + osType + ".zip"
-	os.Remove("sdees_" + osType + ".zip")
 	fmt.Printf("\nDownloading %s/%s...", downloadVersion, downloadName)
-	DownloadFile(downloadName, "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
+	err = DownloadFile(downloadName, "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
+	if err != nil {
+		logger.Debug("Problem downloading file: %s", "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
+	}
 
+	// Unzip
 	logger.Debug("Unzipping new version")
-	Unzip(downloadName, "./")
-
-	logger.Debug("Cleaning...")
+	err = Unzip(downloadName, "./")
+	if err != nil {
+		logger.Debug("Problem unzipping file")
+	}
 	os.Remove(downloadName)
+
+	// Move file
+	files, _ := ioutil.ReadDir("./")
+	for _, f := range files {
+		if strings.Contains(f.Name(), "sdees") {
+			logger.Debug("Moving %s to %s", f.Name(), dir)
+			err = os.Remove(dir)
+			if err != nil {
+				logger.Debug("Error deleting file: %s", err.Error())
+			}
+			err = CopyFile(f.Name(), dir)
+			if err != nil {
+				logger.Debug("Error moving file: %s", err.Error())
+			}
+		}
+	}
+
+	// Clean
+	logger.Debug("Cleaning...")
+	os.Chdir(cwd)
+	os.RemoveAll("tmp11")
+
+	// Done!
 	fmt.Printf("\n\nsdees Version %s installed!\n", versionName)
 	os.Exit(0)
 }
@@ -258,4 +297,64 @@ func checkGithub(version string) (bool, string) {
 	}
 
 	return newVersionAvailable, newVersion
+}
+
+// CopyFile copies a file from src to dst. If src and dst files exist, and are
+// the same, then return success. Otherise, attempt to create a hard link
+// between the two files. If that fail, copy the file contents from src to dst.
+func CopyFile(src, dst string) (err error) {
+	sfi, err := os.Stat(src)
+	if err != nil {
+		return
+	}
+	if !sfi.Mode().IsRegular() {
+		// cannot copy non-regular files (e.g., directories,
+		// symlinks, devices, etc.)
+		return fmt.Errorf("CopyFile: non-regular source file %s (%q)", sfi.Name(), sfi.Mode().String())
+	}
+	dfi, err := os.Stat(dst)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return
+		}
+	} else {
+		if !(dfi.Mode().IsRegular()) {
+			return fmt.Errorf("CopyFile: non-regular destination file %s (%q)", dfi.Name(), dfi.Mode().String())
+		}
+		if os.SameFile(sfi, dfi) {
+			return
+		}
+	}
+	if err = os.Link(src, dst); err == nil {
+		return
+	}
+	err = copyFileContents(src, dst)
+	return
+}
+
+// copyFileContents copies the contents of the file named src to the file named
+// by dst. The file will be created if it does not already exist. If the
+// destination file exists, all it's contents will be replaced by the contents
+// of the source file.
+func copyFileContents(src, dst string) (err error) {
+	in, err := os.Open(src)
+	if err != nil {
+		return
+	}
+	defer in.Close()
+	out, err := os.Create(dst)
+	if err != nil {
+		return
+	}
+	defer func() {
+		cerr := out.Close()
+		if err == nil {
+			err = cerr
+		}
+	}()
+	if _, err = io.Copy(out, in); err != nil {
+		return
+	}
+	err = out.Sync()
+	return
 }
