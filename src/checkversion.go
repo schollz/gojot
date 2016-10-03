@@ -172,8 +172,11 @@ func updateDevVersion(dir string, version string, build string, osType string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	logger.Debug(j[0].Sha)
-
+	logger.Debug("Github: %s, Current: %s", j[0].Sha[0:7], build)
+	if j[0].Sha[0:7] != build {
+		logger.Debug(j[0].Commit.Author.Date.String())
+		fmt.Println("New version of sdees available!\nRun\tgo get -u github.com/schollz/sdees\nto download.")
+	}
 	os.Exit(0)
 }
 
