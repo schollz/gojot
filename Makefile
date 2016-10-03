@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=1.9.1002
+VERSION=1.9.99
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
@@ -187,11 +187,6 @@ latest:
 release:
 	go get github.com/kardianos/osext
 	go get github.com/aktau/github-release
-	echo "Deleting old release"
-	github-release delete \
-	    --user schollz \
-	    --repo sdees \
-	    --tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
