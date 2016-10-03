@@ -173,6 +173,8 @@ func updateDevVersion(dir string, version string, build string, osType string) {
 		log.Fatal(err)
 	}
 	logger.Debug(j[0].Sha)
+
+	os.Exit(0)
 }
 
 func updateDownloadVersion(dir string, version string, build string, osType string) {
