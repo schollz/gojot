@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"path"
 	"runtime"
+	"strings"
 	"syscall"
 	"time"
 
@@ -176,7 +177,8 @@ func setBuild() {
 		if err != nil {
 			return
 		}
-		LastCommit = string(stdout)
+		LastCommit = strings.Replace(string(stdout), "'", "", -1)
+		BuildTime = LastCommit
 	} else {
 		Build = Build[0:7]
 	}
