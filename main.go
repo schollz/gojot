@@ -171,7 +171,6 @@ func setBuild() {
 		if err != nil {
 			return
 		}
-		fmt.Println("Trying gopath)")
 		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%ad'")
 		stdout, err := cmd.Output()
 		if err != nil {
