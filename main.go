@@ -76,7 +76,7 @@ EXAMPLE USAGE:
 
 		// Check new Version
 		programPath, _ := osext.Executable()
-		sdees.CheckNewVersion(programPath, Version, OS)
+		sdees.CheckNewVersion(programPath, Version, Build, OS)
 
 		// Load configuration
 		sdees.LoadConfiguration()

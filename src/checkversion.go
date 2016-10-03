@@ -12,6 +12,75 @@ import (
 	"time"
 )
 
+type GithubCommitsJSON []struct {
+	Sha    string `json:"sha"`
+	Commit struct {
+		Author struct {
+			Name  string    `json:"name"`
+			Email string    `json:"email"`
+			Date  time.Time `json:"date"`
+		} `json:"author"`
+		Committer struct {
+			Name  string    `json:"name"`
+			Email string    `json:"email"`
+			Date  time.Time `json:"date"`
+		} `json:"committer"`
+		Message string `json:"message"`
+		Tree    struct {
+			Sha string `json:"sha"`
+			URL string `json:"url"`
+		} `json:"tree"`
+		URL          string `json:"url"`
+		CommentCount int    `json:"comment_count"`
+	} `json:"commit"`
+	URL         string `json:"url"`
+	HTMLURL     string `json:"html_url"`
+	CommentsURL string `json:"comments_url"`
+	Author      struct {
+		Login             string `json:"login"`
+		ID                int    `json:"id"`
+		AvatarURL         string `json:"avatar_url"`
+		GravatarID        string `json:"gravatar_id"`
+		URL               string `json:"url"`
+		HTMLURL           string `json:"html_url"`
+		FollowersURL      string `json:"followers_url"`
+		FollowingURL      string `json:"following_url"`
+		GistsURL          string `json:"gists_url"`
+		StarredURL        string `json:"starred_url"`
+		SubscriptionsURL  string `json:"subscriptions_url"`
+		OrganizationsURL  string `json:"organizations_url"`
+		ReposURL          string `json:"repos_url"`
+		EventsURL         string `json:"events_url"`
+		ReceivedEventsURL string `json:"received_events_url"`
+		Type              string `json:"type"`
+		SiteAdmin         bool   `json:"site_admin"`
+	} `json:"author"`
+	Committer struct {
+		Login             string `json:"login"`
+		ID                int    `json:"id"`
+		AvatarURL         string `json:"avatar_url"`
+		GravatarID        string `json:"gravatar_id"`
+		URL               string `json:"url"`
+		HTMLURL           string `json:"html_url"`
+		FollowersURL      string `json:"followers_url"`
+		FollowingURL      string `json:"following_url"`
+		GistsURL          string `json:"gists_url"`
+		StarredURL        string `json:"starred_url"`
+		SubscriptionsURL  string `json:"subscriptions_url"`
+		OrganizationsURL  string `json:"organizations_url"`
+		ReposURL          string `json:"repos_url"`
+		EventsURL         string `json:"events_url"`
+		ReceivedEventsURL string `json:"received_events_url"`
+		Type              string `json:"type"`
+		SiteAdmin         bool   `json:"site_admin"`
+	} `json:"committer"`
+	Parents []struct {
+		Sha     string `json:"sha"`
+		URL     string `json:"url"`
+		HTMLURL string `json:"html_url"`
+	} `json:"parents"`
+}
+
 type GithubJson struct {
 	URL             string `json:"url"`
 	AssetsURL       string `json:"assets_url"`
@@ -81,9 +150,32 @@ type GithubJson struct {
 	Body       string `json:"body"`
 }
 
-func CheckNewVersion(dir string, version string, osType string) {
+func CheckNewVersion(dir string, version string, build string, osType string) {
 	logger.Debug("Current executable path: %s", dir)
+	if version == "dev" {
+		updateDevVersion(dir, version, build, osType)
+	} else {
+		updateDownloadVersion(dir, version, build, osType)
+	}
+}
 
+func updateDevVersion(dir string, version string, build string, osType string) {
+	logger.Debug("Updating dev version of sdees")
+	url := "https://api.github.com/repos/schollz/sdees/commits"
+	r, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer r.Body.Close()
+	var j GithubCommitsJSON
+	err = json.NewDecoder(r.Body).Decode(&j)
+	if err != nil {
+		log.Fatal(err)
+	}
+	logger.Debug(j[0].Sha)
+}
+
+func updateDownloadVersion(dir string, version string, build string, osType string) {
 	newVersion, versionName := checkGithub(version)
 	if !newVersion {
 		logger.Debug("Current version is up to date: %s / %s", version, versionName)
