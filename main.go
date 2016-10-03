@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -16,12 +17,12 @@ import (
 )
 
 var (
-	Version, BuildTime, Build, OS string
-	Debug                         bool
-	DontEncrypt, Clean            bool
-	DeleteDocument, DeleteEntry   string
-	ResetConfig                   bool
-	ImportOldFile, ImportFile     string
+	Version, BuildTime, Build, OS, LastCommit string
+	Debug                                     bool
+	DontEncrypt, Clean                        bool
+	DeleteDocument, DeleteEntry               string
+	ResetConfig                               bool
+	ImportOldFile, ImportFile                 string
 )
 
 func main() {
@@ -76,7 +77,7 @@ EXAMPLE USAGE:
 
 		// Check new Version
 		programPath, _ := osext.Executable()
-		sdees.CheckNewVersion(programPath, Version, Build, OS)
+		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
 
 		// Load configuration
 		sdees.LoadConfiguration()
@@ -171,12 +172,12 @@ func setBuild() {
 			return
 		}
 		fmt.Println("Trying gopath)")
-		out, err := exec.Command("git", []string{"rev-parse", "HEAD"}...).Output()
+		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%ad'")
+		stdout, err := cmd.Output()
 		if err != nil {
-			return
+			log.Fatal("Could not run git log to find update")
 		}
-		bString := string(out)
-		Build = bString[0:7]
+		LastCommit = string(stdout)
 	} else {
 		Build = Build[0:7]
 	}

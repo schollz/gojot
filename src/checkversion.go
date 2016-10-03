@@ -150,37 +150,47 @@ type GithubJson struct {
 	Body       string `json:"body"`
 }
 
-func CheckNewVersion(dir string, version string, build string, osType string) {
+func CheckNewVersion(dir string, version string, lastcommit string, osType string) {
 	logger.Debug("Current executable path: %s", dir)
 	if version == "dev" {
-		updateDevVersion(dir, version, build, osType)
+		updateDevVersion(dir, version, lastcommit, osType)
 	} else {
-		updateDownloadVersion(dir, version, build, osType)
+		updateDownloadVersion(dir, version, lastcommit, osType)
 	}
 }
 
-func updateDevVersion(dir string, version string, build string, osType string) {
+func updateDevVersion(dir string, version string, lastcommit string, osType string) {
 	logger.Debug("Updating dev version of sdees")
 	url := "https://api.github.com/repos/schollz/sdees/commits"
 	r, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		logger.Debug("Couldn't call Github API for getting new date")
+		return
 	}
 	defer r.Body.Close()
 	var j GithubCommitsJSON
 	err = json.NewDecoder(r.Body).Decode(&j)
 	if err != nil {
-		log.Fatal(err)
+		logger.Debug("Couldn't decode Github API")
+		return
 	}
-	logger.Debug("Github: %s, Current: %s", j[0].Sha[0:7], build)
-	if j[0].Sha[0:7] != build {
-		logger.Debug(j[0].Commit.Author.Date.String())
-		fmt.Println("New version of sdees available!\nRun\tgo get -u github.com/schollz/sdees\nto download.")
+
+	if len(j) == 0 {
+		logger.Debug("No data form Github!")
+		return
 	}
-	os.Exit(0)
+	currentCommit, err := ParseDate(strings.Replace(lastcommit, "'", "", -1))
+	if err != nil {
+		logger.Debug("Couldn't parse Github API Commit date")
+		return
+	}
+	logger.Debug(j[0].Commit.Author.Date.String(), currentCommit.String())
+	if currentCommit.Sub(j[0].Commit.Author.Date).Hours() < 0 {
+		fmt.Println("New version of sdees available! Run\n\n\tgo get -u github.com/schollz/sdees\n\nto download.")
+	}
 }
 
-func updateDownloadVersion(dir string, version string, build string, osType string) {
+func updateDownloadVersion(dir string, version string, lastcommit string, osType string) {
 	newVersion, versionName := checkGithub(version)
 	if !newVersion {
 		logger.Debug("Current version is up to date: %s / %s", version, versionName)
