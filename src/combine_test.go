@@ -15,7 +15,7 @@ func TestCombine(t *testing.T) {
 	branchHashes["1"] = "uKn3Fdu"
 	branchHashes["2"] = "NdbTNGe"
 	branchHashes["3"] = "+XxdKZQ"
-	combined, _ := CombineEntries(cache)
+	combined, _, _ := CombineEntries(cache)
 	if strings.Contains(combined[0], "one") != true {
 		t.Errorf("Got [%s] instead of the correct", strings.Join(combined, "\n\n"))
 	}

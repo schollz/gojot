@@ -11,10 +11,10 @@ func TestProcessFiles(t *testing.T) {
 	cache.Branch["1"] = Entry{Date: "Thu, 07 Apr 2005 22:13:13 +0200", Text: "one"}
 	cache.Branch["2"] = Entry{Date: "Fri, 08 Apr 2005 22:13:13 +0200", Text: "two"}
 	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: "three"}
-	_, hashes := CombineEntries(cache)
+	_, _, hashes := CombineEntries(cache)
 	cache.Branch["1"] = Entry{Date: "Thu, 07 Apr 2005 22:13:13 +0200", Text: "oneEDIT7"}
 	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: "threeEDIT7"}
-	combined, _ := CombineEntries(cache)
+	combined, _, _ := CombineEntries(cache)
 	testEntry := strings.Join(combined, "\n\n")
 	branchesUpdated := UpdateEntryFromText(testEntry, hashes)
 	if branchesUpdated[0] != "1" && branchesUpdated[1] != "3" && len(branchesUpdated) == 2 {

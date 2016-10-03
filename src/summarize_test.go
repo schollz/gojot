@@ -13,11 +13,14 @@ func TestSummary(t *testing.T) {
 	cache.Branch["3"] = Entry{Date: "Sat, 09 Apr 2005 22:13:13 +0200", Text: `Paul William McClellan, born February 3, 1966, in San Mateo, California, was a Major League baseball player for the San Francisco Giants.
 
 McClellan, a graduate of Sequoia High School and the College of San Mateo. He was a first round draft pick by the Giants in 1986. He played his last game with the Giants on October 6, 1991. His MLB career earned run average was 5.26. Later, McClellan joined the now defunct Sonoma County Crushers minor league team which operated between 1995 through 2002.`}
-	texts, _ := CombineEntries(cache)
-	if SummarizeEntries(texts) != `Thu, 07 Apr 2005 22:13:13 (95 words): Anogeissus leiocarpa (African birch; Bambara: ngálǎma) is a tall deciduous tree native to
-Fri, 08 Apr 2005 22:13:13 (46 words): The 2010 Nigeria Entertainment Awards was the 5th edition of the ceremony and was held on 18
-Sat, 09 Apr 2005 22:13:13 (87 words): Paul William McClellan, born February 3, 1966, in San Mateo, California, was a Major League` {
+	texts, textBranches, _ := CombineEntries(cache)
+	if SummarizeEntries(texts, textBranches) != `1 - Thu, 07 Apr 2005 22:13:13 (95 words):
+  Anogeissus leiocarpa (African birch; Bambara: ngálǎma) is a tall deciduous tree
+2 - Fri, 08 Apr 2005 22:13:13 (46 words):
+  The 2010 Nigeria Entertainment Awards was the 5th edition of the ceremony and
+3 - Sat, 09 Apr 2005 22:13:13 (87 words):
+  Paul William McClellan, born February 3, 1966, in San Mateo, California, was a` {
 		t.Errorf("Incorrect summary")
-		fmt.Println(SummarizeEntries(texts))
+		fmt.Println(SummarizeEntries(texts, textBranches))
 	}
 }

@@ -8,9 +8,9 @@ import (
 	"unicode/utf8"
 )
 
-func SummarizeEntries(texts []string) string {
+func SummarizeEntries(texts []string, textsBranch []string) string {
 	var summarized []string
-	for _, text := range texts {
+	for i, text := range texts {
 		dateInfo := strings.TrimSpace(strings.Split(text, " -==- ")[0])
 		dateInfo = strings.Join(strings.Split(dateInfo, " ")[:5], " ")
 		text = strings.Join(strings.Split(text, "\n")[1:], " ")
@@ -20,13 +20,13 @@ func SummarizeEntries(texts []string) string {
 		for {
 			numWords++
 			sentence = strings.Join(words[0:numWords], " ")
-			if utf8.RuneCountInString(dateInfo+" "+strings.TrimSpace(sentence)) > 120 || numWords >= len(words) {
+			if utf8.RuneCountInString(strings.TrimSpace(sentence)) > 80 || numWords >= len(words) {
 				sentence = strings.Join(words[0:numWords-1], " ")
 				break
 			}
 		}
 		summarized = append(summarized,
-			fmt.Sprintf("%s (%s words): %s", dateInfo, NumberToString(len(words), ','), strings.TrimSpace(sentence)))
+			fmt.Sprintf("%s - %s (%s words):\n  %s", textsBranch[i], dateInfo, NumberToString(len(words), ','), strings.TrimSpace(sentence)))
 	}
 	return strings.Join(summarized, "\n")
 }

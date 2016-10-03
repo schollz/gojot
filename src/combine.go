@@ -25,10 +25,11 @@ func (p timeSlice) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-func CombineEntries(cache Cache) ([]string, map[string]string) {
+func CombineEntries(cache Cache) ([]string, []string, map[string]string) {
 	logger.Debug("Combining entries")
 	var branchHashes = make(map[string]string)
 	var data = make(map[string]combineData)
+	var dateBranch = make(map[string]string) // map of dates to branch
 	for branch := range cache.Branch {
 		textData := HeadMatter(cache.Branch[branch].Date, branch) + cache.Branch[branch].Text
 		branchHashes[branch] = GetMD5Hash(cache.Branch[branch].Text)
@@ -38,6 +39,7 @@ func CombineEntries(cache Cache) ([]string, map[string]string) {
 			logger.Error(err.Error())
 		}
 		data[branch] = combineData{date: parsedData, text: textData}
+		dateBranch[parsedData.String()] = branch
 	}
 
 	sortedCombineData := make(timeSlice, 0, len(data))
@@ -46,8 +48,10 @@ func CombineEntries(cache Cache) ([]string, map[string]string) {
 	}
 	sort.Sort(sortedCombineData)
 	texts := make([]string, len(data))
+	branches := make([]string, len(data))
 	for i, val := range sortedCombineData {
 		texts[i] = val.text
+		branches[i] = dateBranch[val.date.String()]
 	}
-	return texts, branchHashes
+	return texts, branches, branchHashes
 }

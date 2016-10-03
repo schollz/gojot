@@ -119,9 +119,10 @@ func Run() {
 
 	// Load fulltext
 	texts := []string{}
+	textsBranch := []string{}
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 {
-		texts, branchHashes = CombineEntries(cache)
+		texts, textsBranch, branchHashes = CombineEntries(cache)
 		// Conduct the search
 		if len(Search) > 0 {
 			searchWords := GetWordsFromText(Search)
@@ -145,7 +146,7 @@ func Run() {
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")
-		fmt.Println(SummarizeEntries(texts))
+		fmt.Println(SummarizeEntries(texts, textsBranch))
 		return
 	} else {
 		texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
