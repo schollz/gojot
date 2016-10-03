@@ -184,7 +184,7 @@ func updateDevVersion(dir string, version string, lastcommit string, osType stri
 		logger.Debug("Couldn't parse Github API Commit date")
 		return
 	}
-	logger.Debug(j[0].Commit.Author.Date.String(), currentCommit.String())
+	logger.Debug("Github: %s, Current: %s", j[0].Commit.Author.Date.String(), currentCommit.String())
 	if currentCommit.Sub(j[0].Commit.Author.Date).Hours() < 0 {
 		fmt.Println("New version of sdees available! Run\n\n\tgo get -u github.com/schollz/sdees\n\nto download.")
 	}

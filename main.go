@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -175,7 +174,7 @@ func setBuild() {
 		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%ad'")
 		stdout, err := cmd.Output()
 		if err != nil {
-			log.Fatal("Could not run git log to find update")
+			return
 		}
 		LastCommit = string(stdout)
 	} else {
