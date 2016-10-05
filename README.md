@@ -51,7 +51,7 @@ sdees --help # for more information
 
 Here's `sdees` in action, editing a [demo repo](https://github.com/schollz/demo). Go check out the [demo repo](https://github.com/schollz/demo) and make sure its encrypted!
 
-![](UsageGIF)
+![](https://raw.githubusercontent.com/schollz/sdees/master/branding/help3.gif)
 
 
 ### Acknowledgements
