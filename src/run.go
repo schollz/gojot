@@ -9,6 +9,8 @@ import (
 )
 
 func Run() {
+	// Some variables to be set later
+	filterBranch := ""
 
 	// Check if cloning needs to occur
 	logger.Debug("Current remote: %s", Remote)
@@ -61,8 +63,18 @@ func Run() {
 			CurrentDocument = editDocument
 		}
 	} else {
+		branchList, _ := ListBranches(RemoteFolder)
+		for _, branch := range branchList {
+			if branch == InputDocument {
+				doc, _ := ListFileOfOne(RemoteFolder, branch)
+				logger.Debug("You've entered a branch %s which is in document %s", branch, doc)
+				InputDocument = doc
+				filterBranch = branch
+			}
+		}
 		CurrentDocument = InputDocument
 	}
+	logger.Debug("Current document: %s", CurrentDocument)
 	// Save choice of current document
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
@@ -86,7 +98,7 @@ func Run() {
 		} else {
 			Encrypt = true
 		}
-	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 {
+	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
@@ -121,7 +133,7 @@ func Run() {
 	texts := []string{}
 	textsBranch := []string{}
 	var branchHashes map[string]string
-	if All || Export || Summarize || len(Search) > 0 {
+	if All || Export || Summarize || len(Search) > 0 || len(filterBranch) > 0 {
 		texts, textsBranch, branchHashes = CombineEntries(cache)
 		// Conduct the search
 		if len(Search) > 0 {
@@ -137,6 +149,15 @@ func Run() {
 			}
 			texts = textFoo
 		}
+		if len(filterBranch) > 0 {
+			for i, branch := range textsBranch {
+				if branch == filterBranch {
+					logger.Debug("Filtering out everything but branch %s", filterBranch)
+					texts = []string{texts[i]}
+					textsBranch = []string{textsBranch[i]}
+				}
+			}
+		}
 	}
 
 	// Case-switch for what to do with fulltext
@@ -149,7 +170,11 @@ func Run() {
 		fmt.Println(SummarizeEntries(texts, textsBranch))
 		return
 	} else {
-		texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
+		if len(filterBranch) == 0 {
+			texts = append(texts, HeadMatter(GetCurrentDate(), MakeAlliteration()))
+		} else {
+			fmt.Printf("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
+		}
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}
 	fulltext := WriteEntry()
