@@ -54,6 +54,7 @@ FOLDERS:
 
 EXAMPLE USAGE:
    sdees new.txt # edit a new document, new.txt
+	 sdees UglyDuckling # edit a entry in a document
    sdees --summary -n 5 # list a summary of last five entries
    sdees --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
 

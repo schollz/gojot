@@ -42,14 +42,16 @@ Optionally, all information saved in the `git` repo can be encrypted using a sym
 
 ## Usage
 
-The first time you run you can configure your remote system and editor.
-
 ```
 sdees new.txt # edit a new document, new.txt
 sdees --summary # list a summary
 sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 sdees --help # for more information
 ```
+
+Here's `sdees` in action, editing a [demo repo](https://github.com/schollz/demo). Go check out the [demo repo](https://github.com/schollz/demo) and make sure its encrypted!
+
+![](UsageGIF)
 
 
 ### Acknowledgements
