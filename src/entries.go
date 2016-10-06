@@ -7,6 +7,14 @@ import (
 )
 
 func Import(filename string) error {
+	var yesencryption string
+	fmt.Print("\nDo you want to add encryption (default: y)? (y/n) ")
+	fmt.Scanln(&yesencryption)
+	if yesencryption == "n" {
+		Encrypt = false
+	} else {
+		Encrypt = true
+	}
 	logger.Debug("Importing %s", filename)
 	if Encrypt {
 		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
