@@ -24,12 +24,18 @@ _Note_: The previous non-`git` version of `sdees` can [be found here](https://gi
 - Built-in encryption, compatible with `gpg`.
 - Version control (all versions are saved, currently only newest is shown).
 - Temp files are shredded (random bytes written before deletion).
-- Searching, summarizing, synchronized deletion, and more.
+- Searching, summarizing, synchronized deletion, self-updating, and more.
 
 
 ## Install
 
-You can install by downloading [the latest release](https://github.com/schollz/sdees/releases/latest) or installing with Go 1.7+:
+
+Download [the latest release binary](https://github.com/schollz/sdees/releases/latest)
+
+_OR_
+
+use `go get` if you have [installed Go](https://golang.org/dl/):
+
 ```
 go get -u github.com/schollz/sdees
 ```
