@@ -345,8 +345,8 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	cmd.Start()
 	out2b, _ := ioutil.ReadAll(out2)
 	cmd.Wait()
-	fmt.Println(string(out2b))
 	if strings.Contains(string(out2b), "error") || strings.Contains(string(out2b), "***") {
+		fmt.Println(string(out2b))
 		return newBranch, errors.New("Cannot commit " + documentname + " error: " + err.Error())
 	}
 
