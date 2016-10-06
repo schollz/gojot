@@ -177,6 +177,8 @@ release:
 	go get github.com/kardianos/osext
 	go get github.com/aktau/github-release
 	echo "Deleting old release"
+	# git tag -d ${VERSION};
+	# git push :${VERSION};
 	#github-release delete \
 	#		--user schollz \
 	#		--repo sdees \
