@@ -1,4 +1,4 @@
-# How it works
+# How `sdees` works
 
 When `sdees` starts for the first time it will request a `git` repository which can be [local or remote](https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server). Then `sdees` provides an option to write text using the editor of choice into a new *entry*. Each new entry is inserted into a new orphan branch in the supplied `git` repository. The benefit of placing each entry into its own orphan branch is that merge collisions are avoided after creating new entries on different machines. Thus, `sdees` makes it perfectly safe to make *new* entries without internet access.
 
@@ -7,11 +7,11 @@ The combination of entries be displayed as a *document*. The document is reconst
 Optionally, all information saved in the `git` repo can be encrypted using a symmetric cipher with a user-provided passphrase. The passphrase is not stored anywhere on the machine or repo. When enabled, each entry in the `git` repo is encrypted. When editing an encrypted document, a decrypted temp file is stored and then shredded (random bytes written and then deleted) after use.
 
 
-# Setting up `git` server
+# How to setup `git` server
 
-You can just use a [Github](https://github.com/) or [Bitbucket](https://bitbucket.org/) repository and skip this.
+_Easiest way:_ Just dont. You can just use a [Github](https://github.com/) or [Bitbucket](https://bitbucket.org/) repository and skip this.
 
-You can also make your own personal `git` server by following these steps.
+_Alternatively:_ You can also make your own personal `git` server by following these steps.
 
 ## Remote server
 
