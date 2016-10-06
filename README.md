@@ -5,8 +5,6 @@
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-45%25-yellow.svg)
 
-![](https://camo.githubusercontent.com/4e8c3264d9656edef93de9749f152b18314f780e/687474703a2f2f692e696d6775722e636f6d2f4936457a4544482e6a7067)
-
 Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to encrypted documents (like a notebook or journal) while keeping the entire document synchronized.
 
 More info can be found in [INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
