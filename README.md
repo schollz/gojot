@@ -1,4 +1,4 @@
-# sdees is for _distributed_ _editing_ of _encrypted_ _stuff_
+# `sdees` is for `distributed` `editing` of `encrypted` `stuff`
 
 
 [![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
