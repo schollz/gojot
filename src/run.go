@@ -98,7 +98,7 @@ func Run() {
 		} else {
 			Encrypt = true
 		}
-	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 {
+	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 && len(Search) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
@@ -141,7 +141,7 @@ func Run() {
 			textFoo := []string{}
 			for i := range texts {
 				for _, searchWord := range searchWords {
-					if strings.Contains(texts[i], searchWord) {
+					if strings.Contains(strings.ToLower(texts[i]), strings.ToLower(searchWord)) {
 						textFoo = append(textFoo, texts[i])
 						break
 					}
