@@ -13,6 +13,12 @@ func timeTrack(start time.Time, name string) {
 	logger.Debug("%s took %s", name, elapsed)
 }
 
+func GetRandomMD5Hash() string {
+	hasher := md5.New()
+	hasher.Write([]byte(RandStringBytesMaskImprSrc(10, time.Now().UnixNano())))
+	return hex.EncodeToString(hasher.Sum(nil))[0:8]
+}
+
 // RandStringBytesMaskImprSrc generates a random string using a alphabet and seed
 // from SO
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
