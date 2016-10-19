@@ -1,6 +1,8 @@
 package sdees
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"math/rand"
 	"os"
 	"regexp"
