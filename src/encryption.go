@@ -73,9 +73,6 @@ func DecryptFile(file string, passphrase string) error {
 		return err
 	}
 	err = ioutil.WriteFile(file, []byte(decrypted), 0644)
-	if err != nil {
-		return err
-	}
 	return err
 }
 
@@ -86,9 +83,5 @@ func EncryptFile(file string, passphrase string) error {
 	fileContents, _ := ioutil.ReadFile(file)
 	encrypted := EncryptString(string(fileContents), passphrase)
 	err := ioutil.WriteFile(file, []byte(encrypted), 0644)
-	if err != nil {
-		return err
-	}
-	err = Shred(file)
 	return err
 }
