@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+
 	"github.com/speps/go-hashids"
 )
 
@@ -41,7 +42,7 @@ func StringToHashID(s string) string {
 	h := hashids.NewWithData(hd)
 	toEncode := allInts
 	e, _ := h.Encode(toEncode)
-	fmt.Printf("Encoded '%s' as '%s'\n", s, e)
+	logger.Debug("Encoded '%s' as '%s'\n", s, e)
 
 	return string(e)
 }
@@ -62,7 +63,7 @@ func HashIDToString(e string) string {
 		bs = append(bs, buf.Bytes()...)
 	}
 	// fmt.Printf("\n%v\n'%s'\n\n", bs, string(bs))
-	fmt.Printf("Decoded '%s' as '%s'\n", e, string(bs))
+	logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
 	return string(bs)
 }
 
