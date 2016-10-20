@@ -10,6 +10,40 @@ import (
 	"time"
 )
 
+func WriteToMaster(gitfolder string, filename string, text string) {
+	dir, _ := os.Getwd()
+	logger.Debug("Current DIR: %s", dir)
+	os.Chdir(gitfolder)
+	cmd2 := exec.Command("git", "checkout", "-f", "master")
+	_, err2 := cmd2.Output()
+	if err2 != nil {
+		cmd2 = exec.Command("git", "checkout", "--orphan", "master")
+		_, err2 = cmd2.Output()
+		if err2 != nil {
+			logger.Error("Couldn't checkout master")
+		}
+	}
+	if Encrypt {
+		text = EncryptString(text, Passphrase)
+		filename += ".gpg"
+	}
+	err2 = ioutil.WriteFile(filename, []byte(text), 0644)
+	if err2 != nil {
+		logger.Warn("Something wrong with writing key.gpg")
+	}
+	cmd2 = exec.Command("git", "add", filename)
+	_, err2 = cmd2.Output()
+	if err2 != nil {
+		logger.Warn("Something wrong adding key.gpg")
+	}
+	cmd2 = exec.Command("git", "commit", "-m", "'added key'", filename)
+	_, err2 = cmd2.Output()
+	if err2 != nil {
+		logger.Warn("Something wrong: %s ", strings.Join([]string{"git", "commit", "-m", "'added key'", filename}, " "))
+	}
+	os.Chdir(dir)
+}
+
 // ListBranches returns a slice of the branch names of the repo
 // excluding the master branch
 func ListBranches(folder string) ([]string, error) {
@@ -351,42 +385,10 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	}
 
 	logger.Debug("Updated document %s in branch %s", documentname, newBranch)
-
-	// Check if its a new document
 	_, errExistence := GetTextOfOne("./", "master", documentname)
 	if errExistence != nil {
-		logger.Debug("It seems %s doesn't exist yet, making a index file for it in master", documentname)
-		dir, _ := os.Getwd()
-		logger.Debug("Current DIR: %s", dir)
-		cmd2 := exec.Command("git", "checkout", "-f", "master")
-		_, err2 := cmd2.Output()
-		if err2 != nil {
-			cmd2 = exec.Command("git", "checkout", "--orphan", "master")
-			_, err2 = cmd2.Output()
-			if err2 != nil {
-				logger.Error("Couldn't checkout master")
-			}
-		}
-		text := "Yay some text!"
-		if Encrypt {
-			text = EncryptString(text, Passphrase)
-		}
-		err2 = ioutil.WriteFile(documentname, []byte(text), 0644)
-		if err != nil {
-			logger.Warn("Something wrong with writing " + documentname)
-		}
-		cmd2 = exec.Command("git", "add", documentname)
-		_, err2 = cmd2.Output()
-		if err2 != nil {
-			logger.Warn("Something wrong adding " + documentname)
-		}
-		cmd2 = exec.Command("git", "commit", "--date", datestring, "-m", message, documentname)
-		_, err2 = cmd2.Output()
-		if err2 != nil {
-			logger.Warn("Something wrong: %s ", strings.Join([]string{"git", "commit", "--date", datestring, "-m", message, documentname}, " "))
-		}
+		WriteToMaster("./", StringToHashID(strings.Replace(documentname, ".gpg", "", -1)), "new file")
 	}
-
 	return newBranch, err
 }
 

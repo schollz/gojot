@@ -33,7 +33,7 @@ func ListFiles(gitfolder string) ([]string, []bool) {
 	documents := make([]string, len(docMap))
 	i := 0
 	for k, _ := range docMap {
-		documents[i] = k
+		documents[i] = HashIDToString(k)
 		i++
 	}
 	sort.Strings(documents)

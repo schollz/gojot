@@ -5,20 +5,21 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 // PromptPassword prompts for password and tests against the file in input,
 // use "" for no file, in which a new password will be generated
-func PromptPassword(gitfolder string, document string) string {
+func PromptPassword(gitfolder string) string {
 	password1 := "1"
-	textToTest, err := GetTextOfOne(gitfolder, "master", document+".gpg")
-	if err != nil {
-		fmt.Printf("Getting new password for %s\n", document)
+	textToTest, _ := GetTextOfOne(gitfolder, "master", ".key.gpg")
+	if len(textToTest) == 0 {
+		fmt.Printf("Getting new password\n")
 		password2 := "2"
 		for password1 != password2 {
-			fmt.Printf("Enter new password for %s: ", document)
+			fmt.Printf("Enter new password for: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
 			fmt.Printf("\nEnter password again: ")
@@ -29,11 +30,15 @@ func PromptPassword(gitfolder string, document string) string {
 			}
 		}
 		Passphrase = password1
+
+		logger.Debug("It seems key doesn't exist yet, making it")
+		WriteToMaster(gitfolder, ".key", RandStringBytesMaskImprSrc(100, time.Now().UnixNano()))
+
 	} else {
-		logger.Debug("Testing with master:%s.gpg", document)
+		logger.Debug("Testing with master:key.gpg")
 		passwordAccepted := false
 		for passwordAccepted == false {
-			fmt.Printf("\nEnter password to open %s: ", document)
+			fmt.Printf("\nEnter password: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
 			_, err := DecryptString(textToTest, password1)

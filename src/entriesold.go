@@ -10,7 +10,7 @@ import (
 
 func ImportOld(filename string) error {
 	if Encrypt {
-		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
+		Passphrase = PromptPassword(RemoteFolder)
 	}
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {

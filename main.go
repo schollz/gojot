@@ -79,7 +79,7 @@ EXAMPLE USAGE:
 		// Check new Version
 		programPath, _ := osext.Executable()
 		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
-
+		sdees.Encrypt = true
 		// Load configuration
 		sdees.LoadConfiguration()
 

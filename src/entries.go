@@ -17,7 +17,7 @@ func Import(filename string) error {
 	}
 	logger.Debug("Importing %s", filename)
 	if Encrypt {
-		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
+		Passphrase = PromptPassword(RemoteFolder)
 	}
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {

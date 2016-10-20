@@ -82,6 +82,7 @@ func DecryptFile(file string, passphrase string) error {
 // EncryptFile creates an encrypted file with extension gpg
 // and shreds old file
 func EncryptFile(file string, passphrase string) error {
+	logger.Debug("Encrypting %s", file)
 	fileContents, _ := ioutil.ReadFile(file)
 	encrypted := EncryptString(string(fileContents), passphrase)
 	err := ioutil.WriteFile(file+".gpg", []byte(encrypted), 0644)

@@ -9,6 +9,7 @@ import (
 )
 
 func Run() {
+	Encrypt = true
 	// Some variables to be set later
 	filterBranch := ""
 
@@ -32,6 +33,12 @@ func Run() {
 		}
 	}
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
+
+	// Prompt for passphrase if encrypted
+	logger.Debug("Prompting password")
+	if Encrypt {
+		Passphrase = PromptPassword(RemoteFolder)
+	}
 
 	// List available documents to choose from
 	availableFiles, encrypted := ListFiles(RemoteFolder)
@@ -88,17 +95,7 @@ func Run() {
 			break
 		}
 	}
-	if isNew {
-		// Prompt whether encryption is wanted for new files
-		var yesencryption string
-		fmt.Print("\nDo you want to add encryption (default: y)? (y/n) ")
-		fmt.Scanln(&yesencryption)
-		if yesencryption == "n" {
-			Encrypt = false
-		} else {
-			Encrypt = true
-		}
-	} else if !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 && len(Search) == 0 {
+	if !isNew && !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 && len(Search) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
@@ -106,11 +103,6 @@ func Run() {
 		if yesnoall == "y" {
 			All = true
 		}
-	}
-
-	// Prompt for passphrase if encrypted
-	if Encrypt {
-		Passphrase = PromptPassword(RemoteFolder, CurrentDocument)
 	}
 
 	// Update the cache using the passphrase if needed
