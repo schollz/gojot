@@ -25,14 +25,14 @@ sudo apt-get install git-core && \
   chown git:git /home/git
 ```
 
-Then, from the client, add your key:
+The log into the client and add your key to the server:
 
 ```
 cat ~/.ssh/id_rsa.pub | ssh git@remote.com \
   "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
 ```
 
-and then to create a new repo, `newrepo.git`:
+Then, still on the client, create a new repo, `newrepo.git`, on the server:
 
 ```
 ssh git@remote.com "\
