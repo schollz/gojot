@@ -177,12 +177,12 @@ release:
 	go get github.com/kardianos/osext
 	go get github.com/aktau/github-release
 	echo "Deleting old release"
-	# git tag -d ${VERSION};
-	# git push :${VERSION};
-	#github-release delete \
-	#		--user schollz \
-	#		--repo sdees \
-	#		--tag ${VERSION}
+	git tag -d ${VERSION};
+	git push origin :${VERSION};
+	github-release delete \
+			--user schollz \
+			--repo sdees \
+			--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
