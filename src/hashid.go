@@ -67,8 +67,3 @@ func HashIDToString(e string) string {
 	logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
 	return strings.TrimSpace(string(bs))
 }
-
-func main() {
-	HashIDToString(StringToHashID("A slightly longer string string"))
-
-}
