@@ -16,6 +16,9 @@ func MakeAlliteration() string {
 	alliterate := make(map[string]map[string][]string)
 	for _, word := range adjectives {
 		word = strings.Title(strings.TrimSpace(word))
+		if len(word) < 2 {
+			continue
+		}
 		char0 := word[0:1] + " "
 		if _, ok := alliterate[char0]; !ok {
 			alliterate[char0] = make(map[string][]string)
@@ -28,6 +31,9 @@ func MakeAlliteration() string {
 
 	for _, word := range nouns {
 		word = strings.Title(strings.TrimSpace(word))
+		if len(word) < 2 {
+			continue
+		}
 		char0 := word[0:1] + " "
 		if _, ok := alliterate[char0]; !ok {
 			continue
@@ -40,12 +46,22 @@ func MakeAlliteration() string {
 
 	for _, word := range adjectives {
 		word = strings.Title(strings.TrimSpace(word))
+		if len(word) < 2 {
+			continue
+		}
 		char0 := word[0:1] + " "
 		if _, ok := alliterate[char0]["nouns"]; !ok {
 			delete(alliterate[char0], "adjectives")
 			delete(alliterate, char0)
 		}
 	}
+
+	// // Count how many are possible
+	// possible := 0
+	// for letter := range alliterate {
+	// 	possible += len(alliterate[letter]["nouns"]) * len(alliterate[letter]["adjectives"])
+	// }
+	// fmt.Printf("There are %d possible combinations\n", possible)
 
 	rand.Seed(time.Now().UnixNano())
 	randomLetterID := rand.Intn(len(alliterate))
