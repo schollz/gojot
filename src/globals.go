@@ -7,12 +7,12 @@ type Entry struct {
 
 // Global parameters
 var (
-	CachePath, ConfigPath, TempPath                          string
-	CurrentDocument, Editor, Remote, InputDocument           string
-	All, Export, Summarize                                   bool
-	DeleteEntry, Search                                      string
-	RemoteFolder, CacheFile                                  string
-	Extension                                                string
-	Passphrase                                               string
-	Debug, Encrypt, DontEncrypt, ResetConfig, DeleteDocument bool
+	CachePath, ConfigPath, TempPath                string
+	CurrentDocument, Editor, Remote, InputDocument string
+	All, Export, Summarize                         bool
+	DeleteEntry, Search                            string
+	RemoteFolder, CacheFile                        string
+	Extension                                      string
+	Passphrase, Cryptkey                           string
+	Debug, ResetConfig, DeleteDocument             bool
 )

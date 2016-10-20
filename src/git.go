@@ -23,18 +23,15 @@ func WriteToMaster(gitfolder string, filename string, text string) {
 			logger.Error("Couldn't checkout master")
 		}
 	}
-	if Encrypt {
-		text = EncryptString(text, Passphrase)
-		filename += ".gpg"
-	}
+	text = EncryptString(text, Passphrase)
 	err2 = ioutil.WriteFile(filename, []byte(text), 0644)
 	if err2 != nil {
-		logger.Warn("Something wrong with writing key.gpg")
+		logger.Warn("Something wrong with writing " + filename)
 	}
 	cmd2 = exec.Command("git", "add", filename)
 	_, err2 = cmd2.Output()
 	if err2 != nil {
-		logger.Warn("Something wrong adding key.gpg")
+		logger.Warn("Something wrong adding " + filename)
 	}
 	cmd2 = exec.Command("git", "commit", "-m", "'added key'", filename)
 	_, err2 = cmd2.Output()
@@ -345,6 +342,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if len(branchNameOverride) == 0 {
 		newBranch = MakeAlliteration()
 	}
+	newBranch = StringToHashID(newBranch)
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {
@@ -359,14 +357,11 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if err != nil {
 		return newBranch, errors.New("Cannot write file " + documentname)
 	}
-	if Encrypt {
-		err = EncryptFile(documentname, Passphrase)
-		if err != nil {
-			return newBranch, err
-		}
-		documentname += ".gpg"
-		message = EncryptString(message, Passphrase)
+	err = EncryptFile(documentname, Passphrase)
+	if err != nil {
+		return newBranch, err
 	}
+	message = StringToHashID(message)
 
 	cmd = exec.Command("git", "add", documentname)
 	_, err = cmd.Output()

@@ -53,7 +53,6 @@ func GoDeleteDocument(cache Cache) error {
 		fmt.Printf("Did not delete %s\n", CurrentDocument)
 	}
 
-
 	logger.Debug("Deleting cache")
 	err := DeleteCache()
 	if err != nil {
@@ -74,18 +73,15 @@ func GoDeleteDocument(cache Cache) error {
 	}
 
 	document := CurrentDocument
-	if Encrypt {
-		document += ".gpg"
-	}
 	// Remove file from index
-	logger.Debug("git rm -f %s",document)
+	logger.Debug("git rm -f %s", document)
 	cmd = exec.Command("git", "rm", "-f", document)
 	_, err = cmd.Output()
 	if err != nil {
 		return errors.New("Problem git rm -f ")
 	}
 
-	logger.Debug("git commit -m %s",document)
+	logger.Debug("git commit -m %s", document)
 	cmd = exec.Command("git", "commit", "-m", "removed '"+document+"'")
 	_, err = cmd.Output()
 	if err != nil {

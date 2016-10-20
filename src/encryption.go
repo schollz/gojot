@@ -64,7 +64,7 @@ func EncryptString(encryptionText string, encryptionPassphraseString string) str
 
 // DecryptFile returns the decrypted contents of a GPG symmetric encrypted file
 func DecryptFile(file string, passphrase string) error {
-	fileContents, err := ioutil.ReadFile(file + ".gpg")
+	fileContents, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func EncryptFile(file string, passphrase string) error {
 	logger.Debug("Encrypting %s", file)
 	fileContents, _ := ioutil.ReadFile(file)
 	encrypted := EncryptString(string(fileContents), passphrase)
-	err := ioutil.WriteFile(file+".gpg", []byte(encrypted), 0644)
+	err := ioutil.WriteFile(file, []byte(encrypted), 0644)
 	if err != nil {
 		return err
 	}

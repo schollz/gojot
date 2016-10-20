@@ -19,9 +19,6 @@ type Cache struct {
 
 func DeleteCache() error {
 	cacheFile := path.Join(RemoteFolder, CurrentDocument+".cache")
-	if Encrypt {
-		cacheFile += ".gpg"
-	}
 	return Shred(cacheFile)
 }
 
@@ -56,9 +53,6 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	}
 
 	// From those branches, determine which entries need fulltext updating
-	if Encrypt {
-		document += ".gpg"
-	}
 	entriesToUpdate := []Entry{} // which branches to update in cache
 	entries, _ := GetInfo(gitfolder, branchesToGetInfo)
 	for _, entry := range entries {
@@ -88,9 +82,6 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	}
 
 	// Save
-	if Encrypt {
-		document = strings.Split(document, ".gpg")[0]
-	}
 	WriteCache(gitfolder, document, cache)
 
 	return cache, updatedBranches, err
@@ -102,25 +93,22 @@ func WriteCache(gitfolder string, document string, cache Cache) {
 	if err != nil {
 		logger.Debug("Error marshaling " + cacheFile + ": " + err.Error())
 	}
+
 	err = ioutil.WriteFile(cacheFile, b, 0644)
 	if err != nil {
 		logger.Debug("Error writing " + cacheFile + ": " + err.Error())
 	}
-	if Encrypt {
-		EncryptFile(cacheFile, Passphrase)
-	}
+	EncryptFile(cacheFile, Passphrase)
 	logger.Debug("Wrote cache file: %s", cacheFile)
 }
 
 func LoadCache(gitfolder string, document string) (Cache, error) {
 	var cache Cache
 	cacheFile := path.Join(RemoteFolder, document+".cache")
-	if Encrypt {
-		err := DecryptFile(cacheFile, Passphrase)
-		if err != nil {
-			logger.Debug("Error decrypting %s", cacheFile)
-			return cache, err
-		}
+	err := DecryptFile(cacheFile, Passphrase)
+	if err != nil {
+		logger.Debug("Error decrypting %s", cacheFile)
+		return cache, err
 	}
 	defer timeTrack(time.Now(), "Loading cache")
 	b, err := ioutil.ReadFile(cacheFile)

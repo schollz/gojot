@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strings"
 
 	"github.com/speps/go-hashids"
 )
@@ -64,7 +65,7 @@ func HashIDToString(e string) string {
 	}
 	// fmt.Printf("\n%v\n'%s'\n\n", bs, string(bs))
 	logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
-	return string(bs)
+	return strings.TrimSpace(string(bs))
 }
 
 func main() {

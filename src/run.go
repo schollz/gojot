@@ -9,7 +9,6 @@ import (
 )
 
 func Run() {
-	Encrypt = true
 	// Some variables to be set later
 	filterBranch := ""
 
@@ -34,45 +33,39 @@ func Run() {
 	}
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
-	// Prompt for passphrase if encrypted
-	logger.Debug("Prompting password")
-	if Encrypt {
-		Passphrase = PromptPassword(RemoteFolder)
-	}
+	// Prompt for passphrase
+	Passphrase = PromptPassword(RemoteFolder)
 
 	// List available documents to choose from
-	availableFiles, encrypted := ListFiles(RemoteFolder)
+	availableFiles := ListFiles(RemoteFolder)
 	if len(InputDocument) == 0 {
 		var editDocument string
 		fmt.Printf("\nCurrently available documents: ")
-		logger.Debug("Last documents was %s", CurrentDocument)
-		for i, file := range availableFiles {
-			fmt.Printf("\n- %s ", file)
-			if encrypted[i] {
-				fmt.Print("[encrypted] ")
-			}
+		logger.Debug("Last documents was %s", HashIDToString(CurrentDocument))
+		for _, file := range availableFiles {
+			fmt.Printf("\n- %s ", HashIDToString(file))
 			if file == CurrentDocument {
 				fmt.Print("(default) ")
 			}
 		}
 		if len(CurrentDocument) == 0 {
-			CurrentDocument = "notes.txt"
+			CurrentDocument = StringToHashID("notes.txt")
 		}
-		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", CurrentDocument)
+		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", HashIDToString(CurrentDocument))
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
 		} else if len(editDocument) == 0 && len(availableFiles) > 0 {
 			CurrentDocument = availableFiles[0]
 		} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
-			CurrentDocument = "notes.txt"
+			CurrentDocument = StringToHashID("notes.txt")
 		} else if len(editDocument) > 0 {
-			CurrentDocument = editDocument
+			CurrentDocument = StringToHashID(editDocument)
 		}
 	} else {
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
-			if branch == InputDocument {
+			if branch == StringToHashID(InputDocument) {
 				doc, _ := ListFileOfOne(RemoteFolder, branch)
 				logger.Debug("You've entered a branch %s which is in document %s", branch, doc)
 				InputDocument = doc
@@ -87,11 +80,9 @@ func Run() {
 
 	// Check if encryption is needed
 	isNew := true
-	Encrypt = false
-	for i, file := range availableFiles {
+	for _, file := range availableFiles {
 		if CurrentDocument == file {
 			isNew = false
-			Encrypt = encrypted[i]
 			break
 		}
 	}

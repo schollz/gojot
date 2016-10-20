@@ -13,13 +13,13 @@ import (
 // PromptPassword prompts for password and tests against the file in input,
 // use "" for no file, in which a new password will be generated
 func PromptPassword(gitfolder string) string {
+	var err error
 	password1 := "1"
-	textToTest, _ := GetTextOfOne(gitfolder, "master", ".key.gpg")
+	textToTest, _ := GetTextOfOne(gitfolder, "master", ".key")
 	if len(textToTest) == 0 {
-		fmt.Printf("Getting new password\n")
 		password2 := "2"
 		for password1 != password2 {
-			fmt.Printf("Enter new password for: ")
+			fmt.Printf("Enter new password: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
 			fmt.Printf("\nEnter password again: ")
@@ -30,18 +30,18 @@ func PromptPassword(gitfolder string) string {
 			}
 		}
 		Passphrase = password1
-
+		Cryptkey = RandStringBytesMaskImprSrc(100, time.Now().UnixNano())
 		logger.Debug("It seems key doesn't exist yet, making it")
-		WriteToMaster(gitfolder, ".key", RandStringBytesMaskImprSrc(100, time.Now().UnixNano()))
+		WriteToMaster(gitfolder, ".key", Cryptkey)
 
 	} else {
-		logger.Debug("Testing with master:key.gpg")
+		logger.Debug("Testing with master:key")
 		passwordAccepted := false
 		for passwordAccepted == false {
 			fmt.Printf("\nEnter password: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
-			_, err := DecryptString(textToTest, password1)
+			Cryptkey, err = DecryptString(textToTest, password1)
 			if err == nil {
 				passwordAccepted = true
 			} else {
