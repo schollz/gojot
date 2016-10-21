@@ -62,7 +62,7 @@ func TestGetInfo(t *testing.T) {
 	entries, _ := GetInfo("./gittest", branchNames)
 	foundOne := false
 	for _, entry := range entries {
-		if entry.Document == "test.txt" {
+		if entry.Document == StringToHashID("test.txt") {
 			foundOne = true
 			break
 		}
@@ -113,12 +113,18 @@ func TestGetText(t *testing.T) {
 	entries, _ := GetInfo("gittest", branchNames)
 
 	entries, _ = GetText("gittest", entries)
+	foundIt := false
 	for _, entry := range entries {
-		if entry.Branch == "12" {
+		if entry.Branch == StringToHashID("12") {
 			if entry.Text != "hello, world branch #12" {
 				t.Errorf("Got different text: %s", entry.Text)
+			} else {
+				foundIt = true
 			}
 		}
+	}
+	if !foundIt {
+		t.Errorf("Never found branch")
 	}
 
 }
@@ -178,7 +184,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 
 	// Make some new edit and push it
-	_, err = NewDocument("testNew",  StringToHashID("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	_, err = NewDocument("testNew", StringToHashID("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
