@@ -156,7 +156,7 @@ func TestDelete(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testDelete", []string{branches[1]})
-	if info[0].Message != "deleted" {
+	if info[0].Message != StringToHashID("deleted") {
 		t.Errorf("Error while deleting, got %v", info[0])
 	}
 	os.RemoveAll("testDelete")
