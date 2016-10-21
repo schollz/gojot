@@ -63,9 +63,10 @@ func Run() {
 			CurrentDocument = StringToHashID(editDocument)
 		}
 	} else {
+		InputDocument = StringToHashID(InputDocument)
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
-			if branch == StringToHashID(InputDocument) {
+			if branch == InputDocument {
 				doc, _ := ListFileOfOne(RemoteFolder, branch)
 				logger.Debug("You've entered a branch %s which is in document %s", branch, doc)
 				InputDocument = doc
