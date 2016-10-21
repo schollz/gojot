@@ -145,8 +145,8 @@ func Run() {
 
 	// Case-switch for what to do with fulltext
 	if Export {
-		fmt.Println("Exporting to " + CurrentDocument)
-		ioutil.WriteFile(CurrentDocument, []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		fmt.Println("Exporting to " + HashIDToString(CurrentDocument))
+		ioutil.WriteFile(HashIDToString(CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")
@@ -156,7 +156,8 @@ func Run() {
 		if len(filterBranch) == 0 {
 			texts = append(texts, HeadMatter(GetCurrentDate(), StringToHashID(MakeAlliteration())))
 		} else {
-			fmt.Printf("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
+			logger.Debug("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
+			fmt.Printf("Loaded entry '%s' on document '%s'\n", HashIDToString(filterBranch), HashIDToString(CurrentDocument))
 		}
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}
