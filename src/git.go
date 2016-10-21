@@ -413,16 +413,19 @@ func Clone(folder string, remote string) error {
 	logger.Debug("[%s]Cloning %s", id, remote)
 	defer timeTrack(time.Now(), "["+id+"]Cloning")
 	var err error
-	logger.Debug("Cloning %s into directory at %s", remote, folder)
-	cwd, _ := os.Getwd()
-	defer os.Chdir(cwd)
 
-	cmd := exec.Command("git", "clone", remote, folder)
-	_, err = cmd.Output()
-	if err != nil {
-		fmt.Println("Cloning failed, will not continue")
-		os.Exit(-1)
-		return errors.New("Cloning command failed: '" + strings.Join([]string{"git", "clone", remote, folder}, " ") + "'")
+	if !exists(folder) {
+		logger.Debug("Cloning %s into directory at %s", remote, folder)
+		cwd, _ := os.Getwd()
+		defer os.Chdir(cwd)
+
+		cmd := exec.Command("git", "clone", remote, folder)
+		_, err = cmd.Output()
+		if err != nil {
+			fmt.Println("Cloning failed, will not continue")
+			os.Exit(-1)
+			return errors.New("Cloning command failed: '" + strings.Join([]string{"git", "clone", remote, folder}, " ") + "'")
+		}
 	}
 
 	Fetch(folder)
