@@ -166,7 +166,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	newLocalBranch, err := NewDocument("testOld", "test2.txt", "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	newLocalBranch, err := NewDocument("testOld", StringToHashID("test2.txt"), "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -178,7 +178,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 
 	// Make some new edit and push it
-	_, err = NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	_, err = NewDocument("testNew",  StringToHashID("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
