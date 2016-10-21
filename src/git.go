@@ -291,6 +291,9 @@ func Fetch(gitfolder string) error {
 	//      git reset --hard HEAD
 	// 			git rebase
 	for _, branch := range branchesToReset {
+		if branch == "master" {
+			continue
+		}
 		logger.Debug("Resetting branch %s", branch)
 		cmd = exec.Command("git", "checkout", branch)
 		stdout, err = cmd.Output()
