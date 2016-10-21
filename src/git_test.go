@@ -17,6 +17,8 @@ var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
 
 func TestMain(m *testing.M) {
 	DebugMode()
+	Passphrase = "test"
+	Cryptkey = "test"
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
 		createBranches("./gittest", 100)

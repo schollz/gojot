@@ -50,7 +50,7 @@ func StringToHashID(s string) string {
 
 func HashIDToString(e string) string {
 	hd := hashids.NewData()
-	hd.Salt = CryptKey
+	hd.Salt = Cryptkey
 	hd.MinLength = 20
 	h := hashids.NewWithData(hd)
 	d, _ := h.DecodeWithError(e)

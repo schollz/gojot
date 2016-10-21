@@ -23,20 +23,6 @@ func TestEncryptStringWrongPassword(t *testing.T) {
 	}
 }
 
-func TestEncryptFile(t *testing.T) {
-	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
-	err := EncryptFile("test.txt", "abcd")
-	if err != nil {
-		t.Errorf("Got error: %s", err.Error())
-	}
-	if exists("test.txt") {
-		t.Errorf("test.txt should have been shredded!")
-	}
-	if !exists("test.txt.gpg") {
-		t.Errorf("test.txt.gpg should have been created!")
-	}
-}
-
 func TestDecryptFileCorrectPassword(t *testing.T) {
 	ioutil.WriteFile("test.txt", []byte("Some random text"), 0644)
 	EncryptFile("test.txt", "abcd")
