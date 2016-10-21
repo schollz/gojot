@@ -7,6 +7,7 @@ import (
 )
 
 func Import(filename string) error {
+	CurrentDocument = StringToHashID(filename)
 	logger.Debug("Importing %s", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -14,11 +15,11 @@ func Import(filename string) error {
 		return err
 	}
 	blobs := ProcessEntries(string(data))
-	if len(blobs) < 2 {
+	if len(blobs) < 1 {
 		fmt.Println("No entries found, perhaps you should run with --importold")
 	}
 	for i := range blobs {
-		_, err = NewDocument(RemoteFolder, CurrentDocument, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, "")
+		_, err = NewDocument(RemoteFolder, CurrentDocument, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
 		if err != nil {
 			logger.Error("Error creating new document: %s", err.Error())
 		}
