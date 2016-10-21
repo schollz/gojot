@@ -413,11 +413,11 @@ func Clone(folder string, remote string) error {
 	logger.Debug("[%s]Cloning %s", id, remote)
 	defer timeTrack(time.Now(), "["+id+"]Cloning")
 	var err error
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
 
 	if !exists(folder) {
 		logger.Debug("Cloning %s into directory at %s", remote, folder)
-		cwd, _ := os.Getwd()
-		defer os.Chdir(cwd)
 
 		cmd := exec.Command("git", "clone", remote, folder)
 		_, err = cmd.Output()
