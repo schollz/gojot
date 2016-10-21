@@ -2,6 +2,11 @@ package sdees
 
 import "testing"
 
+// func TestHashID(t *testing.T) {
+// 	fmt.Println(StringToHashID("some kind of string"))
+// 	t.Errorf("Not correcting listing files:")
+// }
+
 func BenchmarkHashIDToString(b *testing.B) {
 	logger.Level(2)
 	s := StringToHashID("some kind of string ")

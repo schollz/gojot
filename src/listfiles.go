@@ -24,7 +24,8 @@ func ListFiles(gitfolder string) []string {
 	}
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
-		if document[0] == '.' && document != ".key" {
+		if document[0] == '.' && document != ".key" && document != ".new" {
+			logger.Debug("Found document: %s", document)
 			documents = append(documents, document)
 		}
 	}
