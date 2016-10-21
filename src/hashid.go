@@ -38,8 +38,8 @@ func StringToHashID(s string) string {
 	}
 
 	hd := hashids.NewData()
-	hd.Salt = "a totally cret andom string generated and saved and encrypted using the passphrase"
-	hd.MinLength = 30
+	hd.Salt = Cryptkey
+	hd.MinLength = 20
 	h := hashids.NewWithData(hd)
 	toEncode := allInts
 	e, _ := h.Encode(toEncode)
@@ -50,8 +50,8 @@ func StringToHashID(s string) string {
 
 func HashIDToString(e string) string {
 	hd := hashids.NewData()
-	hd.Salt = "a totally cret andom string generated and saved and encrypted using the passphrase"
-	hd.MinLength = 30
+	hd.Salt = CryptKey
+	hd.MinLength = 20
 	h := hashids.NewWithData(hd)
 	d, _ := h.DecodeWithError(e)
 	var bs []byte
