@@ -29,7 +29,7 @@ func ListFiles(gitfolder string) []string {
 				continue
 			}
 			logger.Debug("Found document: %s", document)
-			documents = append(documents, document)
+			documents = append(documents, strings.Replace(document, ".", "", -1))
 		}
 	}
 

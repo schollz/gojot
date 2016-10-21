@@ -82,11 +82,13 @@ func Run() {
 	// Check if encryption is needed
 	isNew := true
 	for _, file := range availableFiles {
+		logger.Debug(file, CurrentDocument)
 		if CurrentDocument == file {
 			isNew = false
 			break
 		}
 	}
+	logger.Debug("isNew:%v", isNew)
 	if !isNew && !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 && len(Search) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
