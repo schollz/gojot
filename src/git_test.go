@@ -16,7 +16,7 @@ import (
 var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
 
 func TestMain(m *testing.M) {
-	DebugMode()
+	//DebugMode()
 	Passphrase = "test"
 	Cryptkey = "test"
 	// os.RemoveAll("./gittest")
