@@ -7,8 +7,6 @@ import (
 )
 
 func Import(filename string) error {
-	CurrentDocument = StringToHashID(filename)
-	Passphrase = PromptPassword(RemoteFolder)
 	logger.Debug("Importing %s", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -20,7 +18,7 @@ func Import(filename string) error {
 		fmt.Println("No entries found, perhaps you should run with --importold")
 	}
 	for i := range blobs {
-		_, err = NewDocument(RemoteFolder, CurrentDocument, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
+		_, err = NewDocument(RemoteFolder, StringToHashID(filename), blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
 		if err != nil {
 			logger.Error("Error creating new document: %s", err.Error())
 		}

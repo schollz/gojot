@@ -37,6 +37,24 @@ func Run() {
 	// Prompt for passphrase
 	Passphrase = PromptPassword(RemoteFolder)
 
+	// If importing, import
+	if ImportFlag || ImportOldFlag {
+		if len(InputDocument) == 0 {
+			fmt.Println("Must enter name of file to import")
+			return
+		}
+		var err1 error
+		if ImportFlag {
+			err1 = Import(InputDocument)
+		} else if ImportOldFlag {
+			err1 = ImportOld(InputDocument)
+		}
+		if err1 != nil {
+			logger.Error(err1.Error())
+		}
+		return
+	}
+
 	// List available documents to choose from
 	availableFiles := ListFiles(RemoteFolder)
 	if len(InputDocument) == 0 && len(DeleteEntry) == 0 {

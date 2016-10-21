@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -22,7 +21,7 @@ var (
 	DontEncrypt, Clean                        bool
 	DeleteDocument, DeleteEntry               string
 	ResetConfig                               bool
-	ImportOldFile, ImportFile                 string
+	ImportOldFile, ImportFile                 bool
 )
 
 func main() {
@@ -80,19 +79,13 @@ EXAMPLE USAGE:
 		programPath, _ := osext.Executable()
 		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
 		// Load configuration
+		sdees.ImportFlag = ImportFile
+		sdees.ImportOldFlag = ImportOldFile
 		sdees.LoadConfiguration()
 
 		// Process some flags
 		if ResetConfig {
 			sdees.SetupConfig()
-		} else if len(ImportOldFile) > 0 {
-			fmt.Printf("Importing %s using deprecated import file\n", ImportOldFile)
-			sdees.CurrentDocument = ImportOldFile
-			sdees.ImportOld(ImportOldFile)
-		} else if len(ImportFile) > 0 {
-			fmt.Printf("Importing %s\n", ImportFile)
-			sdees.CurrentDocument = ImportFile
-			sdees.Import(ImportFile)
 		} else if Clean {
 			sdees.CleanAll()
 		} else {
@@ -116,12 +109,12 @@ EXAMPLE USAGE:
 			Usage:       "Search for `word`",
 			Destination: &sdees.Search,
 		},
-		cli.StringFlag{
+		cli.BoolFlag{
 			Name:        "importold",
 			Usage:       "Import `document` (JRNL-format)",
 			Destination: &ImportOldFile,
 		},
-		cli.StringFlag{
+		cli.BoolFlag{
 			Name:        "import",
 			Usage:       "Import `document`",
 			Destination: &ImportFile,
