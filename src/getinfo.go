@@ -12,14 +12,6 @@ func getInfoWorker(id int, jobs <-chan string, results chan<- Entry) {
 	for branch := range jobs {
 		result := new(Entry)
 		result.Branch = branch
-
-		// cmd = exec.Command("git", "show", branch+":"+result.Document)
-		// stdout, err = cmd.Output()
-		// if err != nil {
-		// 	logger.Error("git show %s:%s did not work", branch, result.Document)
-		// }
-		//strings.TrimSpace(string(stdout))
-
 		cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'%H-=-%ad-=-%s'", branch)
 		stdout, err := cmd.Output()
 		if err != nil {
