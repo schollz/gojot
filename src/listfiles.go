@@ -24,10 +24,9 @@ func ListFiles(gitfolder string) []string {
 	}
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
-		if document[0] == '.' {
-			continue
+		if document[0] == '.' && document != ".key" {
+			documents = append(documents, document)
 		}
-		documents = append(documents, document)
 	}
 
 	sort.Strings(documents)
