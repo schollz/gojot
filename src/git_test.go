@@ -19,6 +19,8 @@ func TestMain(m *testing.M) {
 	DebugMode()
 	Passphrase = "test"
 	Cryptkey = "test"
+	// os.RemoveAll("./gittest")
+	// os.RemoveAll("./gittest10")
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
 		createBranches("./gittest", 100)
@@ -206,7 +208,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 }
 
-func TestGetLatest(t *testing.T) {
+func TestGetLatestForRepo(t *testing.T) {
 	log.Println("Testing GetLatest()...")
 
 	os.RemoveAll("testOld")
@@ -258,8 +260,8 @@ func TestGetLatest(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testOld", []string{branch})
-	if info[0].Message != "deleted" {
-		t.Errorf("Error while deleting %s, got %v", branch, info[0])
+	if HashIDToString(info[0].Document) != ".deleted" {
+		t.Errorf("Error while deleting %s, got document %v", branch, info[0].Document)
 	}
 
 	os.RemoveAll("testNew")
@@ -284,29 +286,11 @@ func createBranches(gitfolder string, numBranches int) {
 	rand.Seed(18)
 	start := time.Now()
 	for i := 0; i < numBranches; i++ {
-		// cmd := exec.Command("git", "checkout", "--orphan", strconv.Itoa(i))
-		// _, err := cmd.Output()
-		//
-		// d1 = []byte("hello, world branch #" + strconv.Itoa(i))
-		// fileName = "test.txt"
-		// if rand.Float32() < 0.1 {
-		// 	fileName = "other.txt"
-		// }
-		// err = ioutil.WriteFile(fileName, d1, 0644)
-		// if err != nil {
-		// 	fmt.Println("Can't checkout")
-		// 	log.Fatal(err)
-		// }
-		// cmd = exec.Command("git", "add", fileName)
-		// _, err = cmd.Output()
-		//
-		// cmd = exec.Command("git", "commit", "-am", "'added "+fileName+"'")
-		// _, err = cmd.Output()
 		fileName := "test.txt"
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
-		NewDocument(gitfolder, fileName, "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), strconv.Itoa(i)) // TODO: WHY DOESN"T THIS WORK??
+		NewDocument(gitfolder, StringToHashID(fileName), "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), StringToHashID(strconv.Itoa(i))) // TODO: WHY DOESN"T THIS WORK??
 	}
 
 	elapsed := time.Since(start)
