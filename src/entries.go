@@ -99,7 +99,7 @@ func HeadMatter(date string, branch string) string {
 	if len(branch) == 0 {
 		branch = "NEW"
 	}
-	return date + " -==- " + branch + "\n\n"
+	return date + " -==- " + HashIDToString(branch) + "\n\n"
 }
 
 func GetMessage(m string) string {

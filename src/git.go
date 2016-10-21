@@ -380,9 +380,9 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	}
 
 	logger.Debug("Updated document %s in branch %s", documentname, newBranch)
-	_, errExistence := GetTextOfOne("./", "master", documentname)
+	_, errExistence := GetTextOfOne(gitfolder, "master", "."+documentname)
 	if errExistence != nil {
-		WriteToMaster("./", StringToHashID(strings.Replace(documentname, ".gpg", "", -1)), "new file")
+		WriteToMaster(gitfolder, "."+documentname, "new file")
 	}
 	return newBranch, err
 }
