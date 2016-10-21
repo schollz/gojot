@@ -209,6 +209,9 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	if err != nil {
 		t.Errorf("Got error GetLatest: " + err.Error())
 	}
+	if len(newBranches) == 0 {
+		t.Errorf("No branches found!")
+	}
 	if newBranches[0] != newLocalBranch {
 		t.Errorf("Did the local branch %s get overidden?", newLocalBranch)
 	}
