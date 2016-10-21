@@ -8,8 +8,9 @@ import (
 )
 
 func GoDeleteEntry(cache Cache) {
+	DeleteEntry = StringToHashID(DeleteEntry)
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the entry %s in document %s? (y/n) ", DeleteEntry, CurrentDocument)
+	fmt.Printf("Are you sure you want to delete the entry %s in document '%s'? (y/n) ", HashIDToString(DeleteEntry), HashIDToString(CurrentDocument))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		deleteSuccess := false
@@ -34,7 +35,7 @@ func GoDeleteEntry(cache Cache) {
 
 func GoDeleteDocument(cache Cache) error {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", CurrentDocument)
+	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", HashIDToString(CurrentDocument))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		for _, branch := range cache.Branch {
@@ -44,9 +45,9 @@ func GoDeleteDocument(cache Cache) error {
 				return err
 			}
 			if err == nil {
-				fmt.Printf("Deleted entry %s\n", branch.Branch)
+				fmt.Printf("Deleted entry %s\n", HashIDToString(branch.Branch))
 			} else {
-				fmt.Printf("Error deleting %s\n", branch.Branch)
+				fmt.Printf("Error deleting %s\n", HashIDToString(branch.Branch))
 			}
 		}
 	} else {
@@ -60,7 +61,7 @@ func GoDeleteDocument(cache Cache) error {
 		return err
 	}
 
-	logger.Debug("Deleting master index file: %s", CurrentDocument)
+	logger.Debug("Deleting master index file: .%s", CurrentDocument)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	os.Chdir(RemoteFolder)
@@ -74,8 +75,8 @@ func GoDeleteDocument(cache Cache) error {
 
 	document := CurrentDocument
 	// Remove file from index
-	logger.Debug("git rm -f %s", document)
-	cmd = exec.Command("git", "rm", "-f", document)
+	logger.Debug("git rm -f '.%s'", document)
+	cmd = exec.Command("git", "rm", "-f", "."+document)
 	_, err = cmd.Output()
 	if err != nil {
 		return errors.New("Problem git rm -f ")

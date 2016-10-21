@@ -3,6 +3,7 @@ package sdees
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func Run() {
 
 	// List available documents to choose from
 	availableFiles := ListFiles(RemoteFolder)
-	if len(InputDocument) == 0 {
+	if len(InputDocument) == 0 && len(DeleteEntry) == 0 {
 		var editDocument string
 		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", HashIDToString(CurrentDocument))
@@ -64,6 +65,9 @@ func Run() {
 		}
 	} else {
 		InputDocument = StringToHashID(InputDocument)
+		if len(DeleteEntry) > 0 {
+			InputDocument = StringToHashID(DeleteEntry)
+		}
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
@@ -108,10 +112,16 @@ func Run() {
 
 	// Do deletions
 	if DeleteDocument {
-		GoDeleteDocument(cache)
+		err = GoDeleteDocument(cache)
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	} else if len(DeleteEntry) > 0 {
 		GoDeleteEntry(cache)
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 
