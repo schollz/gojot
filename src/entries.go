@@ -43,7 +43,8 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 		if _, ok := branchHashes[blob.Branch]; !ok {
 			logger.Debug("Branch not present updating entry for branch %s ", blob.Branch)
 			if len(blob.Text) < 10 {
-				fmt.Printf("No new data, not commiting entry for branch %s\n", blob.Branch)
+				logger.Debug("No new data, not commiting entry for branch %s\n", blob.Branch)
+				fmt.Printf("No new data, not commiting entry for branch %s\n", HashIDToString(blob.Branch))
 				continue
 			}
 			_, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, blob.Branch)
@@ -51,7 +52,8 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 			if err != nil {
 				logger.Error(err.Error())
 			} else {
-				fmt.Printf("Created entry %s (+%d words)\n", blob.Branch, len(strings.Split(blob.Text, " ")))
+				logger.Debug("Created entry %s (+%d words)\n", blob.Branch, len(strings.Split(blob.Text, " ")))
+				fmt.Printf("Created entry %s (+%d words)\n", HashIDToString(blob.Branch), len(strings.Split(blob.Text, " ")))
 			}
 		} else if blob.Hash != branchHashes[blob.Branch] {
 			logger.Debug("Current hash (%s) != Previous hash (%s), updating entry for %s ", blob.Hash, branchHashes[blob.Branch], blob.Branch)
@@ -60,7 +62,8 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 			if err != nil {
 				logger.Error(err.Error())
 			} else {
-				fmt.Printf("Updated entry for %s\n", blob.Branch)
+				logger.Debug("Updated entry for %s\n", blob.Branch)
+				fmt.Printf("Updated entry for %s\n", HashIDToString(blob.Branch))
 			}
 		}
 	}
@@ -81,7 +84,7 @@ func ProcessEntries(fulltext string) []BlobEntry {
 			}
 			items := strings.Split(line, " -==- ")
 			currentBlob.Date = strings.TrimSpace(items[0])
-			currentBlob.Branch = strings.TrimSpace(items[1])
+			currentBlob.Branch = StringToHashID(strings.TrimSpace(items[1]))
 		} else {
 			currentBlob.Text = currentBlob.Text + line + "\n"
 		}

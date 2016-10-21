@@ -342,7 +342,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if len(branchNameOverride) == 0 {
 		newBranch = MakeAlliteration()
 	}
-	newBranch = StringToHashID(newBranch)
+	newBranch = newBranch
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {

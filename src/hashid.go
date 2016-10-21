@@ -43,7 +43,7 @@ func StringToHashID(s string) string {
 	h := hashids.NewWithData(hd)
 	toEncode := allInts
 	e, _ := h.Encode(toEncode)
-	logger.Debug("Encoded '%s' as '%s'\n", s, e)
+	// logger.Debug("Encoded '%s' as '%s'\n", s, e)
 
 	return string(e)
 }
@@ -64,6 +64,6 @@ func HashIDToString(e string) string {
 		bs = append(bs, buf.Bytes()...)
 	}
 	// fmt.Printf("\n%v\n'%s'\n\n", bs, string(bs))
-	logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
+	// logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
 	return strings.TrimRight(string(bs), "\x00")
 }
