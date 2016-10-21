@@ -8,6 +8,7 @@ import (
 
 func Import(filename string) error {
 	CurrentDocument = StringToHashID(filename)
+	Passphrase = PromptPassword(RemoteFolder)
 	logger.Debug("Importing %s", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
