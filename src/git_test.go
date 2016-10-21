@@ -271,7 +271,7 @@ func TestGetLatestForRepo(t *testing.T) {
 
 	info, _ := GetInfo("testOld", []string{branch})
 	if HashIDToString(info[0].Document) != ".deleted" {
-		t.Errorf("Error while deleting %s, got document %v", branch, info[0].Document)
+		t.Errorf("Error while deleting %s, got document %v", branch, HashIDToString(info[0].Document))
 	}
 
 	os.RemoveAll("testNew")
