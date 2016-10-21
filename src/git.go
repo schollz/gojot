@@ -420,6 +420,8 @@ func Clone(folder string, remote string) error {
 	cmd := exec.Command("git", "clone", remote, folder)
 	_, err = cmd.Output()
 	if err != nil {
+		fmt.Println("Cloning failed, will not continue")
+		os.Exit(-1)
 		return errors.New("Cloning command failed: '" + strings.Join([]string{"git", "clone", remote, folder}, " ") + "'")
 	}
 
