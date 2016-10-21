@@ -90,7 +90,7 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 	addedBranches := []string{}
 	deletedBranches := []string{}
 
-	oldBranches, err := ListBranches(gitfolder)
+	oldBranches, err := ListBranches("./")
 
 	if err != nil {
 		return []string{}, []string{}, err
@@ -101,7 +101,7 @@ func GetLatest(gitfolder string) ([]string, []string, error) {
 		return []string{}, []string{}, err
 	}
 
-	newBranches, err := ListBranches(gitfolder)
+	newBranches, err := ListBranches("./")
 	if err != nil {
 		return []string{}, []string{}, err
 	}
