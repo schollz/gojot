@@ -242,6 +242,7 @@ func Fetch(gitfolder string) error {
 
 	// Find all locally tracked branches with
 	//		git branch -vv
+	logger.Debug("git branch -vv")
 	cmd = exec.Command("git", "branch", "-vv")
 	stdout, err = cmd.Output()
 	if err != nil {
@@ -250,12 +251,13 @@ func Fetch(gitfolder string) error {
 	branchesToReset := []string{}
 	locallyTrackedBranches := make(map[string]bool)
 	for _, line := range strings.Split(string(stdout), "\n") {
+		branch := strings.Split(strings.TrimSpace(line), " ")[0]
 		if strings.Contains(line, "[") && strings.Contains(line, "]") {
 			split1 := strings.Split(line, "[")
 			split2 := strings.Split(split1[1], "]")
 			insides := split2[0]
 			split1 = strings.Split(insides, ":")
-			branch := split1[0]
+			branch = split1[0]
 			if strings.Contains(branch, "/") {
 				split2 = strings.Split(branch, "/")
 				branch = split2[len(split2)-1]
@@ -267,8 +269,13 @@ func Fetch(gitfolder string) error {
 			if strings.Contains(insides, "ahead ") || strings.Contains(insides, "behind ") {
 				branchesToReset = append(branchesToReset, branch)
 			}
-			locallyTrackedBranches[branch] = true
 		}
+		branch = strings.TrimSpace(branch)
+		if len(branch) < 2 || strings.Contains(branch, "Found local") {
+			continue
+		}
+		logger.Debug("Found local branch '%s'", branch)
+		locallyTrackedBranches[branch] = true
 	}
 
 	// Track branches not being tracked.
@@ -282,6 +289,8 @@ func Fetch(gitfolder string) error {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
+		} else {
+			logger.Debug("remote '%s' in local", branch)
 		}
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
