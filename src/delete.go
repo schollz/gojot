@@ -7,35 +7,62 @@ import (
 	"os/exec"
 )
 
-func GoDeleteEntry(cache Cache) {
-	DeleteEntry = StringToHashID(DeleteEntry)
+func IsItDocumentOrEntry(doc string) (bool, string, string) {
+	availableFiles := ListFiles(RemoteFolder)
+	for _, file := range availableFiles {
+		if doc == file {
+			return true, doc, ""
+		}
+	}
+	branchList, _ := ListBranches(RemoteFolder)
+	for _, branch := range branchList {
+		if branch == doc {
+			doc, _ := ListFileOfOne(RemoteFolder, branch)
+			logger.Debug("You've entered a entry %s which is in document %s", branch, doc)
+			return true, doc, branch
+		}
+	}
+	return false, "", ""
+}
+
+func GoDelete() {
+	// Check if user is deleting a entry or a document
+	if len(InputDocument) == 0 {
+		fmt.Printf("Which document would you like to delete? ")
+		fmt.Scanln(&InputDocument)
+	}
+	gotOne, doc, entry := IsItDocumentOrEntry(InputDocument)
+	fmt.Println(gotOne, doc, entry)
+}
+
+func GoDeleteEntry(entry string, cache Cache) {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the entry %s in document '%s'? (y/n) ", HashIDToString(DeleteEntry), HashIDToString(CurrentDocument))
+	fmt.Printf("Are you sure you want to delete the entry %s in document '%s'? (y/n) ", HashIDToString(entry), HashIDToString(entry))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		deleteSuccess := false
 		for _, branch := range cache.Branch {
-			if branch.Branch == DeleteEntry {
-				err := DeleteBranch(DeleteEntry)
+			if branch.Branch == entry {
+				err := DeleteBranch(entry)
 				deleteSuccess = true
 				if err == nil {
-					fmt.Printf("Deleted entry %s\n", HashIDToString(DeleteEntry))
+					fmt.Printf("Deleted entry %s\n", HashIDToString(entry))
 				} else {
-					fmt.Printf("Error deleting %s, does it exist?\n", HashIDToString(DeleteEntry))
+					fmt.Printf("Error deleting %s, does it exist?\n", HashIDToString(entry))
 				}
 			}
 		}
 		if !deleteSuccess {
-			fmt.Printf("Error deleting %s, it does not exist\n", HashIDToString(DeleteEntry))
+			fmt.Printf("Error deleting %s, it does not exist\n", HashIDToString(entry))
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", HashIDToString(DeleteEntry))
+		fmt.Printf("Did not delete %s\n", HashIDToString(entry))
 	}
 }
 
-func GoDeleteDocument(cache Cache) error {
+func GoDeleteDocument(document string, cache Cache) error {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", HashIDToString(CurrentDocument))
+	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", HashIDToString(document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		for _, branch := range cache.Branch {
@@ -50,7 +77,7 @@ func GoDeleteDocument(cache Cache) error {
 			}
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", HashIDToString(DeleteEntry))
+		fmt.Printf("Did not delete %s\n", HashIDToString(document))
 	}
 
 	logger.Debug("Deleting cache")
@@ -60,7 +87,7 @@ func GoDeleteDocument(cache Cache) error {
 		return err
 	}
 
-	logger.Debug("Deleting master index file: .%s", CurrentDocument)
+	logger.Debug("Deleting master index file: .%s", document)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	os.Chdir(RemoteFolder)
@@ -72,7 +99,6 @@ func GoDeleteDocument(cache Cache) error {
 		return errors.New("Problem switching to master")
 	}
 
-	document := CurrentDocument
 	// Remove file from index
 	logger.Debug("git rm -f '.%s'", document)
 	cmd = exec.Command("git", "rm", "-f", "."+document)

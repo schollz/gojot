@@ -19,7 +19,6 @@ var (
 	Version, BuildTime, Build, OS, LastCommit string
 	Debug                                     bool
 	DontEncrypt, Clean                        bool
-	DeleteDocument, DeleteEntry               string
 	ResetConfig                               bool
 	ImportOldFile, ImportFile                 bool
 )
@@ -78,10 +77,6 @@ EXAMPLE USAGE:
 		// Check new Version
 		programPath, _ := osext.Executable()
 		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
-		// Load configuration
-		sdees.ImportFlag = ImportFile
-		sdees.ImportOldFlag = ImportOldFile
-		sdees.LoadConfiguration()
 
 		// Process some flags
 		if ResetConfig {
@@ -112,12 +107,12 @@ EXAMPLE USAGE:
 		cli.BoolFlag{
 			Name:        "importold",
 			Usage:       "Import `document` (JRNL-format)",
-			Destination: &ImportOldFile,
+			Destination: &sdees.ImportOldFlag,
 		},
 		cli.BoolFlag{
 			Name:        "import",
 			Usage:       "Import `document`",
-			Destination: &ImportFile,
+			Destination: &sdees.ImportFlag,
 		},
 		cli.BoolFlag{
 			Name:        "export",
@@ -134,15 +129,10 @@ EXAMPLE USAGE:
 			Usage:       "Edit all of the document",
 			Destination: &sdees.All,
 		},
-		cli.StringFlag{
-			Name:        "delete",
-			Usage:       "Delete `entry`",
-			Destination: &sdees.DeleteEntry,
-		},
 		cli.BoolFlag{
-			Name:        "ddelete",
-			Usage:       "Delete `document`",
-			Destination: &sdees.DeleteDocument,
+			Name:        "delete",
+			Usage:       "Delete `entry` or `document`",
+			Destination: &sdees.Delete,
 		},
 		cli.BoolFlag{
 			Name:        "summary",

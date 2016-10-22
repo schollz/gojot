@@ -3,7 +3,6 @@ package sdees
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"path"
 	"strings"
 	"time"
@@ -12,6 +11,9 @@ import (
 func Run() {
 	// Some variables to be set later
 	filterBranch := ""
+
+	// Load the configuration
+	LoadConfiguration()
 
 	// Check if cloning needs to occur
 	logger.Debug("Current remote: %s", Remote)
@@ -37,6 +39,12 @@ func Run() {
 	// Prompt for passphrase
 	Passphrase = PromptPassword(RemoteFolder)
 
+	// If deleting, Delete
+	if DeleteFlag {
+		GoDelete()
+		return
+	}
+
 	// If importing, import
 	if ImportFlag || ImportOldFlag {
 		if len(InputDocument) == 0 {
@@ -57,7 +65,7 @@ func Run() {
 
 	// List available documents to choose from
 	availableFiles := ListFiles(RemoteFolder)
-	if len(InputDocument) == 0 && len(DeleteEntry) == 0 {
+	if len(InputDocument) == 0 {
 		var editDocument string
 		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", HashIDToString(CurrentDocument))
@@ -83,9 +91,6 @@ func Run() {
 		}
 	} else {
 		InputDocument = StringToHashID(InputDocument)
-		if len(DeleteEntry) > 0 {
-			InputDocument = StringToHashID(DeleteEntry)
-		}
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
@@ -111,7 +116,7 @@ func Run() {
 		}
 	}
 	logger.Debug("isNew:%v", isNew)
-	if !isNew && !All && !Summarize && !Export && !DeleteDocument && len(DeleteEntry) == 0 && len(filterBranch) == 0 && len(Search) == 0 {
+	if !isNew && !All && !Summarize && !Export && len(filterBranch) == 0 && len(Search) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
 		fmt.Print("\nLoad all entries (press enter for 'n')? (y/n) ")
@@ -121,25 +126,10 @@ func Run() {
 		}
 	}
 
-	// Update the cache using the passphrase if needed
+	// Update the cache
 	cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
 	if err != nil {
 		logger.Error("Error updating cache: %s", err.Error())
-		return
-	}
-
-	// Do deletions
-	if DeleteDocument {
-		err = GoDeleteDocument(cache)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return
-	} else if len(DeleteEntry) > 0 {
-		GoDeleteEntry(cache)
-		if err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
