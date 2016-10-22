@@ -10,6 +10,7 @@ import (
 func IsItDocumentOrEntry(doc string) (bool, string, string) {
 	availableFiles := ListFiles(RemoteFolder)
 	for _, file := range availableFiles {
+		logger.Debug(doc, file)
 		if doc == file {
 			return true, doc, ""
 		}
@@ -18,7 +19,7 @@ func IsItDocumentOrEntry(doc string) (bool, string, string) {
 	for _, branch := range branchList {
 		if branch == doc {
 			doc, _ := ListFileOfOne(RemoteFolder, branch)
-			logger.Debug("You've entered a entry %s which is in document %s", branch, doc)
+			logger.Debug("You've entered a entry '%s' which is in document '%s'", HashIDToString(branch), HashIDToString(doc))
 			return true, doc, branch
 		}
 	}
@@ -28,16 +29,31 @@ func IsItDocumentOrEntry(doc string) (bool, string, string) {
 func GoDelete() {
 	// Check if user is deleting a entry or a document
 	if len(InputDocument) == 0 {
-		fmt.Printf("Which document would you like to delete? ")
+		fmt.Printf("Which document or entry would you like to delete? ")
 		fmt.Scanln(&InputDocument)
 	}
-	gotOne, doc, entry := IsItDocumentOrEntry(InputDocument)
-	fmt.Println(gotOne, doc, entry)
+	gotOne, document, entry := IsItDocumentOrEntry(StringToHashID(InputDocument))
+	if !gotOne {
+		fmt.Printf("%s is not a document or entry, did you type it correctly?\n", InputDocument)
+		return
+	}
+
+	// Get the cache
+	cache, _, err := UpdateCache(RemoteFolder, document, false)
+	if err != nil {
+		logger.Error("Error updating cache: %s", err.Error())
+		return
+	}
+	if len(entry) == 0 {
+		GoDeleteDocument(document, cache)
+	} else {
+		GoDeleteEntry(document, entry, cache)
+	}
 }
 
-func GoDeleteEntry(entry string, cache Cache) {
+func GoDeleteEntry(document string, entry string, cache Cache) {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the entry %s in document '%s'? (y/n) ", HashIDToString(entry), HashIDToString(entry))
+	fmt.Printf("Are you sure you want to delete the entry '%s' in document '%s'? (y/n) ", HashIDToString(entry), HashIDToString(document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		deleteSuccess := false

@@ -132,7 +132,7 @@ EXAMPLE USAGE:
 		cli.BoolFlag{
 			Name:        "delete",
 			Usage:       "Delete `entry` or `document`",
-			Destination: &sdees.Delete,
+			Destination: &sdees.DeleteFlag,
 		},
 		cli.BoolFlag{
 			Name:        "summary",

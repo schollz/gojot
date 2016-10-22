@@ -15,6 +15,9 @@ import (
 // "Some time I did something" -> B32Encrypted as branch name
 
 func StringToHashID(s string) string {
+	if len(s) == 0 {
+		return s
+	}
 	sb := []byte(s)
 	i := 0
 	allInts := []int{}
