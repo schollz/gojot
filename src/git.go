@@ -274,7 +274,6 @@ func Fetch(gitfolder string) error {
 		if len(branch) < 2 || strings.Contains(branch, "Found local") {
 			continue
 		}
-		logger.Debug("Found local branch '%s'", branch)
 		locallyTrackedBranches[branch] = true
 	}
 
@@ -287,10 +286,9 @@ func Fetch(gitfolder string) error {
 	start := time.Now()
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
+			logger.Debug("remote '%s' not in local", branch)
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
-		} else {
-			logger.Debug("remote '%s' in local", branch)
 		}
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
