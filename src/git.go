@@ -301,6 +301,7 @@ func Fetch(gitfolder string) error {
 		if branch == "master" {
 			continue
 		}
+		DeleteCache()
 		logger.Debug("Resetting branch %s", branch)
 		cmd = exec.Command("git", "checkout", branch)
 		stdout, err = cmd.Output()

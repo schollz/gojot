@@ -18,6 +18,7 @@ type Cache struct {
 }
 
 func DeleteCache() error {
+	logger.Debug("Deleting cache!")
 	cacheFile := path.Join(RemoteFolder, CurrentDocument+".cache")
 	return Shred(cacheFile)
 }

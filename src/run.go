@@ -132,6 +132,7 @@ func Run() {
 		logger.Error("Error updating cache: %s", err.Error())
 		return
 	}
+	fmt.Println("%+v", cache)
 
 	// Load fulltext
 	texts := []string{}
