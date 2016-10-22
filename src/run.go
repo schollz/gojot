@@ -109,7 +109,6 @@ func Run() {
 	// Check if encryption is needed
 	isNew := true
 	for _, file := range availableFiles {
-		logger.Debug(file, CurrentDocument)
 		if CurrentDocument == file {
 			isNew = false
 			break
@@ -132,7 +131,6 @@ func Run() {
 		logger.Error("Error updating cache: %s", err.Error())
 		return
 	}
-	fmt.Println("%+v", cache)
 
 	// Load fulltext
 	texts := []string{}
