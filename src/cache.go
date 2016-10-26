@@ -2,6 +2,7 @@ package sdees
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -68,18 +69,21 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 		}
 	}
 
-	// Update the fulltext of entries
-	entriesToUpdate, _ = GetText(gitfolder, entriesToUpdate)
 	updatedBranches := make([]string, len(entriesToUpdate))
-	if len(entriesToUpdate) > 10 {
-		logger.Debug("Updating many entries")
-	}
-	for i, entry := range entriesToUpdate {
-		if len(entriesToUpdate) <= 10 {
-			logger.Debug("Updating branch %s", entry.Branch)
+	if len(entriesToUpdate) > 0 {
+		// Update the fulltext of entries
+		if len(entriesToUpdate) > 10 {
+			fmt.Println("Updating many entries...")
 		}
-		cache.Branch[entry.Branch] = entry
-		updatedBranches[i] = entry.Branch
+		logger.Debug("Getting Text for %d entries", len(entriesToUpdate))
+		entriesToUpdate, _ = GetText(gitfolder, entriesToUpdate)
+		for i, entry := range entriesToUpdate {
+			if len(entriesToUpdate) <= 10 {
+				logger.Debug("Updating branch %s", entry.Branch)
+			}
+			cache.Branch[entry.Branch] = entry
+			updatedBranches[i] = entry.Branch
+		}
 	}
 
 	// Save
