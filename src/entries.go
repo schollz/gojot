@@ -7,7 +7,7 @@ import (
 )
 
 func Import(filename string) error {
-	logger.Debug("Importing %s", filename)
+	fmt.Printf("Importing %s\n", filename)
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		logger.Error("Error reading file: %s", err.Error())
@@ -18,7 +18,8 @@ func Import(filename string) error {
 		fmt.Println("No entries found, perhaps you should run with --importold")
 	}
 	for i := range blobs {
-		_, err = NewDocument(RemoteFolder, (filename), blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
+		fmt.Println("Importing entry " + ShortDecrypt(blobs[i].Branch))
+		_, err = NewDocument(RemoteFolder, filename, blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
 		if err != nil {
 			logger.Error("Error creating new document: %s", err.Error())
 		}
