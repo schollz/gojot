@@ -25,11 +25,11 @@ func ListFiles(gitfolder string) []string {
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
 		if document[0] == '.' {
-			document = GetName(document[1:])
+			logger.Debug("Found document: %s", document)
+			document = ShortDecrypt(document[1:])
 			if document == "deleted" || document == "key" || document == "new" {
 				continue
 			}
-			logger.Debug("Found document: %s", document)
 			documents = append(documents, document)
 		}
 	}

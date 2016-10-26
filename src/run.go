@@ -70,15 +70,15 @@ func Run() {
 		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", (CurrentDocument))
 		for _, file := range availableFiles {
-			fmt.Printf("\n- %s ", (file))
+			fmt.Printf("\n- %s ", file)
 			if file == CurrentDocument {
 				fmt.Print("(default) ")
 			}
 		}
 		if len(CurrentDocument) == 0 {
-			CurrentDocument = ("notes.txt")
+			CurrentDocument = "notes.txt"
 		}
-		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", (CurrentDocument))
+		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", ShortDecrypt(CurrentDocument))
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
@@ -102,7 +102,8 @@ func Run() {
 		}
 		CurrentDocument = InputDocument
 	}
-	logger.Debug("Current document: %s", CurrentDocument)
+	CurrentDocument = ShortEncrypt(CurrentDocument)
+	logger.Debug("Current document: %s", ShortDecrypt(CurrentDocument))
 	// Save choice of current document
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 

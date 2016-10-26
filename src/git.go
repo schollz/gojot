@@ -355,6 +355,11 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	}
 	newBranch = newBranch
 
+	// Encrypt everything
+	documentname = ShortEncrypt(documentname)
+	newBranch = ShortEncrypt(newBranch)
+	message = ShortEncrypt(message)
+
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {

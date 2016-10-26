@@ -53,7 +53,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 				logger.Error(err.Error())
 			} else {
 				logger.Debug("Created entry %s (+%d words)\n", blob.Branch, len(strings.Split(blob.Text, " ")))
-				fmt.Printf("Created entry %s (+%d words)\n", (blob.Branch), len(strings.Split(blob.Text, " ")))
+				fmt.Printf("Created entry %s (+%d words)\n", ShortDecrypt(blob.Branch), len(strings.Split(blob.Text, " ")))
 			}
 		} else if blob.Hash != branchHashes[blob.Branch] {
 			logger.Debug("Current hash (%s) != Previous hash (%s), updating entry for %s ", blob.Hash, branchHashes[blob.Branch], blob.Branch)
@@ -63,7 +63,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 				logger.Error(err.Error())
 			} else {
 				logger.Debug("Updated entry for %s\n", blob.Branch)
-				fmt.Printf("Updated entry for %s\n", (blob.Branch))
+				fmt.Printf("Updated entry for %s\n", ShortDecrypt(blob.Branch))
 			}
 		}
 	}
@@ -84,7 +84,7 @@ func ProcessEntries(fulltext string) []BlobEntry {
 			}
 			items := strings.Split(line, " -==- ")
 			currentBlob.Date = strings.TrimSpace(items[0])
-			currentBlob.Branch = (strings.TrimSpace(items[1]))
+			currentBlob.Branch = ShortEncrypt(strings.TrimSpace(items[1]))
 		} else {
 			currentBlob.Text = currentBlob.Text + line + "\n"
 		}
@@ -102,7 +102,7 @@ func HeadMatter(date string, branch string) string {
 	if len(branch) == 0 {
 		branch = "NEW"
 	}
-	return date + " -==- " + (branch) + "\n\n"
+	return date + " -==- " + ShortDecrypt(branch) + "\n\n"
 }
 
 func GetMessage(m string) string {
