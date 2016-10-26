@@ -1,11 +1,19 @@
 package sdees
 
 import (
+	"fmt"
 	"hash/fnv"
 	"math/rand"
 	"strconv"
 	"strings"
 )
+
+func GetName(s string) string {
+	if strings.Contains(s, ".sdz") {
+		return ShortDecrypt(s)
+	}
+	return s
+}
 
 // ShortEncrypt runs a XOR encryption on the input string using the random bytes
 // in the massive key.
@@ -31,9 +39,9 @@ func ShortEncrypt(input string) string {
 		b[i] = inputb[i] ^ keyb[i]
 	}
 
-	// Return string as [startposition]-[encryptedstring]
+	// Return string as [startposition]-==-[encryptedstring]
 	startPosString := strconv.Itoa(startPos)
-	return startPosString + "-" + EncodeToString(b)
+	return startPosString + "." + EncodeToString(b) + ".sdz"
 }
 
 // ShortDecrypt runs a XOR encryption on the input string using the random bytes
@@ -41,10 +49,11 @@ func ShortEncrypt(input string) string {
 // Random bytes are used starting at a position based on the prefix in the input
 func ShortDecrypt(input string) string {
 	key := Cryptkey
-	parts := strings.Split(input, "-")
+	parts := strings.Split(input, ".")
+	fmt.Println(parts)
 	inputb := DecodeString(parts[1])
 	startPos, _ := strconv.Atoi(parts[0])
-	keyb := []byte(key[startPos : startPos+len(input)])
+	keyb := []byte(key[startPos : startPos+len(inputb)])
 	b := make([]byte, len(inputb))
 	for i := 0; i < len(inputb); i++ {
 		b[i] = inputb[i] ^ keyb[i]

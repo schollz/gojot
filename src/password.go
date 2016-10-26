@@ -30,10 +30,9 @@ func PromptPassword(gitfolder string) string {
 			}
 		}
 		Passphrase = password1
-		fullKey := RandStringBytesMaskImprSrc(100, time.Now().UnixNano())
 		logger.Debug("It seems key doesn't exist yet, making it")
-		Cryptkey = fullKey[0:16]
-		WriteToMaster(gitfolder, ".key", fullKey)
+		Cryptkey = RandStringBytesMaskImprSrc(500000, time.Now().UnixNano())
+		WriteToMaster(gitfolder, ".key", Cryptkey)
 	} else {
 		logger.Debug("Testing with master:key")
 		passwordAccepted := false
@@ -44,7 +43,6 @@ func PromptPassword(gitfolder string) string {
 			Cryptkey, err = DecryptString(textToTest, password1)
 			if err == nil {
 				passwordAccepted = true
-				Cryptkey = Cryptkey[0:16]
 			} else {
 				fmt.Println("\nPasswords do not match.")
 				logger.Debug("Got error: %s", err.Error())

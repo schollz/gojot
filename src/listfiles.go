@@ -25,7 +25,7 @@ func ListFiles(gitfolder string) []string {
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
 		if document[0] == '.' {
-			document = document[1:]
+			document = GetName(document[1:])
 			if document == "deleted" || document == "key" || document == "new" {
 				continue
 			}
