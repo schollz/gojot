@@ -12,17 +12,16 @@ func getInfoWorker(id int, jobs <-chan string, results chan<- Entry) {
 	for branch := range jobs {
 		result := new(Entry)
 		result.Branch = branch
-		cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'%H-=-%ad-=-%s'", branch)
+		cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'%H-=-%ad-=-%B-=-'", "-n", "1", branch)
 		stdout, err := cmd.Output()
 		if err != nil {
-			logger.Error(`Couldn't run git log --pretty=format:'%%H-=-%%ad-=-%%s'` + branch)
+			logger.Error(`Couldn't run git log --pretty=format:'%%H-=-%%ad-=-%%B-=-'` + branch)
 		}
-		lines := strings.Split(strings.Replace(string(stdout), "'", "", -1), "\n")
-		items := strings.Split(lines[0], "-=-")
-		result.Document = strings.TrimSpace(lines[1])
+		items := strings.Split(strings.Replace(string(stdout), "'", "", -1), "-=-")
 		result.Hash = items[0]
 		result.Date = items[1]
 		result.Message = strings.TrimSpace(items[2])
+		result.Document = strings.TrimSpace(items[3])
 
 		results <- *result
 	}

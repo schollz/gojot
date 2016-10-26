@@ -1,6 +1,7 @@
 package sdees
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -19,8 +20,8 @@ func TestMain(m *testing.M) {
 	Passphrase = "test"
 	Cryptkey = RandStringBytesMaskImprSrc(10000000, time.Now().UnixNano())
 	// DebugMode()
-	// os.RemoveAll("./gittest")
-	// os.RemoveAll("./gittest10")
+	os.RemoveAll("./gittest")
+	os.RemoveAll("./gittest10")
 	if _, err := os.Stat("./gittest"); os.IsNotExist(err) {
 		log.Println("Creating branches for testing...")
 		createBranches("./gittest", 100)
@@ -61,8 +62,15 @@ func TestGetInfo(t *testing.T) {
 	branchNames, _ := ListBranches("./gittest")
 	entries, _ := GetInfo("./gittest", branchNames)
 	foundOne := false
-	for _, entry := range entries {
-		if entry.Document == ("test.txt") {
+	for i, entry := range entries {
+		if i == 0 {
+			m, _ := DecryptString(entry.Message, Passphrase)
+			if m != "Hi" {
+				fmt.Println(entry.Message)
+				t.Errorf("Problem decoding message")
+			}
+		}
+		if entry.Document == ShortEncrypt("test.txt") {
 			foundOne = true
 			break
 		}
@@ -156,8 +164,10 @@ func TestDelete(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testDelete", []string{branches[1]})
-	if info[0].Message != ("deleted") {
-		t.Errorf("Error while deleting, got %v", info[0])
+	m, _ := DecryptString(info[0].Message, Passphrase)
+	if m != "deleted" {
+		fmt.Println(info[0].Message)
+		t.Errorf("Error while deleting, got %s", m)
 	}
 	os.RemoveAll("testDelete")
 	os.RemoveAll("testDelete1")
@@ -172,7 +182,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	newLocalBranch, err := NewDocument("testOld", ("test2.txt"), "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	newLocalBranch, err := NewDocument("testOld", "test2.txt", "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -184,7 +194,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 
 	// Make some new edit and push it
-	_, err = NewDocument("testNew", ("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	_, err = NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -233,7 +243,7 @@ func TestGetLatestForRepo(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	branch, err := NewDocument("testNew", ("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	branch, err := NewDocument("testNew", "test2.txt", "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -270,8 +280,8 @@ func TestGetLatestForRepo(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testOld", []string{branch})
-	if (info[0].Document) != ".deleted" {
-		t.Errorf("Error while deleting %s, got document %v", branch, (info[0].Document))
+	if ShortDecrypt(info[0].Document) != ".deleted" {
+		t.Errorf("Error while deleting %s, got document %v", branch, ShortDecrypt(info[0].Document))
 	}
 
 	os.RemoveAll("testNew")
@@ -300,7 +310,7 @@ func createBranches(gitfolder string, numBranches int) {
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
-		NewDocument(gitfolder, (fileName), "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), (strconv.Itoa(i))) // TODO: WHY DOESN"T THIS WORK??
+		NewDocument(gitfolder, fileName, "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), strconv.Itoa(i)) // TODO: WHY DOESN"T THIS WORK??
 	}
 
 	elapsed := time.Since(start)
