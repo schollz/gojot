@@ -16,7 +16,8 @@ func ImportOld(filename string) error {
 	}
 	texts, dates := ProcessEntriesOld(string(data))
 	for i := range texts {
-		_, err = NewDocument(RemoteFolder, (filename), texts[i], GetMessage(texts[i]), dates[i], "")
+		fmt.Println("Importing entry from " + dates[i])
+		_, err = NewDocument(RemoteFolder, filename, texts[i], GetMessage(texts[i]), dates[i], "")
 		if err != nil {
 			logger.Error("Error creating new document: %s", err.Error())
 		}

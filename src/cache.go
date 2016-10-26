@@ -56,6 +56,9 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 
 	// From those branches, determine which entries need fulltext updating
 	entriesToUpdate := []Entry{} // which branches to update in cache
+	if len(branchesToGetInfo) > 100 {
+		fmt.Println("Getting info...")
+	}
 	entries, _ := GetInfo(gitfolder, branchesToGetInfo)
 	for _, entry := range entries {
 		cache.Ignore[entry.Branch] = entry.Document != document
