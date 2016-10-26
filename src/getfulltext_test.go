@@ -3,17 +3,17 @@ package sdees
 import "testing"
 
 func TestGetTextOfOne(t *testing.T) {
-	text, err := GetTextOfOne("./gittest10", StringToHashID("1"), StringToHashID("test.txt"))
+	text, err := GetTextOfOne("./gittest10", ("1"), ("test.txt"))
 	if len(text) == 0 || err != nil {
 		t.Errorf("Got no text! Or error: " + err.Error())
 	}
 
-	text, err = GetTextOfOne("./gittest10", StringToHashID("76868761"), StringToHashID("test.txt"))
+	text, err = GetTextOfOne("./gittest10", ("76868761"), ("test.txt"))
 	if err == nil {
 		t.Errorf("Wrong branch should throw error")
 	}
 
-	text, err = GetTextOfOne("./gittest10", StringToHashID("1"), StringToHashID("kjllkjklkjlkj.txt"))
+	text, err = GetTextOfOne("./gittest10", ("1"), ("kjllkjklkjlkj.txt"))
 	if err == nil {
 		t.Errorf("Wrong document should throw error")
 	}

@@ -68,29 +68,29 @@ func Run() {
 	if len(InputDocument) == 0 {
 		var editDocument string
 		fmt.Printf("\nCurrently available documents: ")
-		logger.Debug("Last documents was %s", HashIDToString(CurrentDocument))
+		logger.Debug("Last documents was %s", (CurrentDocument))
 		for _, file := range availableFiles {
-			fmt.Printf("\n- %s ", HashIDToString(file))
+			fmt.Printf("\n- %s ", (file))
 			if file == CurrentDocument {
 				fmt.Print("(default) ")
 			}
 		}
 		if len(CurrentDocument) == 0 {
-			CurrentDocument = StringToHashID("notes.txt")
+			CurrentDocument = ("notes.txt")
 		}
-		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", HashIDToString(CurrentDocument))
+		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", (CurrentDocument))
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
 		} else if len(editDocument) == 0 && len(availableFiles) > 0 {
 			CurrentDocument = availableFiles[0]
 		} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
-			CurrentDocument = StringToHashID("notes.txt")
+			CurrentDocument = ("notes.txt")
 		} else if len(editDocument) > 0 {
-			CurrentDocument = StringToHashID(editDocument)
+			CurrentDocument = (editDocument)
 		}
 	} else {
-		InputDocument = StringToHashID(InputDocument)
+		InputDocument = (InputDocument)
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
@@ -165,8 +165,8 @@ func Run() {
 
 	// Case-switch for what to do with fulltext
 	if Export {
-		fmt.Println("Exporting to " + HashIDToString(CurrentDocument))
-		ioutil.WriteFile(HashIDToString(CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		fmt.Println("Exporting to " + (CurrentDocument))
+		ioutil.WriteFile((CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")
@@ -174,10 +174,10 @@ func Run() {
 		return
 	} else {
 		if len(filterBranch) == 0 {
-			texts = append(texts, HeadMatter(GetCurrentDate(), StringToHashID(MakeAlliteration())))
+			texts = append(texts, HeadMatter(GetCurrentDate(), (MakeAlliteration())))
 		} else {
 			logger.Debug("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
-			fmt.Printf("Loaded entry '%s' on document '%s'\n", HashIDToString(filterBranch), HashIDToString(CurrentDocument))
+			fmt.Printf("Loaded entry '%s' on document '%s'\n", (filterBranch), (CurrentDocument))
 		}
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}

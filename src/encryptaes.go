@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func StringToHashID(s string) string {
+func EncryptAES(s string) string {
 	key := []byte(Cryptkey)
 	plaintext := []byte(s)
 	block, err := aes.NewCipher(key)
@@ -30,7 +30,7 @@ func StringToHashID(s string) string {
 	return hex.EncodeToString(ciphertext)
 }
 
-func HashIDToString(e string) string {
+func DecryptAES(e string) string {
 	if len(e) == 0 {
 		return ""
 	}

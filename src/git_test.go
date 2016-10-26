@@ -62,7 +62,7 @@ func TestGetInfo(t *testing.T) {
 	entries, _ := GetInfo("./gittest", branchNames)
 	foundOne := false
 	for _, entry := range entries {
-		if entry.Document == StringToHashID("test.txt") {
+		if entry.Document == ("test.txt") {
 			foundOne = true
 			break
 		}
@@ -115,7 +115,7 @@ func TestGetText(t *testing.T) {
 	entries, _ = GetText("gittest", entries)
 	foundIt := false
 	for _, entry := range entries {
-		if entry.Branch == StringToHashID("12") {
+		if entry.Branch == ("12") {
 			if entry.Text != "hello, world branch #12" {
 				t.Errorf("Got different text: %s", entry.Text)
 			} else {
@@ -156,7 +156,7 @@ func TestDelete(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testDelete", []string{branches[1]})
-	if info[0].Message != StringToHashID("deleted") {
+	if info[0].Message != ("deleted") {
 		t.Errorf("Error while deleting, got %v", info[0])
 	}
 	os.RemoveAll("testDelete")
@@ -172,7 +172,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	newLocalBranch, err := NewDocument("testOld", StringToHashID("test2.txt"), "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	newLocalBranch, err := NewDocument("testOld", ("test2.txt"), "hiii!", "some other message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -184,7 +184,7 @@ func TestGetLatestWithLocalEdits(t *testing.T) {
 	}
 
 	// Make some new edit and push it
-	_, err = NewDocument("testNew", StringToHashID("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	_, err = NewDocument("testNew", ("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -233,7 +233,7 @@ func TestGetLatestForRepo(t *testing.T) {
 		t.Errorf("Got error while cloning: " + err.Error())
 	}
 
-	branch, err := NewDocument("testNew", StringToHashID("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
+	branch, err := NewDocument("testNew", ("test2.txt"), "hi", "some message", "Thu, 07 Apr 2005 22:13:13 +0200", "")
 	if err != nil {
 		t.Errorf("Got error while making new document: " + err.Error())
 	}
@@ -270,8 +270,8 @@ func TestGetLatestForRepo(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testOld", []string{branch})
-	if HashIDToString(info[0].Document) != ".deleted" {
-		t.Errorf("Error while deleting %s, got document %v", branch, HashIDToString(info[0].Document))
+	if (info[0].Document) != ".deleted" {
+		t.Errorf("Error while deleting %s, got document %v", branch, (info[0].Document))
 	}
 
 	os.RemoveAll("testNew")
@@ -300,7 +300,7 @@ func createBranches(gitfolder string, numBranches int) {
 		if rand.Float32() < 0.1 {
 			fileName = "other.txt"
 		}
-		NewDocument(gitfolder, StringToHashID(fileName), "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), StringToHashID(strconv.Itoa(i))) // TODO: WHY DOESN"T THIS WORK??
+		NewDocument(gitfolder, (fileName), "hello, world branch #"+strconv.Itoa(i), "Hi", GetCurrentDate(), (strconv.Itoa(i))) // TODO: WHY DOESN"T THIS WORK??
 	}
 
 	elapsed := time.Since(start)

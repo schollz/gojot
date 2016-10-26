@@ -18,7 +18,7 @@ func Import(filename string) error {
 		fmt.Println("No entries found, perhaps you should run with --importold")
 	}
 	for i := range blobs {
-		_, err = NewDocument(RemoteFolder, StringToHashID(filename), blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
+		_, err = NewDocument(RemoteFolder, (filename), blobs[i].Text, GetMessage(blobs[i].Text), blobs[i].Date, blobs[i].Branch)
 		if err != nil {
 			logger.Error("Error creating new document: %s", err.Error())
 		}
@@ -44,7 +44,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 			logger.Debug("Branch not present updating entry for branch %s ", blob.Branch)
 			if len(blob.Text) < 10 {
 				logger.Debug("No new data, not commiting entry for branch %s\n", blob.Branch)
-				fmt.Printf("No new data, not commiting entry for branch %s\n", HashIDToString(blob.Branch))
+				fmt.Printf("No new data, not commiting entry for branch %s\n", (blob.Branch))
 				continue
 			}
 			_, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, blob.Branch)
@@ -53,7 +53,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 				logger.Error(err.Error())
 			} else {
 				logger.Debug("Created entry %s (+%d words)\n", blob.Branch, len(strings.Split(blob.Text, " ")))
-				fmt.Printf("Created entry %s (+%d words)\n", HashIDToString(blob.Branch), len(strings.Split(blob.Text, " ")))
+				fmt.Printf("Created entry %s (+%d words)\n", (blob.Branch), len(strings.Split(blob.Text, " ")))
 			}
 		} else if blob.Hash != branchHashes[blob.Branch] {
 			logger.Debug("Current hash (%s) != Previous hash (%s), updating entry for %s ", blob.Hash, branchHashes[blob.Branch], blob.Branch)
@@ -63,7 +63,7 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 				logger.Error(err.Error())
 			} else {
 				logger.Debug("Updated entry for %s\n", blob.Branch)
-				fmt.Printf("Updated entry for %s\n", HashIDToString(blob.Branch))
+				fmt.Printf("Updated entry for %s\n", (blob.Branch))
 			}
 		}
 	}
@@ -84,7 +84,7 @@ func ProcessEntries(fulltext string) []BlobEntry {
 			}
 			items := strings.Split(line, " -==- ")
 			currentBlob.Date = strings.TrimSpace(items[0])
-			currentBlob.Branch = StringToHashID(strings.TrimSpace(items[1]))
+			currentBlob.Branch = (strings.TrimSpace(items[1]))
 		} else {
 			currentBlob.Text = currentBlob.Text + line + "\n"
 		}
@@ -102,7 +102,7 @@ func HeadMatter(date string, branch string) string {
 	if len(branch) == 0 {
 		branch = "NEW"
 	}
-	return date + " -==- " + HashIDToString(branch) + "\n\n"
+	return date + " -==- " + (branch) + "\n\n"
 }
 
 func GetMessage(m string) string {

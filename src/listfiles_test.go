@@ -4,7 +4,7 @@ import "testing"
 
 func TestListFiles(t *testing.T) {
 	files := ListFiles("./gittest10")
-	if files[0] == StringToHashID("test.txt") || files[1] == StringToHashID("other.txt") {
+	if files[0] == ("test.txt") || files[1] == ("other.txt") {
 	} else {
 		t.Errorf("Not correcting listing files: %v", files)
 	}

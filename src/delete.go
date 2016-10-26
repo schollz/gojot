@@ -19,7 +19,7 @@ func IsItDocumentOrEntry(doc string) (bool, string, string) {
 	for _, branch := range branchList {
 		if branch == doc {
 			doc, _ := ListFileOfOne(RemoteFolder, branch)
-			logger.Debug("You've entered a entry '%s' which is in document '%s'", HashIDToString(branch), HashIDToString(doc))
+			logger.Debug("You've entered a entry '%s' which is in document '%s'", branch, doc)
 			return true, doc, branch
 		}
 	}
@@ -32,7 +32,7 @@ func GoDelete() {
 		fmt.Printf("Which document or entry would you like to delete? ")
 		fmt.Scanln(&InputDocument)
 	}
-	gotOne, document, entry := IsItDocumentOrEntry(StringToHashID(InputDocument))
+	gotOne, document, entry := IsItDocumentOrEntry(InputDocument)
 	if !gotOne {
 		fmt.Printf("%s is not a document or entry, did you type it correctly?\n", InputDocument)
 		return
@@ -53,7 +53,7 @@ func GoDelete() {
 
 func GoDeleteEntry(document string, entry string, cache Cache) {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the entry '%s' in document '%s'? (y/n) ", HashIDToString(entry), HashIDToString(document))
+	fmt.Printf("Are you sure you want to delete the entry '%s' in document '%s'? (y/n) ", (entry), (document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		deleteSuccess := false
@@ -62,23 +62,23 @@ func GoDeleteEntry(document string, entry string, cache Cache) {
 				err := DeleteBranch(entry)
 				deleteSuccess = true
 				if err == nil {
-					fmt.Printf("Deleted entry %s\n", HashIDToString(entry))
+					fmt.Printf("Deleted entry %s\n", (entry))
 				} else {
-					fmt.Printf("Error deleting %s, does it exist?\n", HashIDToString(entry))
+					fmt.Printf("Error deleting %s, does it exist?\n", (entry))
 				}
 			}
 		}
 		if !deleteSuccess {
-			fmt.Printf("Error deleting %s, it does not exist\n", HashIDToString(entry))
+			fmt.Printf("Error deleting %s, it does not exist\n", (entry))
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", HashIDToString(entry))
+		fmt.Printf("Did not delete %s\n", (entry))
 	}
 }
 
 func GoDeleteDocument(document string, cache Cache) error {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", HashIDToString(document))
+	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", (document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		for _, branch := range cache.Branch {
@@ -87,13 +87,13 @@ func GoDeleteDocument(document string, cache Cache) error {
 				logger.Debug(err.Error())
 			}
 			if err == nil {
-				fmt.Printf("Deleted entry %s\n", HashIDToString(branch.Branch))
+				fmt.Printf("Deleted entry %s\n", (branch.Branch))
 			} else {
-				fmt.Printf("Error deleting %s\n", HashIDToString(branch.Branch))
+				fmt.Printf("Error deleting %s\n", (branch.Branch))
 			}
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", HashIDToString(document))
+		fmt.Printf("Did not delete %s\n", (document))
 	}
 
 	logger.Debug("Deleting cache")
