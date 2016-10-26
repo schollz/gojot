@@ -90,12 +90,12 @@ func Run() {
 			CurrentDocument = (editDocument)
 		}
 	} else {
-		InputDocument = (InputDocument)
+		InputDocument = ShortEncrypt(InputDocument)
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
 				doc, _ := ListFileOfOne(RemoteFolder, branch)
-				logger.Debug("You've entered a branch %s which is in document %s", branch, doc)
+				logger.Debug("You've entered a branch %s which is in document %s", ShortDecrypt(branch), ShortDecrypt(doc))
 				InputDocument = doc
 				filterBranch = branch
 			}
@@ -178,7 +178,7 @@ func Run() {
 			texts = append(texts, HeadMatter(GetCurrentDate(), (MakeAlliteration())))
 		} else {
 			logger.Debug("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
-			fmt.Printf("Loaded entry '%s' on document '%s'\n", (filterBranch), (CurrentDocument))
+			fmt.Printf("Loaded entry '%s' on document '%s'\n", ShortDecrypt(filterBranch), ShortDecrypt(CurrentDocument))
 		}
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}
