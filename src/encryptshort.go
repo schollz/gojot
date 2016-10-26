@@ -12,7 +12,7 @@ import (
 // Random bytes are used starting at a position based on the hash of the input string.
 // The starting position is saved as a prefix to the encrypted string
 func ShortEncrypt(input string) string {
-	if strings.Contains(input, ".sdz") {
+	if strings.Contains(input, ".sdz") || len(input) == 0 {
 		return input
 	}
 	key := Cryptkey
