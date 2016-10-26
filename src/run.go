@@ -166,8 +166,8 @@ func Run() {
 
 	// Case-switch for what to do with fulltext
 	if Export {
-		fmt.Println("Exporting to " + (CurrentDocument))
-		ioutil.WriteFile((CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		fmt.Println("Exporting to " + ShortDecrypt(CurrentDocument))
+		ioutil.WriteFile(ShortDecrypt(CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")

@@ -284,11 +284,16 @@ func Fetch(gitfolder string) error {
 	//                  -
 	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
+	numTracked := 0
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
 			logger.Debug("remote '%s' not in local", branch)
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
+			numTracked++
+			if numTracked == 10 {
+				fmt.Print("tracking branches...")
+			}
 		}
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
@@ -358,7 +363,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	// Encrypt everything
 	documentname = ShortEncrypt(documentname)
 	newBranch = ShortEncrypt(newBranch)
-	message = ShortEncrypt(message)
+	message = EncryptString(message, Passphrase)
 
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
