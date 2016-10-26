@@ -126,18 +126,18 @@ func Run() {
 		}
 	}
 
-	// Update the cache
-	cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
-	if err != nil {
-		logger.Error("Error updating cache: %s", err.Error())
-		return
-	}
-
 	// Load fulltext
 	texts := []string{}
 	textsBranch := []string{}
 	var branchHashes map[string]string
 	if All || Export || Summarize || len(Search) > 0 || len(filterBranch) > 0 {
+		// Update the cache
+		cache, _, err := UpdateCache(RemoteFolder, CurrentDocument, false)
+		if err != nil {
+			logger.Error("Error updating cache: %s", err.Error())
+			return
+		}
+
 		texts, textsBranch, branchHashes = CombineEntries(cache)
 		// Conduct the search
 		if len(Search) > 0 {
@@ -188,7 +188,7 @@ func Run() {
 	// Push new changes
 	measureTime = time.Now()
 	fmt.Print("Pushing changes")
-	err = Push(RemoteFolder)
+	err := Push(RemoteFolder)
 	if err == nil {
 		fmt.Print("...done")
 	} else {
