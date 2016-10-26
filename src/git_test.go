@@ -115,7 +115,7 @@ func TestGetText(t *testing.T) {
 	entries, _ = GetText("gittest", entries)
 	foundIt := false
 	for _, entry := range entries {
-		if entry.Branch == ("12") {
+		if entry.Branch == ShortEncrypt("12") {
 			if entry.Text != "hello, world branch #12" {
 				t.Errorf("Got different text: %s", entry.Text)
 			} else {
