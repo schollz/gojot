@@ -23,7 +23,7 @@ var (
 	ImportOldFile, ImportFile                 bool
 )
 
-func main {
+func main() {
 	// Delete temp files upon exit
 	defer sdees.CleanUp()
 

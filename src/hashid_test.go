@@ -1,8 +1,15 @@
 package sdees
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestHashID(t *testing.T) {
+	Cryptkey = "asdfasdfasdfasdf"
+	Passphrase = "test"
+	fmt.Printf("\nEncrypted:[%s]", StringToHashID("test"))
+	fmt.Printf("\nDecrypted:[%s]\n", HashIDToString(StringToHashID("test")))
 	if "some kind of string" != HashIDToString(StringToHashID("some kind of string")) {
 		t.Errorf("HashID not working")
 	}

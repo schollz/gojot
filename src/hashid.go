@@ -1,72 +1,53 @@
 package sdees
 
 import (
-	"bytes"
-	"encoding/binary"
-	"fmt"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/hex"
+	"io"
 	"strings"
-
-	"github.com/speps/go-hashids"
 )
 
-// --------------------------------------------------------
-// Some time I did something                 Jan 3rd, 2016
-// --------------------------------------------------------
-// "Some time I did something" -> B32Encrypted as branch name
-
 func StringToHashID(s string) string {
-	if len(s) == 0 {
-		return s
-	}
-	sb := []byte(s)
-	i := 0
-	allInts := []int{}
-	for {
-		buffer := []byte{0, 0, 0, 0, 0, 0, 0, 0}
-		i += 8
-		max := 8
-		if i > len(sb) {
-			max = 8 - (i - len(sb))
-		}
-		for j := 0; j < max; j++ {
-			buffer[j] = sb[i+j-8]
-		}
-		var num int64
-		binary.Read(bytes.NewBuffer(buffer[:]), binary.LittleEndian, &num)
-		allInts = append(allInts, int(num))
-		// fmt.Printf("\n%v\n%d\n", buffer, num)
-		if i > len(sb) {
-			break
-		}
+	key := []byte(Cryptkey)
+	plaintext := []byte(s)
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
 	}
 
-	hd := hashids.NewData()
-	hd.Salt = Cryptkey
-	hd.MinLength = 20
-	h := hashids.NewWithData(hd)
-	toEncode := allInts
-	e, _ := h.Encode(toEncode)
-	// logger.Debug("Encoded '%s' as '%s'\n", s, e)
+	// The IV needs to be unique, but not secure. Therefore it's common to
+	// include it at the beginning of the ciphertext.
+	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		panic(err)
+	}
 
-	return string(e)
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+	return hex.EncodeToString(ciphertext)
 }
 
 func HashIDToString(e string) string {
-	hd := hashids.NewData()
-	hd.Salt = Cryptkey
-	hd.MinLength = 20
-	h := hashids.NewWithData(hd)
-	d, _ := h.DecodeWithError(e)
-	var bs []byte
-	for _, num := range d {
-		buf := new(bytes.Buffer)
-		err := binary.Write(buf, binary.LittleEndian, int64(num))
-		if err != nil {
-			fmt.Println("binary.Write failed:", err)
-		}
-		bs = append(bs, buf.Bytes()...)
+	if len(e) == 0 {
+		return ""
 	}
-	// fmt.Printf("\n%v\n'%s'\n\n", bs, string(bs))
-	// logger.Debug("Decoded '%s' as '%s'\n", e, string(bs))
-	return strings.TrimRight(string(bs), "\x00")
+	e = strings.Replace(e, ".", "", -1)
+	e = strings.Replace(e, ".cache", "", -1)
+	key := []byte(Cryptkey)
+	ciphertext, err := hex.DecodeString(e)
+	if err != nil {
+		panic(err)
+	}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+	iv := ciphertext[:aes.BlockSize]
+	plaintext2 := make([]byte, len(ciphertext)-aes.BlockSize)
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(plaintext2, ciphertext[aes.BlockSize:])
+	return string(plaintext2)
 }
