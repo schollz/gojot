@@ -5,25 +5,27 @@ import (
 	"testing"
 )
 
-func TestEncryptAES(t *testing.T) {
-	Cryptkey = "asdfasdfasdfasdf"
+func TestShortEncrypt(t *testing.T) {
+
 	Passphrase = "test"
-	fmt.Printf("\nEncrypted:[%s]", ("test"))
-	fmt.Printf("\nDecrypted:[%s]\n", ("test"))
-	if "some kind of string" != DecryptAES(EncryptAES("some kind of string")) {
+	fmt.Printf("\nEncrypted:[%s]", ShortEncrypt("some kind of string"))
+	fmt.Printf("\nDecrypted:[%s]\n", ShortDecrypt(ShortEncrypt("some kind of string")))
+	fmt.Printf("\nEncrypted:[%s]", ShortEncrypt("some kind of string"))
+	fmt.Printf("\nDecrypted:[%s]\n", ShortDecrypt(ShortEncrypt("some kind of string")))
+	if "some kind of string" != ShortDecrypt(ShortEncrypt("some kind of string")) {
 		t.Errorf("HashID not working")
 	}
 }
 
-func Benchmark(b *testing.B) {
-	s := EncryptAES("some kind of string ")
+func BenchmarkShortDecrypt(b *testing.B) {
+	s := ShortEncrypt("some kind of string ")
 	for n := 0; n < b.N; n++ {
-		DecryptAES(s)
+		ShortDecrypt(s)
 	}
 }
 
-func Benchmark(b *testing.B) {
+func BenchmarkShortEncrypt(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		EncryptAES("some kind of string")
+		ShortEncrypt("some kind of string")
 	}
 }

@@ -3,51 +3,50 @@ package sdees
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
+	"crypto/hmac"
+	"crypto/sha512"
 	"encoding/hex"
-	"io"
-	"strings"
+	"fmt"
 )
 
-func EncryptAES(s string) string {
-	key := []byte(Cryptkey)
-	plaintext := []byte(s)
-	block, err := aes.NewCipher(key)
+// Hash generates a hash of data using HMAC-SHA-512/256. The tag is intended to
+// be a natural-language string describing the purpose of the hash, such as
+// "hash file for lookup key" or "master secret to client secret".  It serves
+// as an HMAC "key" and ensures that different purposes will have different
+// hash output. This function is NOT suitable for hashing passwords.
+func HMACHash(data string, salt string) string {
+	h := hmac.New(sha512.New512_256, []byte(salt))
+	h.Write([]byte(data))
+	return string(h.Sum(nil))
+}
+
+func ShortEncrypt(text string) string {
+	passphrase := Passphrase
+	key := HMACHash(passphrase, "passphrase")
+	fmt.Println(text)
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		panic(err)
 	}
-
-	// The IV needs to be unique, but not secure. Therefore it's common to
-	// include it at the beginning of the ciphertext.
-	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
-	iv := ciphertext[:aes.BlockSize]
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		panic(err)
-	}
-
-	stream := cipher.NewCTR(block, iv)
-	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+	plaintext := []byte(text)
+	iv := []byte(HMACHash(key, "iv")[:16]) // 16 bytes
+	cfb := cipher.NewCFBEncrypter(block, iv)
+	ciphertext := make([]byte, len(plaintext))
+	cfb.XORKeyStream(ciphertext, plaintext)
 	return hex.EncodeToString(ciphertext)
 }
 
-func DecryptAES(e string) string {
-	if len(e) == 0 {
-		return ""
-	}
-	e = strings.Replace(e, ".", "", -1)
-	e = strings.Replace(e, ".cache", "", -1)
-	key := []byte(Cryptkey)
-	ciphertext, err := hex.DecodeString(e)
+func ShortDecrypt(text string) string {
+	passphrase := Passphrase
+	key := HMACHash(passphrase, "passphrase")
+	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		panic(err)
 	}
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err)
-	}
-	iv := ciphertext[:aes.BlockSize]
-	plaintext2 := make([]byte, len(ciphertext)-aes.BlockSize)
-	stream := cipher.NewCTR(block, iv)
-	stream.XORKeyStream(plaintext2, ciphertext[aes.BlockSize:])
-	return string(plaintext2)
+	ciphertext, _ := hex.DecodeString(text)
+	iv := []byte(HMACHash(key, "iv")[:16]) // 16 bytes
+	cfb := cipher.NewCFBEncrypter(block, iv)
+	plaintext := make([]byte, len(ciphertext))
+	cfb.XORKeyStream(plaintext, ciphertext)
+	return string(plaintext)
 }

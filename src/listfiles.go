@@ -24,12 +24,13 @@ func ListFiles(gitfolder string) []string {
 	}
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
-		if document[0] == '.' && document != ".key" && document != ".new" && (document) != ".deleted" {
-			if len(strings.TrimLeft(strings.TrimRight(document, "\x00"), "\x00")) < 2 {
+		if document[0] == '.' {
+			document = document[1:]
+			if document == "deleted" || document == "key" || document == "new" {
 				continue
 			}
 			logger.Debug("Found document: %s", document)
-			documents = append(documents, strings.Replace(document, ".", "", -1))
+			documents = append(documents, document)
 		}
 	}
 

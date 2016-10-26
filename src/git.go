@@ -162,7 +162,7 @@ func Delete(gitfolder string, branch string) error {
 	}
 
 	// Create empty file and commit to same branch
-	NewDocument(gitfolder, (".deleted"), "", "deleted", "Thu, 07 Apr 2005 22:13:13 +0200", branch)
+	NewDocument(gitfolder, ".deleted", "", "deleted", "Thu, 07 Apr 2005 22:13:13 +0200", branch)
 
 	return nil
 }
@@ -351,9 +351,10 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 
 	newBranch := branchNameOverride
 	if len(branchNameOverride) == 0 {
-		newBranch = (MakeAlliteration())
+		newBranch = MakeAlliteration()
 	}
 	newBranch = newBranch
+
 	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {
@@ -372,7 +373,6 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if err != nil {
 		return newBranch, err
 	}
-	message = (message)
 
 	cmd = exec.Command("git", "add", documentname)
 	_, err = cmd.Output()

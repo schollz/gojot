@@ -30,11 +30,10 @@ func PromptPassword(gitfolder string) string {
 			}
 		}
 		Passphrase = password1
-		Cryptkey = RandStringBytesMaskImprSrc(100, time.Now().UnixNano())
+		fullKey := RandStringBytesMaskImprSrc(100, time.Now().UnixNano())
 		logger.Debug("It seems key doesn't exist yet, making it")
-		WriteToMaster(gitfolder, ".key", Cryptkey)
-		Cryptkey = Cryptkey[0:16]
-
+		Cryptkey = fullKey[0:16]
+		WriteToMaster(gitfolder, ".key", fullKey)
 	} else {
 		logger.Debug("Testing with master:key")
 		passwordAccepted := false
