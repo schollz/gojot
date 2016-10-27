@@ -6,12 +6,17 @@ The combination of entries be displayed as a *document*. The document is reconst
 
 Optionally, all information saved in the `git` repo can be encrypted using a symmetric cipher with a user-provided passphrase. The passphrase is not stored anywhere on the machine or repo. When enabled, each entry in the `git` repo is encrypted. When editing an encrypted document, a decrypted temp file is stored and then shredded (random bytes written and then deleted) after use.
 
-# Limitations
+## Limitations
 
 `sdees` is not meant as an encrypted file system, as it has limits to the number of entries that can be stored.
 
-Currently there are only 47,300,000 alliterations available for random branch names. Thus, a collision probability of 50% will occur after ~7,000 entries. Collisions are not detrimental, but it will only allow one document to be loaded with the same entry name. The reason is because
+**Possible collisions in entry names**
 
+Currently there are only 47,300,000 alliterations available for random entry names. Thus, a collision probability of 50% will occur after ~7,000 entries. Collisions are not detrimental, but it will only allow one document to be loaded with the same entry name. The reason that this happens is technical, and [is slated to be resolved](https://github.com/schollz/sdees/issues/73).
+
+**Weak encryption of filenames**
+
+The text of each entry is securely encrypted using a GPG-compatible symmetric cipher - this is not the issue. The issue is that the filenames are encrypted using a OTP in order to make sure the encrypted names are short enough to be used for branch names and filenames (which are limited to 255 characters usually). This is done by first generating a 10,000,000 key full of random bytes that will be used for the pads in the OTP. Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~3,100 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). Just don't store credit-card information in your document name.
 
 # How to setup `git` server
 
