@@ -35,7 +35,7 @@ func GoDelete() {
 	}
 	gotOne, document, entry := IsItDocumentOrEntry(InputDocument)
 	if !gotOne {
-		fmt.Printf("%s is not a document or entry, did you type it correctly?\n", InputDocument)
+		fmt.Printf("%s is not a document or entry, did you type it correctly?\n", DecryptOTP(InputDocument))
 		return
 	}
 
@@ -54,7 +54,7 @@ func GoDelete() {
 
 func GoDeleteEntry(document string, entry string, cache Cache) {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the entry '%s' in document '%s'? (y/n) ", (entry), (document))
+	fmt.Printf("Are you sure you want to delete the entry '%s' in document '%s'? (y/n) ", DecryptOTP(entry), DecryptOTP(document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		deleteSuccess := false
@@ -65,12 +65,12 @@ func GoDeleteEntry(document string, entry string, cache Cache) {
 				if err == nil {
 					fmt.Printf("Deleted entry %s\n", (entry))
 				} else {
-					fmt.Printf("Error deleting %s, does it exist?\n", (entry))
+					fmt.Printf("Error deleting %s, does it exist?\n", DecryptOTP(entry))
 				}
 			}
 		}
 		if !deleteSuccess {
-			fmt.Printf("Error deleting %s, it does not exist\n", (entry))
+			fmt.Printf("Error deleting %s, it does not exist\n", DecryptOTP(entry))
 		}
 	} else {
 		fmt.Printf("Did not delete %s\n", (entry))
@@ -79,7 +79,7 @@ func GoDeleteEntry(document string, entry string, cache Cache) {
 
 func GoDeleteDocument(document string, cache Cache) error {
 	var yesno string
-	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", (document))
+	fmt.Printf("Are you sure you want to delete the document %s? (y/n) ", DecryptOTP(document))
 	fmt.Scanln(&yesno)
 	if string(yesno) == "y" {
 		for _, branch := range cache.Branch {
@@ -88,13 +88,13 @@ func GoDeleteDocument(document string, cache Cache) error {
 				logger.Debug(err.Error())
 			}
 			if err == nil {
-				fmt.Printf("Deleted entry %s\n", (branch.Branch))
+				fmt.Printf("Deleted entry %s\n", DecryptOTP(branch.Branch))
 			} else {
-				fmt.Printf("Error deleting %s\n", (branch.Branch))
+				fmt.Printf("Error deleting %s\n", DecryptOTP(branch.Branch))
 			}
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", (document))
+		fmt.Printf("Did not delete %s\n", DecryptOTP(document))
 	}
 
 	logger.Debug("Deleting cache")
