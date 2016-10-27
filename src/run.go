@@ -110,12 +110,12 @@ func Run() {
 	// Check if encryption is needed
 	isNew := true
 	for _, file := range availableFiles {
-		if CurrentDocument == file {
+		if CurrentDocument == ShortEncrypt(file) {
 			isNew = false
 			break
 		}
 	}
-	logger.Debug("isNew:%v", isNew)
+
 	if !isNew && !All && !Summarize && !Export && len(filterBranch) == 0 && len(Search) == 0 {
 		// Prompt for whether to load whole document
 		var yesnoall string
