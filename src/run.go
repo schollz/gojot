@@ -94,10 +94,11 @@ func Run() {
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
-				doc, _ := ListFileOfOne(RemoteFolder, branch)
-				logger.Debug("You've entered a branch %s which is in document %s", DecryptOTP(branch), DecryptOTP(doc))
-				InputDocument = doc
-				filterBranch = branch
+				for _, doc := range ListFilesOfOne(RemoteFolder, branch) {
+					logger.Debug("You've entered a branch %s which is in document %s", DecryptOTP(branch), DecryptOTP(doc))
+					InputDocument = doc
+					filterBranch = branch
+				}
 			}
 		}
 		CurrentDocument = InputDocument

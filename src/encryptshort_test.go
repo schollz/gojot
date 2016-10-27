@@ -10,7 +10,7 @@ func TestEncryptOTP(t *testing.T) {
 	fmt.Printf("\nDecrypted:[%s]\n", DecryptOTP(EncryptOTP("some kind of string")))
 	fmt.Printf("\nEncrypted:[%s]", EncryptOTP("some kind of string"))
 	fmt.Printf("\nDecrypted:[%s]\n", DecryptOTP(EncryptOTP("some kind of string")))
-	if EncryptOTP("some kind of string") != ShortEncrypt("some kind of string") {
+	if EncryptOTP("some kind of string") != EncryptOTP("some kind of string") {
 		t.Errorf("EncryptOTP not the same for same input")
 	}
 	if "some kind of string" != DecryptOTP(EncryptOTP("some kind of string")) {

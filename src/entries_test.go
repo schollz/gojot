@@ -17,7 +17,7 @@ func TestProcessFiles(t *testing.T) {
 	combined, _, _ := CombineEntries(cache)
 	testEntry := strings.Join(combined, "\n\n")
 	branchesUpdated := UpdateEntryFromText(testEntry, hashes)
-	if branchesUpdated[0] != EncryptOTP("1") && branchesUpdated[1] != ShortEncrypt("3") && len(branchesUpdated) == 2 {
+	if branchesUpdated[0] != EncryptOTP("1") && branchesUpdated[1] != EncryptOTP("3") && len(branchesUpdated) == 2 {
 		t.Errorf("Error processing files")
 	}
 }

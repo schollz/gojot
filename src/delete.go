@@ -18,9 +18,10 @@ func IsItDocumentOrEntry(doc string) (bool, string, string) {
 	branchList, _ := ListBranches(RemoteFolder)
 	for _, branch := range branchList {
 		if branch == doc {
-			doc, _ := ListFileOfOne(RemoteFolder, branch)
-			logger.Debug("You've entered a entry '%s' which is in document '%s'", branch, doc)
-			return true, doc, branch
+			for _, doc := range ListFilesOfOne(RemoteFolder, branch) {
+				logger.Debug("You've entered a entry '%s' which is in document '%s'", branch, doc)
+				return true, doc, branch
+			}
 		}
 	}
 	return false, "", ""

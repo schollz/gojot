@@ -38,7 +38,7 @@ func ListFiles(gitfolder string) []string {
 	return documents
 }
 
-func ListFileOfOne(gitfolder string, branch string) (string, bool) {
+func ListFilesOfOne(gitfolder string, branch string) []string {
 	defer timeTrack(time.Now(), "Listing files")
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -52,24 +52,13 @@ func ListFileOfOne(gitfolder string, branch string) (string, bool) {
 	if err != nil {
 		logger.Error("Problem doing ls-tree")
 	}
-	docMap := make(map[string]bool)
+	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
 		if document[0] == '.' {
 			continue
 		}
-		docMap[strings.Replace(document, ".gpg", "", -1)] = strings.Contains(document, ".gpg")
+		documents = append(documents, document)
 	}
 
-	documents := make([]string, len(docMap))
-	i := 0
-	for k, _ := range docMap {
-		documents[i] = k
-		i++
-	}
-	sort.Strings(documents)
-	encrypted := make([]bool, len(documents))
-	for i, val := range documents {
-		encrypted[i] = docMap[val]
-	}
-	return documents[0], encrypted[0]
+	return documents
 }
