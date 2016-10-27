@@ -12,7 +12,7 @@ import (
 // Random bytes are used starting at a position based on the hash of the input string.
 // The starting position is saved as a prefix to the encrypted string
 func ShortEncrypt(input string) string {
-	if strings.Contains(input, ".sdz") || len(input) == 0 {
+	if strings.Contains(input, ".otp") || len(input) == 0 {
 		return input
 	}
 	key := Cryptkey
@@ -36,14 +36,14 @@ func ShortEncrypt(input string) string {
 
 	// Return string as [startposition]-==-[encryptedstring]
 	startPosString := strconv.Itoa(startPos)
-	return startPosString + "." + EncodeToString(b) + ".sdz"
+	return startPosString + "." + EncodeToString(b) + ".otp"
 }
 
 // ShortDecrypt runs a XOR encryption on the input string using the random bytes
 // in the massive key.
 // Random bytes are used starting at a position based on the prefix in the input
 func ShortDecrypt(input string) string {
-	if !strings.Contains(input, ".sdz") {
+	if !strings.Contains(input, ".otp") {
 		return input
 	}
 	key := Cryptkey
