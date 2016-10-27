@@ -26,7 +26,7 @@ func SummarizeEntries(texts []string, textsBranch []string) string {
 			}
 		}
 		summarized = append(summarized,
-			fmt.Sprintf("%s - %s (%s words):\n  %s", ShortDecrypt(textsBranch[i]), dateInfo, NumberToString(len(words), ','), strings.TrimSpace(sentence)))
+			fmt.Sprintf("%s - %s (%s words):\n  %s", DecryptOTP(textsBranch[i]), dateInfo, NumberToString(len(words), ','), strings.TrimSpace(sentence)))
 	}
 	return strings.Join(summarized, "\n")
 }

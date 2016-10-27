@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// ShortEncrypt runs a XOR encryption on the input string using the random bytes
+// EncryptOTP runs a XOR encryption on the input string using the random bytes
 // in the massive key.
 // Random bytes are used starting at a position based on the hash of the input string.
 // The starting position is saved as a prefix to the encrypted string
-func ShortEncrypt(input string) string {
+func EncryptOTP(input string) string {
 	if strings.Contains(input, ".otp") || len(input) == 0 {
 		return input
 	}
@@ -39,10 +39,10 @@ func ShortEncrypt(input string) string {
 	return startPosString + "." + EncodeToString(b) + ".otp"
 }
 
-// ShortDecrypt runs a XOR encryption on the input string using the random bytes
+// DecryptOTP runs a XOR encryption on the input string using the random bytes
 // in the massive key.
 // Random bytes are used starting at a position based on the prefix in the input
-func ShortDecrypt(input string) string {
+func DecryptOTP(input string) string {
 	if !strings.Contains(input, ".otp") {
 		return input
 	}

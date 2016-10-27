@@ -70,7 +70,7 @@ func TestGetInfo(t *testing.T) {
 				t.Errorf("Problem decoding message")
 			}
 		}
-		if entry.Document == ShortEncrypt("test.txt") {
+		if entry.Document == EncryptOTP("test.txt") {
 			foundOne = true
 			break
 		}
@@ -123,7 +123,7 @@ func TestGetText(t *testing.T) {
 	entries, _ = GetText("gittest", entries)
 	foundIt := false
 	for _, entry := range entries {
-		if entry.Branch == ShortEncrypt("12") {
+		if entry.Branch == EncryptOTP("12") {
 			if entry.Text != "hello, world branch #12" {
 				t.Errorf("Got different text: %s", entry.Text)
 			} else {
@@ -280,8 +280,8 @@ func TestGetLatestForRepo(t *testing.T) {
 	}
 
 	info, _ := GetInfo("testOld", []string{branch})
-	if ShortDecrypt(info[0].Document) != ".deleted" {
-		t.Errorf("Error while deleting %s, got document %v", branch, ShortDecrypt(info[0].Document))
+	if DecryptOTP(info[0].Document) != ".deleted" {
+		t.Errorf("Error while deleting %s, got document %v", branch, DecryptOTP(info[0].Document))
 	}
 
 	os.RemoveAll("testNew")

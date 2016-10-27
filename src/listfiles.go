@@ -26,7 +26,7 @@ func ListFiles(gitfolder string) []string {
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
 		if document[0] == '.' {
 			logger.Debug("Found document: %s", document)
-			document = ShortDecrypt(document[1:])
+			document = DecryptOTP(document[1:])
 			if document == "deleted" || document == "key" || document == "new" {
 				continue
 			}

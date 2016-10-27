@@ -78,7 +78,7 @@ func Run() {
 		if len(CurrentDocument) == 0 {
 			CurrentDocument = "notes.txt"
 		}
-		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", ShortDecrypt(CurrentDocument))
+		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", DecryptOTP(CurrentDocument))
 		fmt.Scanln(&editDocument)
 		if len(editDocument) == 0 && len(CurrentDocument) > 0 {
 			// Pass
@@ -90,27 +90,27 @@ func Run() {
 			CurrentDocument = (editDocument)
 		}
 	} else {
-		InputDocument = ShortEncrypt(InputDocument)
+		InputDocument = EncryptOTP(InputDocument)
 		branchList, _ := ListBranches(RemoteFolder)
 		for _, branch := range branchList {
 			if branch == InputDocument {
 				doc, _ := ListFileOfOne(RemoteFolder, branch)
-				logger.Debug("You've entered a branch %s which is in document %s", ShortDecrypt(branch), ShortDecrypt(doc))
+				logger.Debug("You've entered a branch %s which is in document %s", DecryptOTP(branch), DecryptOTP(doc))
 				InputDocument = doc
 				filterBranch = branch
 			}
 		}
 		CurrentDocument = InputDocument
 	}
-	CurrentDocument = ShortEncrypt(CurrentDocument)
-	logger.Debug("Current document: %s", ShortDecrypt(CurrentDocument))
+	CurrentDocument = EncryptOTP(CurrentDocument)
+	logger.Debug("Current document: %s", DecryptOTP(CurrentDocument))
 	// Save choice of current document
 	SaveConfiguration(Editor, Remote, CurrentDocument)
 
 	// Check if encryption is needed
 	isNew := true
 	for _, file := range availableFiles {
-		if CurrentDocument == ShortEncrypt(file) {
+		if CurrentDocument == EncryptOTP(file) {
 			isNew = false
 			break
 		}
@@ -166,8 +166,8 @@ func Run() {
 
 	// Case-switch for what to do with fulltext
 	if Export {
-		fmt.Println("Exporting to " + ShortDecrypt(CurrentDocument))
-		ioutil.WriteFile(ShortDecrypt(CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
+		fmt.Println("Exporting to " + DecryptOTP(CurrentDocument))
+		ioutil.WriteFile(DecryptOTP(CurrentDocument), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 		return
 	} else if Summarize {
 		fmt.Println("\nSummary:")
@@ -178,7 +178,7 @@ func Run() {
 			texts = append(texts, HeadMatter(GetCurrentDate(), (MakeAlliteration())))
 		} else {
 			logger.Debug("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
-			fmt.Printf("Loaded entry '%s' on document '%s'\n", ShortDecrypt(filterBranch), ShortDecrypt(CurrentDocument))
+			fmt.Printf("Loaded entry '%s' on document '%s'\n", DecryptOTP(filterBranch), DecryptOTP(CurrentDocument))
 		}
 		ioutil.WriteFile(path.Join(TempPath, "temp"), []byte(strings.Join(texts, "\n\n")+"\n"), 0644)
 	}

@@ -47,8 +47,8 @@ func TestUpdateCache(t *testing.T) {
 
 func TestLoadCache(t *testing.T) {
 	log.Println("Testing LoadCache...")
-	UpdateCache(CACHE_TEST_GITFOLDER, ShortEncrypt("test.txt"), true)
-	cache, _ := LoadCache(CACHE_TEST_GITFOLDER, ShortEncrypt("test.txt"))
+	UpdateCache(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt"), true)
+	cache, _ := LoadCache(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt"))
 	if len(cache.Branch) == 0 {
 		t.Errorf("Error loading cache, got: %v", cache.Branch["test3"])
 	}
