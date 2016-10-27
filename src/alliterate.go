@@ -2,6 +2,7 @@ package sdees
 
 import (
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -75,5 +76,5 @@ func MakeAlliteration() string {
 	}
 	nounLength := len(alliterate[randomLetter]["nouns"])
 	adjectiveLength := len(alliterate[randomLetter]["adjectives"])
-	return alliterate[randomLetter]["adjectives"][rand.Intn(adjectiveLength)] + alliterate[randomLetter]["nouns"][rand.Intn(nounLength)]
+	return alliterate[randomLetter]["adjectives"][rand.Intn(adjectiveLength)] + alliterate[randomLetter]["nouns"][rand.Intn(nounLength)] + strconv.Itoa(rand.Intn(100))
 }

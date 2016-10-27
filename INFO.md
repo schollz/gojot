@@ -6,6 +6,12 @@ The combination of entries be displayed as a *document*. The document is reconst
 
 Optionally, all information saved in the `git` repo can be encrypted using a symmetric cipher with a user-provided passphrase. The passphrase is not stored anywhere on the machine or repo. When enabled, each entry in the `git` repo is encrypted. When editing an encrypted document, a decrypted temp file is stored and then shredded (random bytes written and then deleted) after use.
 
+# Limitations
+
+`sdees` is not meant as an encrypted file system, as it has limits to the number of entries that can be stored.
+
+Currently there are only 47,300,000 alliterations available for random branch names. Thus, a collision probability of 50% will occur after ~7,000 entries. Collisions are not detrimental, but it will only allow one document to be loaded with the same entry name. The reason is because
+
 
 # How to setup `git` server
 
