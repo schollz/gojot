@@ -11,13 +11,13 @@ func IsItDocumentOrEntry(doc string) (bool, string, string) {
 	availableFiles := ListFiles(RemoteFolder)
 	for _, file := range availableFiles {
 		logger.Debug(doc, file)
-		if doc == file {
+		if EncryptOTP(doc) == EncryptOTP(file) {
 			return true, doc, ""
 		}
 	}
 	branchList, _ := ListBranches(RemoteFolder)
 	for _, branch := range branchList {
-		if branch == doc {
+		if EncryptOTP(branch) == EncryptOTP(doc) {
 			for _, doc := range ListFilesOfOne(RemoteFolder, branch) {
 				logger.Debug("You've entered a entry '%s' which is in document '%s'", branch, doc)
 				return true, doc, branch
