@@ -71,7 +71,11 @@ func Run() {
 		logger.Debug("Last documents was %s", (CurrentDocument))
 		for _, file := range availableFiles {
 			fmt.Printf("\n- %s ", file)
-			if file == CurrentDocument {
+			quickCache, errCache := LoadCache(RemoteFolder, EncryptOTP(file))
+			if errCache == nil {
+				fmt.Printf("(%d entries) ", len(quickCache.Branch))
+			}
+			if EncryptOTP(file) == EncryptOTP(CurrentDocument) {
 				fmt.Print("(default) ")
 			}
 		}
