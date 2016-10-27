@@ -12,9 +12,9 @@ var CACHE_TEST_GITFOLDER = "./gittest10"
 
 func TestCreateCache(t *testing.T) {
 	log.Println("Testing CreateCache...")
-	_, _, err := UpdateCache(CACHE_TEST_GITFOLDER, "test.txt", true)
-	if !exists(path.Join(CACHE_TEST_GITFOLDER, "test.txt.cache")) || err != nil {
-		t.Errorf("Error creating cache: %s, %v", path.Join(CACHE_TEST_GITFOLDER, "test.txt.cache"), err)
+	_, _, err := UpdateCache(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt"), true)
+	if !exists(path.Join(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt")+".cache")) || err != nil {
+		t.Errorf("Error creating cache: %s, %v", path.Join(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt")+".cache"), err)
 	}
 }
 
@@ -39,7 +39,7 @@ func TestUpdateCache(t *testing.T) {
 	}
 	logger.Debug("Updated local branch: %s", newLocalBranch2)
 
-	_, updatedBranches, _ := UpdateCache(gitfolder, "test2.txt", false)
+	_, updatedBranches, _ := UpdateCache(gitfolder, EncryptOTP("test2.txt"), false)
 	if len(updatedBranches) < 2 {
 		t.Errorf("Error updating branches, got %v", updatedBranches)
 	}
@@ -47,9 +47,12 @@ func TestUpdateCache(t *testing.T) {
 
 func TestLoadCache(t *testing.T) {
 	log.Println("Testing LoadCache...")
-	UpdateCache(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt"), true)
-	cache, _ := LoadCache(CACHE_TEST_GITFOLDER, EncryptOTP("test.txt"))
+	UpdateCache(CACHE_TEST_GITFOLDER, EncryptOTP("other.txt"), true)
+	cache, err := LoadCache(CACHE_TEST_GITFOLDER, EncryptOTP("other.txt"))
+	if err != nil {
+		t.Errorf("Got error: " + err.Error())
+	}
 	if len(cache.Branch) == 0 {
-		t.Errorf("Error loading cache, got: %v", cache.Branch["test3"])
+		t.Errorf("Error loading cache, got: %v", cache.Branch)
 	}
 }
