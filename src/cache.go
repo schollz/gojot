@@ -114,7 +114,7 @@ func LoadCache(gitfolder string, document string) (Cache, error) {
 	var cache Cache
 	cacheFile := path.Join(RemoteFolder, document+".cache")
 	err := DecryptFile(cacheFile, Passphrase)
-	go EncryptFile(cacheFile, Passphrase)
+	defer EncryptFile(cacheFile, Passphrase)
 	if err != nil {
 		logger.Debug("Error decrypting %s", cacheFile)
 		return cache, err
