@@ -25,7 +25,7 @@ func EncryptOTP(input string) string {
 
 	// Use random integer to seed and generate random start position
 	rand.Seed(int64(inputToNum))
-	startPos := rand.Intn(9999000-1) + 1
+	startPos := rand.Intn(999000-1) + 1
 
 	// Do XOR encryption based on that start position
 	keyb := []byte(key[startPos : startPos+len(input)])

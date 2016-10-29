@@ -292,7 +292,7 @@ func Fetch(gitfolder string) error {
 			cmd.Output()
 			numTracked++
 			if numTracked == 10 {
-				fmt.Print("tracking branches...")
+				fmt.Print(" ..tracking branches, please wait.. ")
 			}
 		}
 	}

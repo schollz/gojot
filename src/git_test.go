@@ -18,7 +18,7 @@ var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
 
 func TestMain(m *testing.M) {
 	Passphrase = "test"
-	Cryptkey = RandStringBytesMaskImprSrc(10000000, time.Now().UnixNano())
+	Cryptkey = RandStringBytesMaskImprSrc(1000000, time.Now().UnixNano())
 	// DebugMode()
 	os.RemoveAll("./gittest")
 	os.RemoveAll("./gittest10")
