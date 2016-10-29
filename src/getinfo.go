@@ -34,6 +34,7 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 		return entries, errors.New("Problem running git log")
 	}
 	branchStrings := strings.Split(strings.Replace(string(stdout), "'", "", -1), "-==-")
+	logger.Debug("Got info for %d branches, now will sift for %d branches", len(branchStrings), len(branchesToGet))
 	for _, branchString := range branchStrings {
 		items := strings.Split(branchString, "-=-")
 		if len(items) < 5 {
