@@ -30,7 +30,7 @@ func SetupConfig() {
 		os.RemoveAll(HashString(yesno))
 		// cmd := exec.Command("git", "clone", yesno, HashString(yesno))
 		// _, err := cmd.Output()
-
+		fmt.Println("Cloning " + yesno + " ...")
 		cmd := exec.Command("git", "clone", yesno, HashString(yesno))
 		// out1, _ := cmd.StdoutPipe()
 		out2, _ := cmd.StderrPipe()

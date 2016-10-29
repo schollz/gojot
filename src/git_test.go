@@ -38,12 +38,12 @@ func TestMain(m *testing.M) {
 	exitVal := m.Run()
 
 	// Delete all the folders that get Created
-	// log.Println("Deleting testing folders")
-	// os.RemoveAll("gittest")
-	// os.RemoveAll("gittest10")
-	// os.RemoveAll("test")
-	// os.RemoveAll("testNew")
-	// os.RemoveAll("testOld")
+	log.Println("Deleting testing folders")
+	os.RemoveAll("gittest")
+	os.RemoveAll("gittest10")
+	os.RemoveAll("test")
+	os.RemoveAll("testNew")
+	os.RemoveAll("testOld")
 
 	log.Println("Testing complete")
 	os.Exit(exitVal)
