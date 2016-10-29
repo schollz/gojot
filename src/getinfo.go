@@ -74,7 +74,6 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 		return entries, errors.New("Problem running git log")
 	}
 	branchStrings := strings.Split(strings.Replace(string(stdout), "'", "", -1), "-==-")
-
 	for _, branchString := range branchStrings {
 		items := strings.Split(branchString, "-=-")
 		if len(items) < 5 {
@@ -84,8 +83,12 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 		result.Hash = items[0]
 		result.Date = items[1]
 		result.Message = strings.TrimSpace(items[2])
-		foo := strings.Split(items[3], ",")
-		result.Branch = strings.TrimSpace(strings.Replace(foo[len(foo)-1], ")", "", -1))
+		if strings.Contains(items[3], ",") {
+			foo := strings.Split(items[3], ",")
+			result.Branch = strings.TrimSpace(strings.Replace(foo[len(foo)-1], ")", "", -1))
+		} else {
+			result.Branch = strings.TrimSpace(strings.Replace(strings.Replace(items[3], "(", "", -1), ")", "", -1))
+		}
 		result.Document = strings.TrimSpace(items[4])
 		if _, ok := branchesToGet[result.Branch]; ok {
 			entries = append(entries, result)

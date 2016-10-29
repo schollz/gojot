@@ -57,30 +57,6 @@ func TestListBranches(t *testing.T) {
 	}
 }
 
-func TestGetInfo(t *testing.T) {
-	log.Println("Testing GetInfo()...")
-	branchNames, _ := ListBranches("./gittest")
-	entries, _ := GetInfo("./gittest", branchNames)
-	foundOne := false
-	for i, entry := range entries {
-		if i == 0 {
-			m, _ := DecryptString(entry.Message, Passphrase)
-			if m != "Hi" {
-				fmt.Println(entry.Message)
-				t.Errorf("Problem decoding message")
-			}
-		}
-		if entry.Document == EncryptOTP("test.txt") {
-			foundOne = true
-			break
-		}
-	}
-	if !foundOne {
-		t.Errorf("Could not get info!")
-	}
-
-}
-
 func TestClone(t *testing.T) {
 	log.Println("Testing CloneRepo()...")
 	err := os.RemoveAll("test")
