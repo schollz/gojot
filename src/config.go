@@ -49,14 +49,16 @@ func SetupConfig() {
 	}
 	configParameters.Remote = yesno
 
-	fmt.Printf("Which editor do you want to use: vim (default), nano, or emacs? ")
+	fmt.Printf("Which editor do you want to use: micro (default), vim,  nano, or emacs? ")
 	fmt.Scanln(&yesno)
 	if strings.TrimSpace(strings.ToLower(yesno)) == "nano" {
 		configParameters.Editor = "nano"
 	} else if strings.TrimSpace(strings.ToLower(yesno)) == "emacs" {
 		configParameters.Editor = "emacs"
-	} else {
+	} else if strings.TrimSpace(strings.ToLower(yesno)) == "vim" {
 		configParameters.Editor = "vim"
+	} else {
+		configParameters.Editor = "micro"
 	}
 	configParameters.CurrentDocument = ""
 

@@ -14,6 +14,7 @@ func init() {
 func setupPaths() {
 	// Set the paths
 	homeDir, _ := home.Dir()
+	HomePath = homeDir
 
 	if !exists(path.Join(homeDir, ".cache")) {
 		err := os.MkdirAll(path.Join(homeDir, ".cache"), 0711)

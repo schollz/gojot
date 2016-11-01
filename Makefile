@@ -58,121 +58,18 @@ clean:
 
 .PHONY: windows
 windows:
-	rm -rf vim*
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./src/bin/
-	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf micro*
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
+	unzip micro*.zip
+	mv micro*/micro.exe ./src/bin
+	cd src && C:/Go/work/bin/go-bindata.exe ./bin
+	rm -rf ./src/bin/micro.exe
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64" -o sdees.exe
 	zip -j sdees_windows_386.zip sdees.exe
 	rm sdees.exe
 	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
 	rm -f *.zip
-
-.PHONY: latest
-latest:
-	go get github.com/aktau/github-release
-	echo "Deleting old release"
-	github-release delete \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest
-	echo "Moving tag"
-	git tag --force latest ${BUILD}
-	git push --force --tags
-	echo "Creating new release"
-	github-release release \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "Latest" \
-	    --description "This is a standalone latest of sdees." \
-	    --pre-release
-	echo "Uploading Windows 64 latest, bundled with VIM"
-	rm -rf vim*
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./src/bin/
-	cd src && $(GOPATH)/bin/go-bindata ./bin
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64" -o sdees.exe
-	zip -j sdees_windows_amd64.zip sdees.exe
-	github-release upload \
-			--user schollz \
-			--repo sdees \
-			--tag latest \
-			--name "sdees_windows_amd64.zip" \
-			--file sdees_windows_amd64.zip
-	rm sdees.exe
-	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
-	rm -f *.zip
-	echo "Uploading Windows 32 latest, bundled with VIM"
-	rm -rf vim*
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./src/bin/
-	cd src && $(GOPATH)/bin/go-bindata ./bin
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_386" -o sdees.exe
-	zip -j sdees_windows_386.zip sdees.exe
-	github-release upload \
-			--user schollz \
-			--repo sdees \
-			--tag latest \
-			--name "sdees_windows_386.zip" \
-			--file sdees_windows_386.zip
-	rm sdees.exe
-	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
-	rm -f *.zip
-	echo "Uploading Linux Amd64"
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o sdees
-	zip -j sdees_linux_amd64.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "sdees_linux_amd64.zip" \
-	    --file sdees_linux_amd64.zip
-	rm sdees
-	rm -f *.zip
-	echo "Uploading Linux Arm"
-	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm" -o sdees
-	zip -j sdees_linux_arm.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "sdees_linux_arm.zip" \
-	    --file sdees_linux_arm.zip
-	rm sdees
-	rm -f *.zip
-	echo "Uploading Linux Arm64"
-	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm64" -o sdees
-	zip -j sdees_linux_arm64.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "sdees_linux_arm64.zip" \
-	    --file sdees_linux_arm64.zip
-	rm sdees
-	rm -f *.zip
-	echo "Uploading OSX"
-	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
-	zip -j sdees_osx.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag latest \
-	    --name "sdees_osx.zip" \
-	    --file sdees_osx.zip
-	rm sdees
-	rm -f *.zip
-
 
 .PHONY: release
 release:
@@ -196,11 +93,12 @@ release:
 	    --name "${VERSION}" \
 	    --description "This is a standalone latest of sdees."
 	echo "Uploading Windows 32 latest, bundled with VIM"
-	rm -rf vim*
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./src/bin/
+	rm -rf micro*
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win32.zip
+	unzip micro*.zip
+	mv micro*/micro.exe ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_386" -o sdees.exe
 	zip -j sdees_windows_386.zip sdees.exe
@@ -212,14 +110,15 @@ release:
 			--file sdees_windows_386.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
 	rm -f *.zip
+	rm -rf micro*
 	echo "Uploading Windows 64 latest, bundled with VIM"
-	rm -rf vim*
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./src/bin/
+	rm -rf micro*
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
+	unzip micro*.zip
+	mv micro*/micro.exe ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64" -o sdees.exe
 	zip -j sdees_windows_amd64.zip sdees.exe
@@ -231,9 +130,15 @@ release:
 			--file sdees_windows_amd64.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
-	rm -rf ./src/bin/vim.exe
 	rm -f *.zip
+	rm -rf micro*
 	echo "Uploading Linux Amd64"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux64.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o sdees
 	zip -j sdees_linux_amd64.zip sdees
 	github-release upload \
@@ -244,71 +149,37 @@ release:
 	    --file sdees_linux_amd64.zip
 	rm sdees
 	rm -f *.zip
-	echo "Uploading Linux Arm"
-	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm" -o sdees
-	zip -j sdees_linux_arm.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag ${VERSION} \
-	    --name "sdees_linux_arm.zip" \
-	    --file sdees_linux_arm.zip
-	rm sdees
-	rm -f *.zip
-	echo "Uploading Linux Arm64"
-	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm64" -o sdees
-	zip -j sdees_linux_arm64.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag ${VERSION} \
-	    --name "sdees_linux_arm64.zip" \
-	    --file sdees_linux_arm64.zip
-	rm sdees
-	rm -f *.zip
-	echo "Uploading OSX"
-	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
-	zip -j sdees_osx.zip sdees
-	github-release upload \
-	    --user schollz \
-	    --repo sdees \
-	    --tag ${VERSION} \
-	    --name "sdees_osx.zip" \
-	    --file sdees_osx.zip
-	rm sdees
-	rm -f *.zip
-
-.PHONY: binaries
-binaries:
-	go get github.com/jteeuwen/go-bindata/...
-	rm -rf binaries
-	mkdir binaries
-	mkdir bin
-	$(GOPATH)/bin/go-bindata bin
-	## OS X
-	env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
-	zip -j binaries/sdees_osx_amd64.zip binaries/sdees
-	rm binaries/sdees
-
-	## LINUX
-	env GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees
-	zip -j binaries/sdees_linux_amd64.zip binaries/sdees
-	rm binaries/sdees
-	env GOOS=linux GOARCH=arm go build ${LDFLAGS} -o binaries/sdees
-	zip -j binaries/sdees_linux_arm.zip binaries/sdees
-	rm binaries/sdees
-	env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -o binaries/sdees
-	zip -j binaries/sdees_linux_arm64.zip binaries/sdees
-	rm binaries/sdees
-	## WINDOWS
-	wget ftp://ftp.vim.org/pub/vim/pc/vim80w32.zip
-	unzip vim80w32.zip
-	mv vim/vim80/vim.exe ./bin/
-	rm -rf vim*
-	rm -rf bindata.go
-	$(GOPATH)/bin/go-bindata bin
-	env GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o binaries/sdees.exe
-	zip -j binaries/sdees_windows_amd64.zip binaries/sdees.exe
-	rm -rf binaries/vim.exe
-	rm -rf ./vim/
-	rm binaries/sdees.exe
+	rm -rf micro*
+	# echo "Uploading Linux Arm"
+	# env GOOS=linux GOARCH=arm go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm" -o sdees
+	# zip -j sdees_linux_arm.zip sdees
+	# github-release upload \
+	#     --user schollz \
+	#     --repo sdees \
+	#     --tag ${VERSION} \
+	#     --name "sdees_linux_arm.zip" \
+	#     --file sdees_linux_arm.zip
+	# rm sdees
+	# rm -f *.zip
+	# echo "Uploading Linux Arm64"
+	# env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm64" -o sdees
+	# zip -j sdees_linux_arm64.zip sdees
+	# github-release upload \
+	#     --user schollz \
+	#     --repo sdees \
+	#     --tag ${VERSION} \
+	#     --name "sdees_linux_arm64.zip" \
+	#     --file sdees_linux_arm64.zip
+	# rm sdees
+	# rm -f *.zip
+	# echo "Uploading OSX"
+	# env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
+	# zip -j sdees_osx.zip sdees
+	# github-release upload \
+	#     --user schollz \
+	#     --repo sdees \
+	#     --tag ${VERSION} \
+	#     --name "sdees_osx.zip" \
+	#     --file sdees_osx.zip
+	# rm sdees
+	# rm -f *.zip

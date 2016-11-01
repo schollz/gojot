@@ -66,7 +66,7 @@ func WriteEntry() string {
 		settings := `{
     "autoclose": false,
     "autoindent": false,
-    "colorscheme": "atomdark",
+    "colorscheme": "zenburn",
     "cursorline": false,
     "gofmt": false,
     "goimports": false,
@@ -81,19 +81,19 @@ func WriteEntry() string {
     "statusline": false,
     "syntax": false,
     "tabsize": 4,
-    "tabstospaces": false
+    "tabstospaces": false,
+		"softwrap": true
 }`
-		if exists(path.Join(TempPath, ".config")) {
-			if exists(path.Join(TempPath, ".config", "micro")) {
-				err := ioutil.WriteFile(path.Join(TempPath, ".config", "micro", "settings.json"), []byte(settings), 0644)
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
+		if !exists(path.Join(HomePath, ".config", "micro")) {
+			os.MkdirAll(path.Join(HomePath, ".config", "micro"), 0755)
+		}
+		err := ioutil.WriteFile(path.Join(HomePath, ".config", "micro", "settings.json"), []byte(settings), 0644)
+		if err != nil {
+			log.Fatal(err)
 		}
 
-		lines := "100" // TODO determine this
-		cmdArgs = []string{"+" + lines + ",1000000", path.Join(TempPath, "temp")}
+		lines := "10000000" // TODO determine this
+		cmdArgs = []string{"-startpos", lines + ",1000000", path.Join(TempPath, "temp")}
 	}
 
 	// Load from binary assets
