@@ -76,6 +76,7 @@ EXAMPLE USAGE:
 		} else {
 			sdees.Extension = ""
 		}
+		sdees.Version = Version
 
 		// Check new Version
 		programPath, _ := osext.Executable()

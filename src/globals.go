@@ -7,7 +7,7 @@ type Entry struct {
 
 // Global parameters
 var (
-	HomePath, CachePath, ConfigPath, TempPath                     string
+	Version, HomePath, CachePath, ConfigPath, TempPath            string
 	CurrentDocument, Editor, Remote, InputDocument                string
 	All, Export, Summarize, ImportFlag, ImportOldFlag, DeleteFlag bool
 	Search                                                        string
