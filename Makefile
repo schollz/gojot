@@ -56,21 +56,6 @@ clean:
 	rm -rf src/test
 	rm -rf src/gittest10
 
-.PHONY: windows
-windows:
-	rm -rf micro*
-	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
-	unzip micro*.zip
-	mv micro*/micro.exe ./src/bin
-	cd src && C:/Go/work/bin/go-bindata.exe ./bin
-	rm -rf ./src/bin/micro.exe
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64" -o sdees.exe
-	zip -j sdees_windows_386.zip sdees.exe
-	rm sdees.exe
-	cd src && git reset --hard HEAD
-	rm -f *.zip
-
 .PHONY: release
 release:
 	go get github.com/kardianos/osext
@@ -92,7 +77,7 @@ release:
 	    --tag ${VERSION} \
 	    --name "${VERSION}" \
 	    --description "This is a standalone latest of sdees."
-	echo "Uploading Windows 32 latest, bundled with VIM"
+	echo "Uploading Windows 32"
 	rm -rf micro*
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win32.zip
 	unzip micro*.zip
@@ -100,19 +85,19 @@ release:
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_386" -o sdees.exe
-	zip -j sdees_windows_386.zip sdees.exe
+	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win32" -o sdees.exe
+	zip -j sdees-win32.zip sdees.exe
 	github-release upload \
 			--user schollz \
 			--repo sdees \
 			--tag ${VERSION} \
-			--name "sdees_windows_386.zip" \
-			--file sdees_windows_386.zip
+			--name "sdees-win32.zip" \
+			--file sdees-win32.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
 	rm -rf micro*
-	echo "Uploading Windows 64 latest, bundled with VIM"
+	echo "Uploading Windows 64"
 	rm -rf micro*
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
 	unzip micro*.zip
@@ -120,66 +105,87 @@ release:
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=windows_amd64" -o sdees.exe
-	zip -j sdees_windows_amd64.zip sdees.exe
+	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win64" -o sdees.exe
+	zip -j sdees-win64.zip sdees.exe
 	github-release upload \
 			--user schollz \
 			--repo sdees \
 			--tag ${VERSION} \
-			--name "sdees_windows_amd64.zip" \
-			--file sdees_windows_amd64.zip
+			--name "sdees-win64.zip" \
+			--file sdees-win64.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
 	rm -rf micro*
-	echo "Uploading Linux Amd64"
+	echo "Uploading Linux 64"
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux64.tar.gz
 	tar -xvzf micro*.tar.gz
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o sdees
-	zip -j sdees_linux_amd64.zip sdees
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux64" -o sdees
+	zip -j sdees-linux64.zip sdees
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag ${VERSION} \
-	    --name "sdees_linux_amd64.zip" \
-	    --file sdees_linux_amd64.zip
+	    --name "sdees-linux64.zip" \
+	    --file sdees-linux64.zip
 	rm sdees
 	rm -f *.zip
 	rm -rf micro*
-	# echo "Uploading Linux Arm"
-	# env GOOS=linux GOARCH=arm go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm" -o sdees
-	# zip -j sdees_linux_arm.zip sdees
-	# github-release upload \
-	#     --user schollz \
-	#     --repo sdees \
-	#     --tag ${VERSION} \
-	#     --name "sdees_linux_arm.zip" \
-	#     --file sdees_linux_arm.zip
-	# rm sdees
-	# rm -f *.zip
-	# echo "Uploading Linux Arm64"
-	# env GOOS=linux GOARCH=arm64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_arm64" -o sdees
-	# zip -j sdees_linux_arm64.zip sdees
-	# github-release upload \
-	#     --user schollz \
-	#     --repo sdees \
-	#     --tag ${VERSION} \
-	#     --name "sdees_linux_arm64.zip" \
-	#     --file sdees_linux_arm64.zip
-	# rm sdees
-	# rm -f *.zip
-	# echo "Uploading OSX"
-	# env GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
-	# zip -j sdees_osx.zip sdees
-	# github-release upload \
-	#     --user schollz \
-	#     --repo sdees \
-	#     --tag ${VERSION} \
-	#     --name "sdees_osx.zip" \
-	#     --file sdees_osx.zip
-	# rm sdees
-	# rm -f *.zip
+	echo "Uploading Linux 32"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux32.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=linux GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux32" -o sdees
+	zip -j sdees-linux32.zip sdees
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-linux32.zip" \
+	    --file sdees-linux32.zip
+	rm sdees
+	rm -f *.zip
+	rm -rf micro*
+	echo "---------- Uploading Linux ARM ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux-arm.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=linux GOARCH=arm go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux-arm" -o sdees
+	zip -j sdees-linux-arm.zip sdees
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-linux-arm.zip" \
+	    --file sdees-linux-arm.zip
+	rm sdees
+	rm -f *.zip
+	rm -rf micro*
+	echo "---------- Uploading OSX ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-osx.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
+	zip -j sdees-osx.zip sdees
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-osx.zip" \
+	    --file sdees-osx.zip
+	rm sdees
+	rm -f *.zip
+	rm -rf micro*
