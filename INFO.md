@@ -1,3 +1,11 @@
+# Why `sdees`
+
+**Problem:** I would like to write into a document (e.g., a journal with time stamped entries) and also have it be available on all computers I use, and I want it to be locally encrypted. Unfortunately, typical cloud storage synchronization utilities (e.g. Dropbox) do not play well with syncing a single document that is encrypted locally.
+
+**Solution:** The basic solution is to create a lot of files - each encrypted - where each file contains the text for one entry in the document. You don't need any special tool for this - you can just use a text editor, `gpg`, and synchronization software like `git` or Dropbox.
+
+My program, `sdees`, just makes this solution easier to attain. `sdees` comes as a single executable file with the text-editor and `gpg` bulit-in - the only system  requirement is the installation of `git` (which is pretty easy to get on any system). The other benefit of `sdees` is that it will automatically combine all the time-stamped entries so it appears that you are editing a single document.
+
 # How `sdees` works
 
 When `sdees` starts for the first time it will request a `git` repository which can be [local or remote](https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server). Then `sdees` provides an option to write text using the editor of choice into a new *entry*. Each new entry is inserted into a new orphan branch in the supplied `git` repository. The benefit of placing each entry into its own orphan branch is that merge collisions are avoided after creating new entries on different machines. Thus, `sdees` makes it perfectly safe to make *new* entries without internet access.
@@ -16,7 +24,7 @@ Currently there are only 47,300,000 alliterations available for random entry nam
 
 **Weak encryption of filenames**
 
-The text of each entry is securely encrypted using a GPG-compatible symmetric cipher - this is not the issue. The issue is that the filenames are encrypted using a OTP in order to make sure the encrypted names are short enough to be used for branch names and filenames (which are limited to 255 characters usually). This is done by first generating a 10,000,000 key full of random bytes that will be used for the pads in the OTP. Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~3,100 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). Just don't store credit-card information in your document name.
+The text of each entry is securely encrypted using a GPG-compatible symmetric cipher - this is not the issue. The issue is that the filenames are encrypted using a OTP in order to make sure the encrypted names are short enough to be used for branch names and filenames (which are limited to 255 characters usually). This is done by first generating a 1,000,000 key full of random bytes that will be used for the pads in the OTP. Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~300 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). Just don't store credit-card information in the name of your files!
 
 # How to setup `git` server
 

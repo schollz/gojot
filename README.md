@@ -5,7 +5,8 @@
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-50%25-yellow.svg)
 
-Ok. But, really, `sdees` is just a fancy wrapper for `git` and `vim`/`nano`/`emacs` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. **`sdees` is great for a `git`-based *encrypted* journal. It is compatible with any local repo or hosted service (Gitlab/Bitbucket/Github).** More info can be found in [INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
+
+Ok. But, really, `sdees` is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. `sdees` is great for a *distributed and encrypted* journal and is compatible any local repo or hosted service (Gitlab/Bitbucket/Github). More info can be found in [INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
 
 
 _Note_: The previous non-`git` version of `sdees` can [be found here](https://github.com/schollz/sdees/tree/1.X).
@@ -13,11 +14,12 @@ _Note_: The previous non-`git` version of `sdees` can [be found here](https://gi
 
 ## Features
 
-- _Only two_ dependencies: `git` and a text editor (`vim` is bundled in Windows binary).
+- _Only one_ dependency: `git`
 - Cross-compatibility (Windows/Linux/OS X).
 - Built-in encryption, compatible with `gpg`.
-- Version control (all versions are saved, currently only newest is shown).
-- Temp files are shredded (random bytes written before deletion).
+- Built-in text editor, `micro` (but options for `emacs`/`vim`/`nano`).
+- Built-in version control (all versions are saved, currently only newest is shown).
+- Secure - filenames are encrypted with OTP and temp files are shredded.
 - Searching, summarizing, synchronized deletion, self-updating, and more.
 
 
