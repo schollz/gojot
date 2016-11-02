@@ -9,6 +9,7 @@ import (
 )
 
 func Run() {
+	Passphrase = "aslkdfjalsdkncfljaksjnflaskjnflk"
 	// Some variables to be set later
 	filterBranch := ""
 
@@ -17,6 +18,7 @@ func Run() {
 
 	// Check if cloning needs to occur
 	logger.Debug("Current remote: %s", Remote)
+	logger.Debug("Current remote folder: %s", RemoteFolder)
 	measureTime := time.Now()
 	fmt.Print("Fetching latest")
 	if !exists(RemoteFolder) {
@@ -25,7 +27,10 @@ func Run() {
 		if err != nil {
 			logger.Warn("Problems cloning remote '%s': %s", Remote, err.Error())
 		}
+		// Prompt for passphrase
+		Passphrase = PromptPassword(RemoteFolder)
 	} else {
+		logger.Debug("Remote folder does exist: %s", RemoteFolder)
 		errFetch := Fetch(RemoteFolder)
 		if errFetch == nil {
 			fmt.Print("...done")
@@ -36,9 +41,10 @@ func Run() {
 	}
 	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
-	// Prompt for passphrase
-	Passphrase = PromptPassword(RemoteFolder)
-
+	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
+		// Prompt for passphrase
+		Passphrase = PromptPassword(RemoteFolder)
+	}
 	// If deleting, Delete
 	if DeleteFlag {
 		GoDelete()

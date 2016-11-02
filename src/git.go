@@ -189,6 +189,7 @@ func DeleteBranch(branch string) error {
 // Fetch will force fetch and update tracking and rebase all branches so
 // that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
+
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Fetching %s", id, gitfolder)
 	defer timeTrack(time.Now(), "["+id+"]Fetching "+gitfolder)
@@ -215,6 +216,11 @@ func Fetch(gitfolder string) error {
 	cmd.Wait()
 	if strings.Contains(string(out2b), "fatal:") {
 		return errors.New(strings.TrimSpace(string(out2b)))
+	}
+
+	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
+		// Prompt for passphrase
+		Passphrase = PromptPassword(RemoteFolder)
 	}
 
 	// Get branchces
@@ -248,30 +254,11 @@ func Fetch(gitfolder string) error {
 	if err != nil {
 		return errors.New("Cannot branch -vv")
 	}
-	branchesToReset := []string{}
 	locallyTrackedBranches := make(map[string]bool)
 	for _, line := range strings.Split(string(stdout), "\n") {
 		branch := strings.Split(strings.TrimSpace(line), " ")[0]
-		if strings.Contains(line, "[") && strings.Contains(line, "]") {
-			split1 := strings.Split(line, "[")
-			split2 := strings.Split(split1[1], "]")
-			insides := split2[0]
-			split1 = strings.Split(insides, ":")
-			branch = split1[0]
-			if strings.Contains(branch, "/") {
-				split2 = strings.Split(branch, "/")
-				branch = split2[len(split2)-1]
-			}
-			branch = strings.TrimSpace(branch)
-			if len(branch) == 0 {
-				continue
-			}
-			if strings.Contains(insides, "ahead ") || strings.Contains(insides, "behind ") {
-				branchesToReset = append(branchesToReset, branch)
-			}
-		}
 		branch = strings.TrimSpace(branch)
-		if len(branch) < 2 || strings.Contains(branch, "Found local") {
+		if len(branch) < 2 || strings.Contains(branch, "Found local") || !strings.Contains(line, "[") {
 			continue
 		}
 		locallyTrackedBranches[branch] = true
@@ -290,6 +277,8 @@ func Fetch(gitfolder string) error {
 			logger.Debug("remote '%s' not in local", branch)
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
+			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
+			cmd.Output()
 			numTracked++
 			if numTracked == 10 {
 				fmt.Print(" ..tracking branches, please wait.. ")
@@ -299,35 +288,110 @@ func Fetch(gitfolder string) error {
 	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find ANY that have "ahead" or "behind", and do
-	//      git checkout branch
-	//      git reset --hard HEAD
-	// 			git rebase
+	branchesToReset := []string{}
+	logger.Debug(`git for-each-ref --format="%(refname)-=-%(push:track)" refs/heads`)
+	cmd = exec.Command("git", "for-each-ref", `--format="%(refname)-=-%(push:track)"`, "refs/heads")
+	stdout, err = cmd.Output()
+	if err != nil {
+		return errors.New("Cannot for-each-ref")
+	}
+	for _, line := range strings.Split(string(stdout), "\n") {
+		line = strings.Replace(line, `"`, "", -1)
+		// logger.Debug(line)
+		items := strings.Split(line, "-=-")
+		if len(items) < 2 {
+			continue
+		}
+		branch := strings.Replace(items[0], "refs/heads/", "", -1)
+		if strings.Contains(items[1], "ahead") || strings.Contains(items[1], "behind") {
+			branchesToReset = append(branchesToReset, branch)
+		}
+	}
+
+	if len(branchesToReset) > 0 {
+		DeleteCache()
+	}
+	var gotErr error
 	for _, branch := range branchesToReset {
 		if branch == "master" {
 			continue
 		}
-		DeleteCache()
 		logger.Debug("Resetting branch %s", branch)
+
+		cmd = exec.Command("git", "reset", "--hard", "HEAD")
+		_, err = cmd.Output()
+		if err != nil {
+			logger.Debug("Cannot reset" + branch)
+			continue
+		}
+
 		cmd = exec.Command("git", "checkout", branch)
 		stdout, err = cmd.Output()
 		if err != nil {
-			return errors.New("Cannot checkout" + branch)
+			logger.Debug("Cannot checkout" + branch)
+			continue
 		}
+
 		cmd = exec.Command("git", "reset", "--hard", "HEAD")
+		_, err = cmd.Output()
+		if err != nil {
+			logger.Debug("Cannot reset" + branch)
+			continue
+		}
+
+		cmd = exec.Command("git", "log", "--pretty=format:'|%B|'", "-n", "1", "origin/"+branch)
 		stdout, err = cmd.Output()
 		if err != nil {
-			return errors.New("Cannot reset --hard HEAD of " + branch)
+			logger.Debug("Cannot get log " + branch)
+			continue
 		}
-		cmd = exec.Command("git", "rebase")
-		stdout, err = cmd.Output()
-		if err != nil {
-			return errors.New("Cannot rebase " + branch)
+		foo := strings.Split(string(stdout), "|")
+		decrypted, _ := DecryptString(strings.TrimSpace(strings.Replace(foo[1], "'", "", -1)), Passphrase)
+		logger.Debug("Decrypted message:%s", decrypted)
+		if strings.TrimSpace(decrypted) == "deleted" {
+			cmd := exec.Command("git", "rebase")
+			out2, _ := cmd.StderrPipe()
+			cmd.Start()
+			out2b, _ := ioutil.ReadAll(out2)
+			cmd.Wait()
+			logger.Debug("git rebase : " + string(out2b))
+		} else {
+			logger.Debug("pulling...")
+			cmd = exec.Command("git", "pull")
+			out2, _ := cmd.StdoutPipe()
+			cmd.Start()
+			out2b, _ := ioutil.ReadAll(out2)
+			cmd.Wait()
+			logger.Debug("git pull : " + string(out2b))
+			if strings.Contains(string(out2b), "Merge conflict") {
+				files, _ := ioutil.ReadDir("./")
+				for _, f := range files {
+					if strings.Contains(f.Name(), ".cache") {
+						continue
+					}
+					bText, _ := ioutil.ReadFile(f.Name())
+					logger.Debug("TEXT: [%s]", string(bText))
+					logger.Debug("Merging branch %s", branch)
+					fmt.Printf("Merging branch %s\n", DecryptOTP(branch))
+					merged := MergeEncrypted(string(bText), Passphrase)
+					if len(merged) > 0 {
+						ioutil.WriteFile(f.Name(), []byte(merged), 0644)
+					}
+					EncryptFile(f.Name(), Passphrase)
+				}
+				logger.Debug("committing (just in case)...")
+				cmd = exec.Command("git", "commit", "-am", "'merged'")
+				_, err = cmd.Output()
+			}
 		}
+
 		cmd = exec.Command("git", "checkout", "master")
 		stdout, err = cmd.Output()
 		if err != nil {
-			return errors.New("Cannot checkout master")
+			logger.Debug("Cannot checkout master")
+			continue
 		}
+
 	}
 
 	// NOT NEEDED - THIS IS TAKEN CARE OF WITH FETCH --FORCE
@@ -344,7 +408,7 @@ func Fetch(gitfolder string) error {
 	// 	}
 	// }
 
-	return nil
+	return gotErr
 }
 
 func NewDocument(gitfolder string, documentname string, fulltext string, message string, datestring string, branchNameOverride string) (string, error) {
@@ -365,7 +429,10 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	newBranch = EncryptOTP(newBranch)
 	message = EncryptString(message, Passphrase)
 
-	cmd := exec.Command("git", "checkout", "--orphan", newBranch)
+	cmd := exec.Command("git", "reset", "--hard", "HEAD")
+	cmd.Output()
+
+	cmd = exec.Command("git", "checkout", "--orphan", newBranch)
 	_, err = cmd.Output()
 	if err != nil {
 		cmd2 := exec.Command("git", "checkout", newBranch)
