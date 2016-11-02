@@ -27,10 +27,10 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 
 	entries := []Entry{}
 
-	cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'-==-%H-=-%ad-=-%B-=-%d-=-'", "--all")
+	cmd := exec.Command("git", "log", "--name-only", "--pretty=format:'-==-%d -=-%H -=-%ad -=-%B -=-'", "--all")
 	stdout, err := cmd.Output()
 	if err != nil {
-		logger.Error(`Couldn't run git log --name-only --pretty=format:'-==-%%H-=-%%ad-=-%%B-=-%%d-=-' --all`)
+		logger.Error(`Couldn't run git log --name-only --pretty=format:'-==-%%d-=-%%H-=-%%ad-=-%%B-=-' --all`)
 		return entries, errors.New("Problem running git log")
 	}
 	branchStrings := strings.Split(strings.Replace(string(stdout), "'", "", -1), "-==-")
@@ -41,15 +41,20 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 			continue
 		}
 		var result Entry
-		result.Hash = items[0]
-		result.Date = items[1]
-		result.Message = strings.TrimSpace(items[2])
-		if strings.Contains(items[3], ",") {
-			foo := strings.Split(items[3], ",")
+		result.Branch = ""
+		if strings.Contains(items[0], ",") {
+			foo := strings.Split(items[0], ",")
 			result.Branch = strings.TrimSpace(strings.Replace(foo[len(foo)-1], ")", "", -1))
 		} else {
-			result.Branch = strings.TrimSpace(strings.Replace(strings.Replace(items[3], "(", "", -1), ")", "", -1))
+			result.Branch = strings.TrimSpace(strings.Replace(strings.Replace(items[0], "(", "", -1), ")", "", -1))
 		}
+		result.Branch = strings.TrimSpace(strings.Replace(result.Branch, "origin/", "", -1))
+		if len(result.Branch) == 0 {
+			continue
+		}
+		result.Hash = items[1]
+		result.Date = items[2]
+		result.Message = strings.TrimSpace(items[3])
 		result.Document = strings.TrimSpace(items[4])
 		if _, ok := branchesToGet[result.Branch]; ok {
 			entries = append(entries, result)

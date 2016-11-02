@@ -59,7 +59,7 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 	if len(branchesToGetInfo) > 100 {
 		fmt.Println("Getting info...")
 	}
-	entries, _ := GetInfo(gitfolder, branchesToGetInfo)
+	entries, _ := GetInfo(gitfolder, branchNames)
 	for _, entry := range entries {
 		cache.Ignore[entry.Branch] = entry.Document != document
 		ignore, ok := cache.Ignore[entry.Branch]
@@ -68,6 +68,7 @@ func UpdateCache(gitfolder string, document string, forceUpdate bool) (Cache, []
 			continue
 		}
 		if !ignore && entry.Hash != cache.Branch[entry.Branch].Hash {
+			logger.Debug("Updating entry '%s' in cache", DecryptOTP(entry.Branch))
 			entriesToUpdate = append(entriesToUpdate, entry)
 		}
 	}
