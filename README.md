@@ -3,7 +3,7 @@
 
 [![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
-![](https://img.shields.io/badge/coverage-51%25-yellow.svg)
+![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
 
 
 Ok. But, really, `sdees` is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. `sdees` is great for a *distributed and encrypted* journal and is compatible any local repo or hosted service (Gitlab/Bitbucket/Github). More info can be found in [INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
