@@ -151,7 +151,7 @@ EXAMPLE USAGE:
 func CheckIfGitIsInstalled() {
 	cmd := exec.Command("git", "--version")
 	stdout, err := cmd.Output()
-	versionNums := strings.Split(strings.Split(string(stdout), " ")[2], ".")
+	versionNums := strings.Split(strings.Split(strings.TrimSpace(string(stdout)), " ")[2], ".")
 	major, _ := strconv.Atoi(versionNums[0])
 	minor, _ := strconv.Atoi(versionNums[1])
 	if major < 2 || (major == 2 && minor < 12) {
