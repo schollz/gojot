@@ -38,7 +38,7 @@ func PromptPassword(gitfolder string) string {
 		logger.Debug("Testing with master:key")
 		passwordAccepted := false
 		for passwordAccepted == false {
-			fmt.Printf("\nEnter password: ")
+			fmt.Printf("Enter password: ")
 			bytePassword, _ := terminal.ReadPassword(int(os.Stdin.Fd()))
 			password1 = strings.TrimSpace(string(bytePassword))
 			Cryptkey, err = DecryptString(textToTest, password1)

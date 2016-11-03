@@ -189,6 +189,10 @@ func DeleteBranch(branch string) error {
 // Fetch will force fetch and update tracking and rebase all branches so
 // that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
+	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
+		// Prompt for passphrase
+		Passphrase = PromptPassword(RemoteFolder)
+	}
 
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Fetching %s", id, gitfolder)
@@ -216,11 +220,6 @@ func Fetch(gitfolder string) error {
 	cmd.Wait()
 	if strings.Contains(string(out2b), "fatal:") {
 		return errors.New(strings.TrimSpace(string(out2b)))
-	}
-
-	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
-		// Prompt for passphrase
-		Passphrase = PromptPassword(RemoteFolder)
 	}
 
 	// Get branchces
@@ -289,7 +288,7 @@ func Fetch(gitfolder string) error {
 
 	// Find ANY that have "ahead" or "behind", and do
 	branchesToReset := []string{}
-	logger.Debug(`git for-each-ref --format="%(refname)-=-%(push:track)" refs/heads`)
+	logger.Debug(`git for-each-ref --format="%%(refname)-=-%%(push:track)" refs/heads`)
 	cmd = exec.Command("git", "for-each-ref", `--format="%(refname)-=-%(push:track)"`, "refs/heads")
 	stdout, err = cmd.Output()
 	if err != nil {

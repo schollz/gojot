@@ -20,17 +20,19 @@ func Run() {
 	logger.Debug("Current remote: %s", Remote)
 	logger.Debug("Current remote folder: %s", RemoteFolder)
 	measureTime := time.Now()
-	fmt.Print("Fetching latest")
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
 		err := Clone(RemoteFolder, Remote)
 		if err != nil {
 			logger.Warn("Problems cloning remote '%s': %s", Remote, err.Error())
 		}
-		// Prompt for passphrase
-		Passphrase = PromptPassword(RemoteFolder)
 	} else {
 		logger.Debug("Remote folder does exist: %s", RemoteFolder)
+		if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
+			// Prompt for passphrase
+			Passphrase = PromptPassword(RemoteFolder)
+		}
+		fmt.Print("Fetching latest")
 		errFetch := Fetch(RemoteFolder)
 		if errFetch == nil {
 			fmt.Print("...done")

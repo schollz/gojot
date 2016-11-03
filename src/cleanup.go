@@ -29,7 +29,7 @@ func CleanUp() error {
 
 func CleanAll() {
 	var yesno string
-	fmt.Print("\n\nThis will remove all local files, but not remote. Are you sure? (y/n) ")
+	fmt.Print("\nThis will remove all local files, but not remote. Are you sure? (y/n) ")
 	fmt.Scanln(&yesno)
 	if yesno == "y" {
 		logger.Debug("Removing cache: %s", CachePath)
