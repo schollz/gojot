@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -149,9 +150,19 @@ EXAMPLE USAGE:
 
 func CheckIfGitIsInstalled() {
 	cmd := exec.Command("git", "--version")
-	_, err := cmd.Output()
+	stdout, err := cmd.Output()
+	versionNums := strings.Split(strings.Split(strings.TrimSpace(string(stdout)), " ")[2], ".")
+	major, _ := strconv.Atoi(versionNums[0])
+	minor, _ := strconv.Atoi(versionNums[1])
+	if major < 2 || (major == 2 && minor < 5) {
+		fmt.Printf("\n%s detected.\n\nPlease install git version 2.5+ before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... \n", strings.TrimSpace(string(stdout)))
+		var input string
+		fmt.Scanln(&input)
+		os.Exit(1)
+	}
+	os.Exit(1)
 	if err != nil {
-		fmt.Println("\ngit is not detected.\n\nPlease install git before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
+		fmt.Println("\ngit is not detected.\n\nPlease install git version 2.5+ before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
 		var input string
 		fmt.Scanln(&input)
 		os.Exit(1)
