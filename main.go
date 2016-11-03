@@ -160,7 +160,6 @@ func CheckIfGitIsInstalled() {
 		fmt.Scanln(&input)
 		os.Exit(1)
 	}
-	os.Exit(1)
 	if err != nil {
 		fmt.Println("\ngit is not detected.\n\nPlease install git version 2.5+ before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
 		var input string
