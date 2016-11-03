@@ -41,19 +41,6 @@ func MergeEncrypted(mergedEncrypted string, pass string) string {
 	return MergeText(text1, text2)
 }
 
-func StrExtract(sExper, sAdelim, sCdelim string, nOccur int) string {
-	aExper := strings.Split(sExper, sAdelim)
-	if len(aExper) <= nOccur {
-		return ""
-	}
-	sMember := aExper[nOccur]
-	aExper = strings.Split(sMember, sCdelim)
-	if len(aExper) == 1 {
-		return ""
-	}
-	return strings.TrimSpace(aExper[0])
-}
-
 // DeltaType describes the relationship of elements in two
 // sequences. The following table provides a summary:
 //

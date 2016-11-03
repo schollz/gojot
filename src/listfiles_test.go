@@ -10,6 +10,13 @@ func TestListFiles(t *testing.T) {
 	}
 }
 
+func TestListFilesOfOne(t *testing.T) {
+	files := ListFilesOfOne("./gittest10", EncryptOTP("1"))
+	if DecryptOTP(files[0]) != "test.txt" {
+		t.Errorf("Not correcting listing files of one, got %v", DecryptOTP(files[0]))
+	}
+}
+
 // func BenchmarkListFiles(b *testing.B) {
 // 	for n := 0; n < b.N; n++ {
 // 		ListFiles("gittest")
