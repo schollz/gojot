@@ -14,7 +14,7 @@ _Note_: The previous non-`git` version of `sdees` can [be found here](https://gi
 
 ## Features
 
-- _Only one_ dependency: `git`
+- _Only one_ dependency: `git` (version 2.5+)
 - Cross-compatibility (Windows/Linux/OS X).
 - Built-in encryption, compatible with `gpg`.
 - Built-in text editor, `micro` (but options for `emacs`/`vim`/`nano`).
@@ -25,8 +25,15 @@ _Note_: The previous non-`git` version of `sdees` can [be found here](https://gi
 
 ## Install
 
+First install the latest `git`. If you are on Windows/OSX just [use the build version](https://git-scm.com/downloads). If you are on Ubuntu, make sure to add the latest repo:
 
-Download [the latest release binary](https://github.com/schollz/sdees/releases/latest)
+```
+add-apt-repository ppa:git-core/ppa -y
+apt-get update
+apt-get install git -y
+```
+
+Then, to install `sdees`, simply download [the latest release binary](https://github.com/schollz/sdees/releases/latest)
 
 _OR_
 

@@ -149,7 +149,9 @@ EXAMPLE USAGE:
 
 func CheckIfGitIsInstalled() {
 	cmd := exec.Command("git", "--version")
-	_, err := cmd.Output()
+	stdout, err := cmd.Output()
+	fmt.Println(string(stdout))
+	os.Exit(1)
 	if err != nil {
 		fmt.Println("\ngit is not detected.\n\nPlease install git before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
 		var input string

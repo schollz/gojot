@@ -26,6 +26,10 @@ Currently there are only 47,300,000 alliterations available for random entry nam
 
 The text of each entry is securely encrypted using a GPG-compatible symmetric cipher - this is not the issue. The issue is that the filenames are encrypted using a OTP in order to make sure the encrypted names are short enough to be used for branch names and filenames (which are limited to 255 characters usually). This is done by first generating a 1,000,000 key full of random bytes that will be used for the pads in the OTP. Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~300 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). Just don't store credit-card information in the name of your files!
 
+**Newer version of `git`**
+
+To determine branches that are ahead/behind, this program uses `git for-each-ref` with the `push:track` option, which is not introduced until [version 2.5.0, released March, 2016](https://git-scm.com/docs/git-for-each-ref/2.5.0). The alternative to this is `git branch -vv` but that is not considered stable.
+
 # How to setup `git` server
 
 _Easiest way:_ Just dont. You can just use a [Github](https://github.com/) or [Bitbucket](https://bitbucket.org/) repository and skip this.
