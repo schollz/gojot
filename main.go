@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -151,7 +152,10 @@ func CheckIfGitIsInstalled() {
 	cmd := exec.Command("git", "--version")
 	stdout, err := cmd.Output()
 	versionNums := strings.Split(strings.Split(string(stdout), " ")[2], ".")
-	fmt.Println(versionNums)
+	major, _ := strconv.Atoi(versionNums[0])
+	fmt.Println(major)
+	minor, _ := strconv.Atoi(versionNums[1])
+	fmt.Println(minor)
 	os.Exit(1)
 	if err != nil {
 		fmt.Println("\ngit is not detected.\n\nPlease install git before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
