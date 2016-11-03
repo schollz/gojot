@@ -70,4 +70,5 @@ Stack overflow (see code for attributions).
 # License
 
 MIT
-This software includes third party open source software components: Foo, Bar, and Whatsit. Each of these software components have their own license. Please see ./Foo/License.txt, ./Bar/License.txt, and ./Whatsit/License.txt.
+
+This software includes third party open source software components: `src/base58*` and `src/merge*`. Each of these software components have their own license and copyright, stated in the respective files.
