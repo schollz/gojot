@@ -153,12 +153,16 @@ func CheckIfGitIsInstalled() {
 	stdout, err := cmd.Output()
 	versionNums := strings.Split(strings.Split(string(stdout), " ")[2], ".")
 	major, _ := strconv.Atoi(versionNums[0])
-	fmt.Println(major)
 	minor, _ := strconv.Atoi(versionNums[1])
-	fmt.Println(minor)
+	if major < 2 || (major == 2 && minor < 12) {
+		fmt.Printf("\n%s detected.\n\nPlease install git version 2.5+ before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... \n", string(stdout))
+		var input string
+		fmt.Scanln(&input)
+		os.Exit(1)
+	}
 	os.Exit(1)
 	if err != nil {
-		fmt.Println("\ngit is not detected.\n\nPlease install git before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
+		fmt.Println("\ngit is not detected.\n\nPlease install git version 2.5+ before proceeding. To install, go to \n\n    https://git-scm.com/downloads \n\nand install the version for your operating system.\nPress enter to continue... ")
 		var input string
 		fmt.Scanln(&input)
 		os.Exit(1)
