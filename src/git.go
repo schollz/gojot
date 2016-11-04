@@ -419,7 +419,7 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 
 	newBranch := branchNameOverride
 	if len(branchNameOverride) == 0 {
-		newBranch = MakeAlliteration()
+		newBranch = GenerateEntryName()
 	}
 	newBranch = newBranch
 

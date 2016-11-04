@@ -188,7 +188,7 @@ func Run() {
 		return
 	} else {
 		if len(filterBranch) == 0 {
-			texts = append(texts, HeadMatter(GetCurrentDate(), (MakeAlliteration())))
+			texts = append(texts, HeadMatter(GetCurrentDate(), GenerateEntryName()))
 		} else {
 			logger.Debug("Loaded entry '%s' on document '%s'\n", filterBranch, CurrentDocument)
 			fmt.Printf("Loaded entry '%s' on document '%s'\n", DecryptOTP(filterBranch), DecryptOTP(CurrentDocument))
