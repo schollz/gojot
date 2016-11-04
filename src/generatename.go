@@ -8,7 +8,7 @@ import (
 )
 
 func GenerateEntryName() string {
-	return GenerateAlliteration()
+	return GenerateNonAlliteration()
 }
 
 func GenerateAlliteration() string {
