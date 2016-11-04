@@ -9,9 +9,9 @@ import (
 )
 
 func Run() {
-	Passphrase = "aslkdfjalsdkncfljaksjnflaskjnflk"
 	// Some variables to be set later
 	filterBranch := ""
+	Passphrase = "alskdfjalskdjfalskjdflajsdfljasd"
 
 	// Load the configuration
 	LoadConfiguration()
@@ -19,7 +19,6 @@ func Run() {
 	// Check if cloning needs to occur
 	logger.Debug("Current remote: %s", Remote)
 	logger.Debug("Current remote folder: %s", RemoteFolder)
-	measureTime := time.Now()
 	if !exists(RemoteFolder) {
 		logger.Debug("Remote folder does not exist: %s", RemoteFolder)
 		err := Clone(RemoteFolder, Remote)
@@ -28,25 +27,13 @@ func Run() {
 		}
 	} else {
 		logger.Debug("Remote folder does exist: %s", RemoteFolder)
-		if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
-			// Prompt for passphrase
-			Passphrase = PromptPassword(RemoteFolder)
-		}
-		fmt.Print("Fetching latest")
 		errFetch := Fetch(RemoteFolder)
-		if errFetch == nil {
-			fmt.Print("...done")
-		} else {
-			fmt.Println("...unable to fetch:")
+		if errFetch != nil {
+			fmt.Println("Unable to fetch latest:")
 			fmt.Println(errFetch.Error())
 		}
 	}
-	fmt.Printf(" (%s)\n", time.Since(measureTime).String())
 
-	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
-		// Prompt for passphrase
-		Passphrase = PromptPassword(RemoteFolder)
-	}
 	// If deleting, Delete
 	if DeleteFlag {
 		GoDelete()
@@ -199,7 +186,7 @@ func Run() {
 	UpdateEntryFromText(fulltext, branchHashes)
 
 	// Push new changes
-	measureTime = time.Now()
+	measureTime := time.Now()
 	fmt.Print("Pushing changes")
 	err := Push(RemoteFolder)
 	if err == nil {

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -189,9 +190,13 @@ func DeleteBranch(branch string) error {
 // Fetch will force fetch and update tracking and rebase all branches so
 // that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
-	if Passphrase == "aslkdfjalsdkncfljaksjnflaskjnflk" {
-		// Prompt for passphrase
-		Passphrase = PromptPassword(RemoteFolder)
+	// Get password asyncrhonsyl
+	gettingPassword := false
+	wg := sync.WaitGroup{}
+	if Passphrase == "alskdfjalskdjfalskjdflajsdfljasd" {
+		wg.Add(1)
+		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done() }()
+		gettingPassword = true
 	}
 
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
@@ -279,9 +284,6 @@ func Fetch(gitfolder string) error {
 			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
 			cmd.Output()
 			numTracked++
-			if numTracked == 10 {
-				fmt.Print(" ..tracking branches, please wait.. ")
-			}
 		}
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
@@ -309,6 +311,10 @@ func Fetch(gitfolder string) error {
 
 	if len(branchesToReset) > 0 {
 		DeleteCache()
+	}
+	if gettingPassword {
+		// Wait until password is recieved
+		wg.Wait()
 	}
 	var gotErr error
 	for _, branch := range branchesToReset {
