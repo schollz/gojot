@@ -195,7 +195,7 @@ func Fetch(gitfolder string) error {
 	wg := sync.WaitGroup{}
 	if Passphrase == "alskdfjalskdjfalskjdflajsdfljasd" {
 		wg.Add(1)
-		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done() }()
+		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done(); fmt.Println("Fetching...") }()
 		gettingPassword = true
 	}
 
@@ -276,16 +276,21 @@ func Fetch(gitfolder string) error {
 	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
 	numTracked := 0
+	wg2 := sync.WaitGroup{}
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
+			wg2.Add(1)
 			logger.Debug("remote '%s' not in local", branch)
-			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
-			cmd.Output()
-			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
-			cmd.Output()
+			go func() {
+				cmd := exec.Command("git", "branch", "--track", branch, "origin/"+branch)
+				cmd.Output()
+				cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
+				cmd.Output()
+			}()
 			numTracked++
 		}
 	}
+	wg2.Wait()
 	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find ANY that have "ahead" or "behind", and do
