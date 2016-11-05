@@ -12,16 +12,6 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.Buil
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
-	go get -v gopkg.in/cheggaaa/pb.v1
-	go get -v github.com/jcelliott/lumber
-	go get -v github.com/mitchellh/go-homedir
-	go get -v github.com/urfave/cli
-	go get -v golang.org/x/crypto/ssh/terminal
-	go get -v golang.org/x/crypto/openpgp/armor
-	go get -v golang.org/x/crypto/openpgp
-	go get -v github.com/kardianos/osext
-	go get -v github.com/aktau/github-release
-	go get -v github.com/jteeuwen/go-bindata/...
 	go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o ${BINARY}
 
 .PHONY: update
