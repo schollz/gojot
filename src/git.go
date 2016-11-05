@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"gopkg.in/cheggaaa/pb.v1"
 )
 
 func WriteToMaster(gitfolder string, filename string, text string) {
@@ -203,9 +205,10 @@ func Fetch(gitfolder string) error {
 	wg := sync.WaitGroup{}
 	if Passphrase == "alskdfjalskdjfalskjdflajsdfljasd" {
 		wg.Add(1)
-		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done(); fmt.Println("Fetching...") }()
+		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done(); fmt.Print("Fetching...") }()
 		gettingPassword = true
 	}
+	startTotal := time.Now()
 
 	// Get clean DIR
 	cmd := exec.Command("git", "reset", "--hard", "HEAD")
@@ -280,13 +283,31 @@ func Fetch(gitfolder string) error {
 	numTracked := 0
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
+			numTracked++
+		}
+	}
+	var bar *pb.ProgressBar
+	includeBar := false
+	curNumTracked := 0
+	for branch := range remotelyTrackedBranches {
+		if _, ok := locallyTrackedBranches[branch]; !ok {
+			if includeBar {
+				bar.Increment()
+			}
 			logger.Debug("remote '%s' not in local", branch)
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
 			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
 			cmd.Output()
-			numTracked++
+			if Passphrase != "alskdfjalskdjfalskjdflajsdfljasd" && !includeBar {
+				includeBar = true
+				bar = pb.StartNew(numTracked - curNumTracked)
+			}
+			curNumTracked++
 		}
+	}
+	if includeBar {
+		bar.Finish()
 	}
 	logger.Debug("Tracking took " + time.Since(start).String())
 
@@ -415,6 +436,7 @@ func Fetch(gitfolder string) error {
 	// 	}
 	// }
 
+	fmt.Printf("done (%s).\n", time.Since(startTotal).String())
 	return gotErr
 }
 
