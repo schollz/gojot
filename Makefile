@@ -12,26 +12,23 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.Buil
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
-	go get github.com/jcelliott/lumber
-	go get github.com/mitchellh/go-homedir
-	go get github.com/urfave/cli
-	go get golang.org/x/crypto/ssh/terminal
-	go get golang.org/x/crypto/openpgp/armor
-	go get golang.org/x/crypto/openpgp
-	go get github.com/kardianos/osext
-	go get github.com/speps/go-hashids
 	go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux_amd64" -o ${BINARY}
+
+.PHONY: update
+update:
+	go get -u -v gopkg.in/cheggaaa/pb.v1
+	go get -u -v github.com/jcelliott/lumber
+	go get -u -v github.com/mitchellh/go-homedir
+	go get -u -v github.com/urfave/cli
+	go get -u -v golang.org/x/crypto/ssh/terminal
+	go get -u -v golang.org/x/crypto/openpgp/armor
+	go get -u -v golang.org/x/crypto/openpgp
+	go get -u -v github.com/kardianos/osext
+	go get -u -v github.com/aktau/github-release
+	go get -u -v github.com/jteeuwen/go-bindata/...
 
 .PHONY: test
 test:
-	go get -u github.com/schollz/sdees/src
-	go get github.com/jcelliott/lumber
-	go get github.com/kardianos/osext
-	go get github.com/mitchellh/go-homedir
-	go get github.com/urfave/cli
-	go get github.com/jteeuwen/go-bindata/...
-	go get github.com/kardianos/osext
-	go get github.com/speps/go-hashids
 	cd src && $(GOPATH)/bin/go-bindata bin
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	cd src && go test -v -cover
@@ -58,8 +55,6 @@ clean:
 
 .PHONY: release
 release:
-	go get github.com/kardianos/osext
-	go get github.com/aktau/github-release
 	echo "Deleting old release"
 	git tag -d ${VERSION};
 	git push origin :${VERSION};
