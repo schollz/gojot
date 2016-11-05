@@ -20,11 +20,11 @@ All information saved in the `git` repo is encrypted using a symmetric cipher wi
 
 ## Possible collisions in entry names
 
-Currently there are only 47,300,000 alliterations available for random entry names. Thus, a collision probability of 50% will occur after ~7,000 entries. Collisions are not detrimental, but it will only allow one document to be loaded with the same entry name. The reason that this happens is technical, and [is slated to be resolved](https://github.com/schollz/sdees/issues/73).
+Currently there are only 14,260,682,650 adjective+verb combinations available for random entry names. Thus, a collision probability of 50% will occur after ~120,000 entries. Collisions are not detrimental, but it will only allow one document to be loaded with the same entry name. The reason that this happens is technical, and [is slated to be resolved](https://github.com/schollz/sdees/issues/73).
 
 ## Weak encryption of filenames
 
-The text of each entry is securely encrypted using a GPG-compatible symmetric cipher - this is not the issue. The issue is that the filenames are encrypted using a OTP in order to make sure the encrypted names are short enough to be used for branch names and filenames (which are limited to 255 characters usually). This is done by first generating a 1,000,000 key full of random bytes that will be used for the pads in the OTP. Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~300 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). Just don't store credit-card information in the name of your files!
+While the text of each entry is securely encrypted using a GPG-compatible symmetric cipher, the filenames are encrypted using a OTP from a static source of random bytes. The OTP is useful for filenames since encrypted strings are short enough to be used for branch names and filenames (which are limited to 255 characters). Pads are used randomly (since usage cannot be synced), and generally only 20-30 bytes will be used at a time. Still, this means a probability of 50% to overlap could start to occur after ~600 entries and a complete collision could start occurring with 50% probability after ~300 documents. This would only allow an attacker to reveal the names of two documents, though, and not any of the information inside the documents (as that is stored under GPG). So do not store credit-card information in the names of your files!
 
 ## `git` version 2.5+ required
 
