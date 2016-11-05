@@ -65,8 +65,13 @@ func SetupConfig() {
 			break
 		}
 		// check if it actually exists
-		cmd := exec.Command(configParameters.Editor+Extension, "--version")
+		cmd := exec.Command(path.Join(ProgramPath, configParameters.Editor+Extension), "--version")
 		_, err := cmd.Output()
+		if err == nil {
+			break
+		}
+		cmd = exec.Command(path.Join(".", configParameters.Editor+Extension), "--version")
+		_, err = cmd.Output()
 		if err == nil {
 			break
 		}

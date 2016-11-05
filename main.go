@@ -82,6 +82,7 @@ EXAMPLE USAGE:
 		// Check new Version
 		programPath, _ := osext.Executable()
 		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
+		sdees.ProgramPath, _ = osext.ExecutableFolder()
 
 		// Process some flags
 		if ResetConfig {

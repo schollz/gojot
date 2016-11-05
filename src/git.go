@@ -201,15 +201,6 @@ func trackBranchInParallel(gitfolder string, branch string, wg *sync.WaitGroup) 
 // Fetch will force fetch and update tracking and rebase all branches so
 // that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
-	// Get password asyncrhonsyl
-	gettingPassword := false
-	wg := sync.WaitGroup{}
-	if Passphrase == "alskdfjalskdjfalskjdflajsdfljasd" {
-		wg.Add(1)
-		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done(); fmt.Println("Fetching...") }()
-		gettingPassword = true
-	}
-
 	id := RandStringBytesMaskImprSrc(4, time.Now().UnixNano())
 	logger.Debug("[%s]Fetching %s", id, gitfolder)
 	defer timeTrack(time.Now(), "["+id+"]Fetching "+gitfolder)
@@ -217,6 +208,15 @@ func Fetch(gitfolder string) error {
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	os.Chdir(gitfolder)
+
+	// Get password asyncrhonsly
+	gettingPassword := false
+	wg := sync.WaitGroup{}
+	if Passphrase == "alskdfjalskdjfalskjdflajsdfljasd" {
+		wg.Add(1)
+		go func() { Passphrase = PromptPassword(RemoteFolder); wg.Done(); fmt.Println("Fetching...") }()
+		gettingPassword = true
+	}
 
 	// Get clean DIR
 	cmd := exec.Command("git", "reset", "--hard", "HEAD")
@@ -261,6 +261,8 @@ func Fetch(gitfolder string) error {
 		branches = append(branches, branchName)
 	}
 
+	logger.Debug("Found %d branches", len(branches))
+
 	// Find all locally tracked branches with
 	//		git branch -vv
 	logger.Debug("git branch -vv")
@@ -287,16 +289,21 @@ func Fetch(gitfolder string) error {
 	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
 	numTracked := 0
-	wg2 := sync.WaitGroup{}
+	// wg2 := sync.WaitGroup{}
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
-			wg2.Add(1)
 			logger.Debug("remote '%s' not in local", branch)
-			go trackBranchInParallel(gitfolder, branch, &wg2)
+			// wg2.Add(1)
+			// trackBranchInParallel(gitfolder, branch, &wg2)
+
+			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
+			cmd.Output()
+			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
+			cmd.Output()
 			numTracked++
 		}
 	}
-	wg2.Wait()
+	// wg2.Wait()
 	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find ANY that have "ahead" or "behind", and do

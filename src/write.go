@@ -117,7 +117,13 @@ func WriteEntry() string {
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		cmd := exec.Command(path.Join(ProgramPath, Editor+Extension), cmdArgs...)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		err2 := cmd.Run()
+		if err2 != nil {
+			log.Fatal(err2)
+		}
 	}
 	fileContents, _ := ioutil.ReadFile(path.Join(TempPath, "temp"))
 	return strings.TrimSpace(string(fileContents))
