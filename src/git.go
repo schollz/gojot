@@ -187,17 +187,6 @@ func DeleteBranch(branch string) error {
 	return nil
 }
 
-func trackBranchInParallel(gitfolder string, branch string, wg *sync.WaitGroup) {
-	cwd, _ := os.Getwd()
-	defer os.Chdir(cwd)
-	os.Chdir(gitfolder)
-	cmd := exec.Command("git", "branch", "--track", branch, "origin/"+branch)
-	cmd.Output()
-	cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
-	cmd.Output()
-	wg.Done()
-}
-
 // Fetch will force fetch and update tracking and rebase all branches so
 // that it matches the remote origin. It will not destroy local copies of things.
 func Fetch(gitfolder string) error {
@@ -289,13 +278,9 @@ func Fetch(gitfolder string) error {
 	//   SET OF BRANCHES FROM git branch -vv
 	start := time.Now()
 	numTracked := 0
-	// wg2 := sync.WaitGroup{}
 	for branch := range remotelyTrackedBranches {
 		if _, ok := locallyTrackedBranches[branch]; !ok {
 			logger.Debug("remote '%s' not in local", branch)
-			// wg2.Add(1)
-			// trackBranchInParallel(gitfolder, branch, &wg2)
-
 			cmd = exec.Command("git", "branch", "--track", branch, "origin/"+branch)
 			cmd.Output()
 			cmd = exec.Command("git", "branch", "--set-upstream-to=origin/"+branch, branch)
@@ -303,7 +288,6 @@ func Fetch(gitfolder string) error {
 			numTracked++
 		}
 	}
-	// wg2.Wait()
 	logger.Debug("Tracking took " + time.Since(start).String())
 
 	// Find ANY that have "ahead" or "behind", and do
