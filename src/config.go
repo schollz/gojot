@@ -27,9 +27,9 @@ func SetupConfig() {
 		fmt.Scanln(&yesno)
 		cwd, _ := os.Getwd()
 		os.Chdir(CachePath)
-		if !exists(EncodeBase58(yesno)) {
+		if !exists(HashString(yesno)) {
 			fmt.Println("Cloning " + yesno + " ...")
-			cmd := exec.Command("git", "clone", yesno, EncodeBase58(yesno))
+			cmd := exec.Command("git", "clone", yesno, HashString(yesno))
 			out2, _ := cmd.StderrPipe()
 			cmd.Start()
 			out2b, _ := ioutil.ReadAll(out2)
