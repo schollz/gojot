@@ -33,7 +33,7 @@ If you are on Ubuntu, make sure to add the latest repo:
 Download
 ---------
 
-Then, to install ``sdees``, simply download `the latest release binary`_
+Then, to install *sdees*, simply download `the latest release binary`_
 
 *OR*
 

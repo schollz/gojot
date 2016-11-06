@@ -3,18 +3,13 @@ Overview
 
 .. raw:: html
 
-    <div class="console-container">
-    <div class="console"><pre>
-    <span>sdees --list
-    <br>Some moreas dlfkja sdlfkjas ldfkja sldfkja sldfkja sldkfj alsdkj flaksj dflaksj dflka jsdlfkajs dlfk ajsldfk jalsdkjf alskd jflaskdj flaks jdflaksj dflaksjd lfkasj dlfkasj dlfkajs dlfkas jdflakj sdfl
-    <br>Some more
-    </span></pre></div></div>
+   <center>
+   <script type="text/javascript" src="https://asciinema.org/a/c1lygo9g50g0fvyibtu9y4esw.js" id="asciicast-c1lygo9g50g0fvyibtu9y4esw" async></script>
+   </center>
 
+*sdees* is for *distributed* *editing* of *encrypted* *stuff*.
 
-What is sdees?
---------------
-
-*sdees* is for *distributed* *editing* of *encrypted* *stuff.*
+*sdees does editing, encryption* and *synchronization*.
 
 But, really, *sdees* is just a fancy wrapper for ``git`` that
 allows you to make time-stamped entries to encrypted documents while
@@ -47,3 +42,4 @@ Features
     About <about>
     Installation Guide <install>
     Examples <examples>
+    Advanced <advanced>
