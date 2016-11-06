@@ -54,7 +54,7 @@ func WriteEntry() string {
 			}
 		}
 
-		cmdArgs = []string{"-c", "WPCLI", "+startinsert", path.Join(TempPath, "temp")}
+		cmdArgs = []string{"-u", path.Join(TempPath, ".vimrc"), "-c", "WPCLI", "+startinsert", path.Join(TempPath, "temp")}
 
 	} else if Editor == "nano" {
 		lines := "100" // TODO: DETERMINE THIS

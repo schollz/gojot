@@ -45,6 +45,16 @@ func EncodeToString(b []byte) string {
 	return EncodeAlphabet(b, BTCAlphabet)
 }
 
+// EncodeBase58 encodes a byte slice to a modified base58 string, using BTCAlphabet
+func EncodeBase58(s string) string {
+	return EncodeAlphabet([]byte(s), BTCAlphabet)
+}
+
+// DecodeBase58 decodes a modified base58 string to a byte slice, using BTCAlphabet
+func DecodeBase58(b string) string {
+	return string(DecodeAlphabet(b, BTCAlphabet))
+}
+
 // DecodeAlphabet decodes a modified base58 string to a byte slice, using alphabet.
 func DecodeAlphabet(b, alphabet string) []byte {
 	answer := big.NewInt(0)
