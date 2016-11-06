@@ -50,6 +50,8 @@ func GoDelete() {
 	} else {
 		GoDeleteEntry(document, entry, cache)
 	}
+	CurrentDocument = document
+	DeleteCache()
 }
 
 func GoDeleteEntry(document string, entry string, cache Cache) {
@@ -97,13 +99,6 @@ func GoDeleteDocument(document string, cache Cache) error {
 		fmt.Printf("Did not delete %s\n", DecryptOTP(document))
 	}
 
-	logger.Debug("Deleting cache")
-	err := DeleteCache()
-	if err != nil {
-		logger.Debug(err.Error())
-		return err
-	}
-
 	logger.Debug("Deleting master index file: .%s", document)
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
@@ -111,7 +106,7 @@ func GoDeleteDocument(document string, cache Cache) error {
 
 	// Make sure we aren't on that branch
 	cmd := exec.Command("git", "checkout", "master")
-	_, err = cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
 		return errors.New("Problem switching to master")
 	}
