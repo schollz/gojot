@@ -44,6 +44,6 @@ Features
     :maxdepth: 2
 
     Overview <index>
+    About <about>
     Installation Guide <install>
     Examples <examples>
-    API <klink>
