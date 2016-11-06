@@ -3,9 +3,12 @@ package sdees
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 func Run() {
@@ -60,20 +63,30 @@ func Run() {
 
 	// List available documents to choose from
 	availableFiles := ListFiles(RemoteFolder)
+	if ShowStats {
+		DisplayStats(availableFiles)
+		return
+	}
 	if len(InputDocument) == 0 {
 		var editDocument string
-		fmt.Printf("\nCurrently available documents: ")
 		logger.Debug("Last documents was %s", (CurrentDocument))
+		data := [][]string{}
 		for _, file := range availableFiles {
-			fmt.Printf("\n- %s ", file)
 			quickCache, errCache := LoadCache(RemoteFolder, EncryptOTP(file))
+			entryString := "N/A"
 			if errCache == nil {
-				fmt.Printf("(%d entries) ", len(quickCache.Branch))
+				entryString = Comma(int64(len(quickCache.Branch)))
 			}
-			if EncryptOTP(file) == EncryptOTP(CurrentDocument) {
-				fmt.Print("(default) ")
-			}
+			data = append(data, []string{file, entryString})
 		}
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"Document", "# Entries"})
+		for _, v := range data {
+			table.Append(v)
+		}
+		fmt.Printf("\n")
+		table.Render()
+
 		if len(CurrentDocument) == 0 {
 			CurrentDocument = "notes.txt"
 		}

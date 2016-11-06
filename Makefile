@@ -26,6 +26,7 @@ update:
 	go get -u -v github.com/kardianos/osext
 	go get -u -v github.com/aktau/github-release
 	go get -u -v github.com/jteeuwen/go-bindata/...
+	go get -u -v github.com/olekukonko/tablewriter
 
 .PHONY: test
 test:

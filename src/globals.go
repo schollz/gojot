@@ -14,5 +14,5 @@ var (
 	RemoteFolder, CacheFile                                         string
 	Extension                                                       string
 	Passphrase, Cryptkey                                            string
-	Debug, ResetConfig, DeleteDocument                              bool
+	Debug, ResetConfig, DeleteDocument, ShowStats                   bool
 )

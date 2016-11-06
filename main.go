@@ -145,6 +145,11 @@ EXAMPLE USAGE:
 			Usage:       "Gets summary",
 			Destination: &sdees.Summarize,
 		},
+		cli.BoolFlag{
+			Name:        "stats",
+			Usage:       "Print stats",
+			Destination: &sdees.ShowStats,
+		},
 	}
 	app.Run(os.Args)
 }
