@@ -27,9 +27,9 @@ func SetupConfig() {
 		fmt.Scanln(&yesno)
 		cwd, _ := os.Getwd()
 		os.Chdir(CachePath)
-		if !exists(HashString(yesno)) {
+		if !exists(EncodeBase58(yesno)) {
 			fmt.Println("Cloning " + yesno + " ...")
-			cmd := exec.Command("git", "clone", yesno, HashString(yesno))
+			cmd := exec.Command("git", "clone", yesno, EncodeBase58(yesno))
 			out2, _ := cmd.StderrPipe()
 			cmd.Start()
 			out2b, _ := ioutil.ReadAll(out2)
@@ -101,7 +101,7 @@ func LoadConfiguration() {
 	}
 	Editor = c.Editor
 	Remote = c.Remote
-	RemoteFolder = path.Join(CachePath, HashString(Remote))
+	RemoteFolder = path.Join(CachePath, EncodeBase58(Remote))
 	if len(Remote) == 0 {
 		SetupConfig()
 	}
