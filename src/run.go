@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,16 +72,16 @@ func Run() {
 		var editDocument string
 		logger.Debug("Last documents was %s", (CurrentDocument))
 		data := [][]string{}
-		for _, file := range availableFiles {
+		for fileNum, file := range availableFiles {
 			quickCache, errCache := LoadCache(RemoteFolder, EncryptOTP(file))
 			entryString := "N/A"
 			if errCache == nil {
 				entryString = Comma(int64(len(quickCache.Branch)))
 			}
-			data = append(data, []string{file, entryString})
+			data = append(data, []string{strconv.Itoa(fileNum + 1), file, entryString})
 		}
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Document", "# Entries"})
+		table.SetHeader([]string{"#", "Document", "# Entries"})
 		for _, v := range data {
 			table.Append(v)
 		}
@@ -99,7 +100,12 @@ func Run() {
 		} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
 			CurrentDocument = ("notes.txt")
 		} else if len(editDocument) > 0 {
-			CurrentDocument = (editDocument)
+			fileNum, err := strconv.Atoi(strings.TrimSpace(editDocument))
+			if err == nil {
+				CurrentDocument = availableFiles[fileNum-1]
+			} else {
+				CurrentDocument = strings.TrimSpace(editDocument)
+			}
 		}
 	} else {
 		InputDocument = EncryptOTP(InputDocument)
