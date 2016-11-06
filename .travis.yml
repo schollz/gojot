@@ -17,3 +17,4 @@ install:
   - go get -v github.com/kardianos/osext
   - go get -v github.com/aktau/github-release
   - go get -v github.com/jteeuwen/go-bindata/...
+  - go get -u -v github.com/olekukonko/tablewriter
