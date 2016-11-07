@@ -15,18 +15,19 @@ func WriteEntry() string {
 	var cmdArgs []string
 	if Editor == "vim" {
 		// Setup vim
-		vimrc := `func! WordProcessorModeCLI()
-			setlocal formatoptions=t1
-			setlocal textwidth=80
-			map j gj
-			map k gk
-			set formatprg=par
-			setlocal wrap
-			setlocal linebreak
-			setlocal noexpandtab
-			normal G$
-	endfu
-	com! WPCLI call WordProcessorModeCLI()`
+		vimrc := `set nocompatible
+func! WordProcessorModeCLI()
+	setlocal formatoptions=t1
+	setlocal textwidth=80
+	map j gj
+	map k gk
+	set formatprg=par
+	setlocal wrap
+	setlocal linebreak
+	setlocal noexpandtab
+	normal G$
+endfu
+com! WPCLI call WordProcessorModeCLI()`
 		// Append to .vimrc file
 		if exists(path.Join(TempPath, ".vimrc")) {
 			// Check if .vimrc file contains code
