@@ -227,7 +227,7 @@ func Fetch(gitfolder string) error {
 	out2b, _ = ioutil.ReadAll(out2)
 	cmd.Wait()
 	if strings.Contains(string(out2b), "fatal:") {
-		return errors.New(strings.TrimSpace(string(out2b)))
+		fmt.Println(strings.TrimSpace(string(out2b)))
 	}
 
 	// Get branchces

@@ -1,15 +1,15 @@
 Overview
 =========
 
-.. raw:: html
-
-   <center>
-   <script type="text/javascript" src="https://asciinema.org/a/c1lygo9g50g0fvyibtu9y4esw.js" id="asciicast-c1lygo9g50g0fvyibtu9y4esw" async></script>
-   </center>
-
 *sdees* is for *distributed* *editing* of *encrypted* *stuff*.
 
 *sdees does editing, encryption* and *synchronization*.
+
+.. raw:: html
+
+   <center>
+   <script type="text/javascript" src="https://asciinema.org/a/1u4hogpihb4ixgo804gci5anm.js" id="asciicast-1u4hogpihb4ixgo804gci5anm" async data-autoplay="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+   </center>
 
 But, really, *sdees* is just a fancy wrapper for ``git`` that
 allows you to make time-stamped entries to encrypted documents while
