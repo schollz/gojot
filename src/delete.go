@@ -65,7 +65,7 @@ func GoDeleteEntry(document string, entry string, cache Cache) {
 				err := DeleteBranch(entry)
 				deleteSuccess = true
 				if err == nil {
-					fmt.Printf("Deleted entry %s\n", (entry))
+					fmt.Printf("Deleted entry %s\n", DecryptOTP(entry))
 				} else {
 					fmt.Printf("Error deleting %s, does it exist?\n", DecryptOTP(entry))
 				}
@@ -75,7 +75,7 @@ func GoDeleteEntry(document string, entry string, cache Cache) {
 			fmt.Printf("Error deleting %s, it does not exist\n", DecryptOTP(entry))
 		}
 	} else {
-		fmt.Printf("Did not delete %s\n", (entry))
+		fmt.Printf("Did not delete %s\n", DecryptOTP(entry))
 	}
 }
 
