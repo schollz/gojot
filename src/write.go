@@ -16,6 +16,7 @@ func WriteEntry() string {
 	if Editor == "vim" {
 		// Setup vim
 		vimrc := `set nocompatible
+set backspace=2
 func! WordProcessorModeCLI()
 	setlocal formatoptions=t1
 	setlocal textwidth=80
