@@ -18,3 +18,4 @@ install:
   - go get -v github.com/aktau/github-release
   - go get -v github.com/jteeuwen/go-bindata/...
   - go get -u -v github.com/olekukonko/tablewriter
+  - go get -u -v github.com/codahale/chacha20

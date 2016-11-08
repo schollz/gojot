@@ -16,6 +16,7 @@ $(BINARY): $(SOURCES)
 
 .PHONY: update
 update:
+	go get -u -v github.com/codahale/chacha20
 	go get -u -v gopkg.in/cheggaaa/pb.v1
 	go get -u -v github.com/jcelliott/lumber
 	go get -u -v github.com/mitchellh/go-homedir

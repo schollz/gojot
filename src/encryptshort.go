@@ -3,57 +3,63 @@ package sdees
 import (
 	"hash/fnv"
 	"math/rand"
-	"strconv"
 	"strings"
+
+	"github.com/codahale/chacha20"
 )
 
-// EncryptOTP runs a XOR encryption on the input string using the random bytes
-// in the massive key.
-// Random bytes are used starting at a position based on the hash of the input string.
-// The starting position is saved as a prefix to the encrypted string
-func EncryptOTP(input string) string {
-	if strings.Contains(input, ".otp") || len(input) == 0 {
-		return input
+func GenerateCryptkey() string {
+	key := make([]byte, chacha20.KeySize)
+	rand.Read(key)
+	return EncodeToString(key)
+}
+
+// EncryptOTP runs a XOR encryption on the input string using ChaCha20
+// The nonce is generate from a hash so that its reproducible
+func EncryptOTP(s string) string {
+	if strings.Contains(s, ".otp") || len(s) == 0 {
+		return s
 	}
-	key := Cryptkey
-	inputb := []byte(input)
+	key := DecodeString(Cryptkey)
 
 	// Get integer hash of input, using some of the random bytes in key as salt
 	h := fnv.New32a()
-	h.Write(append(inputb, []byte(key)[:100]...))
+	h.Write(append([]byte(s), []byte(key)[:10]...))
 	inputToNum := h.Sum32()
 
-	// Use random integer to seed and generate random start position
+	// Use random integer to seed and generate nonce
 	rand.Seed(int64(inputToNum))
-	startPos := rand.Intn(999000-1) + 1
+	nonce := make([]byte, chacha20.NonceSize)
+	rand.Read(nonce)
 
-	// Do XOR encryption based on that start position
-	keyb := []byte(key[startPos : startPos+len(input)])
-	b := make([]byte, len(inputb))
-	for i := 0; i < len(inputb); i++ {
-		b[i] = inputb[i] ^ keyb[i]
+	c, err := chacha20.New(key, nonce)
+	if err != nil {
+		panic(err)
 	}
-
-	// Return string as [startposition]-==-[encryptedstring]
-	startPosString := strconv.Itoa(startPos)
-	return startPosString + "." + EncodeToString(b) + ".otp"
+	src := []byte(s)
+	dst := make([]byte, len(src))
+	c.XORKeyStream(dst, src)
+	return EncodeToString(nonce) + "." + EncodeToString(dst) + ".otp"
 }
 
-// DecryptOTP runs a XOR encryption on the input string using the random bytes
-// in the massive key.
-// Random bytes are used starting at a position based on the prefix in the input
+// DecryptOTP runs a XOR encryption on the input string using ChaCha20
 func DecryptOTP(input string) string {
 	if !strings.Contains(input, ".otp") {
 		return input
 	}
-	key := Cryptkey
-	parts := strings.Split(input, ".")
-	inputb := DecodeString(parts[1])
-	startPos, _ := strconv.Atoi(parts[0])
-	keyb := []byte(key[startPos : startPos+len(inputb)])
-	b := make([]byte, len(inputb))
-	for i := 0; i < len(inputb); i++ {
-		b[i] = inputb[i] ^ keyb[i]
+	items := strings.Split(input, ".")
+
+	key := DecodeString(Cryptkey)
+
+	nonce := DecodeString(items[0])
+
+	c, err := chacha20.New(key, nonce)
+	if err != nil {
+		panic(err)
 	}
-	return string(b)
+
+	src := DecodeString(items[1])
+	dst := make([]byte, len(src))
+	c.XORKeyStream(dst, src)
+	return string(dst)
 }

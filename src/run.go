@@ -76,7 +76,7 @@ func Run() {
 			quickCache, errCache := LoadCache(RemoteFolder, EncryptOTP(file))
 			entryString := "N/A"
 			if errCache == nil {
-				entryString = Comma(int64(len(quickCache.Branch)))
+				entryString = Comma(int64(1 + len(quickCache.Branch)))
 			}
 			data = append(data, []string{strconv.Itoa(fileNum + 1), file, entryString})
 		}

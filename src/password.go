@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 	"syscall"
-	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -31,8 +30,7 @@ func PromptPassword(gitfolder string) string {
 		}
 		Passphrase = password1
 		logger.Debug("It seems key doesn't exist yet, making it")
-		Cryptkey = RandStringBytesMaskImprSrc(1000000, time.Now().UnixNano())
-		// sqrt(1000000) ~ 300
+		Cryptkey = GenerateCryptkey()
 		WriteToMaster(gitfolder, ".key", Cryptkey)
 	} else {
 		logger.Debug("Testing with master:key")
