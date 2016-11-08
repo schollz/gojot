@@ -47,13 +47,13 @@ entry and they are resolved by combining the diffed versions of the
 entries. Multiple documents can be stored in a single ``git``
 repository.
 
-All information saved in the ``git`` repo is encrypted using a symmetric
-cipher with a user-provided passphrase. The passphrase is not stored
-anywhere on the machine or repo. Each entry in the ``git`` repo is
-encrypted. When editing an encrypted document, a decrypted temp file is
+All information saved in the ``git`` repo is encrypted. The text of each entry
+is encrypted using OpenPGP with a symmetric cipher with a user-provided passphrase.
+The passphrase is not stored anywhere on the machine or repo.
+All the filenames and branch names are encrypted using ChaCha20 with a key generated
+upon initialization. When editing an encrypted document, a decrypted temp file is
 stored and then shredded (random bytes written and then deleted) after
-use. All filenames are encrypted using a one-time pad whose pages are
-generated at the initialization.
+use.
 
 .. _local or remote: https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server
 
@@ -65,9 +65,15 @@ Limitations
 *sdees* is not meant as an encrypted file system, as it has limits to
 the number of entries that can be stored.
 
-Possible collisions in entry names
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Entry names need to be unique
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Entry names allow you quick access to a specific entry without having to recall
+a d ate. Entry names should be unique, as currently **sdees** will load a random
+entry if their are two entries with the same name.
+
+Collision of entry names
+~~~~~~~~~~~~~~~~~~~~~~~~
 Currently there are only 14,260,682,650 adjective+verb combinations
 available for random entry names. Thus, a collision probability of 50%
 will occur after ~120,000 entries. Collisions are not detrimental, but
@@ -75,26 +81,13 @@ it will only allow one document to be loaded with the same entry name.
 The reason that this happens is technical, and `is slated to be
 resolved`_.
 
-.. warning::
 
-    Do not store sensitive information in the entry or document names! They are encrypted,
-    but they are not encrypted as securely as the text of the entry.
-    
-Weak encryption of filenames
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``git`` version 2.5+
+~~~~~~~~~~~~~~~~~~~~~~
 
-While the text of each entry is securely encrypted using a
-GPG-compatible symmetric cipher, the filenames are encrypted using a OTP
-from a static source of random bytes. The OTP is useful for filenames
-since encrypted strings are short enough to be used for branch names and
-filenames (which are limited to 255 characters). Pads are used randomly
-(since usage cannot be synced), and generally only 20-30 bytes will be
-used at a time. Still, this means a probability of 50% to overlap could
-start to occur after ~600 entries and a complete collision could start
-occurring with 50% probability after ~300 documents. This would only
-allow an attacker to reveal the names of two documents, though, and not
-any of the information inside the documents (as that is stored under
-GPG). So do not store credit-card information in the names of your
-files!
+To determine branches that are ahead/behind, this program uses ``git for-each-ref``
+with the ``push:track`` option, which is not introduced until
+`version 2.5.0, released March, 2016`_.
+The alternative to this is ``git branch -vv`` but that is not considered stable.
 
 .. _is slated to be resolved: https://github.com/schollz/sdees/issues/73

@@ -4,7 +4,9 @@ Help
 First time startup
 --------------------
 
-On the first use you will be asked to point *sdees* to a repository. You will also be able to select which editor you'd like to use. Currently only four editors are supported: micro, vim, emacs, and nano.
+On the first use you will be asked to point *sdees* to a repository.
+You will also be able to select which editor you'd like to use.
+Currently only four editors are supported: ``micro``, ``vim``, ``emacs``, and ``nano``.
 
 .. raw:: html
 
@@ -17,7 +19,6 @@ Adding an entry
 
 Adding an entry is as simple as starting the program and selecting the document to put the entry in.
 
-
 Here is a simple example of adding an entry:
 
 .. raw:: html
@@ -26,13 +27,14 @@ Here is a simple example of adding an entry:
    <script type="text/javascript" src="https://asciinema.org/a/bwgsyl52a7vmtsbwwvbjxm4ii.js" id="asciicast-bwgsyl52a7vmtsbwwvbjxm4ii" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
    </center>
 
-Each entry is assigned a random name, which you can also change to whatever you want. To do this, simply delete the randomized entry name and type in your own.
+Each entry is assigned a random name.
+The random name is only used to keep track of things internally, but you can also
+use the name to quickly edit a specific entry. To do this, simply delete the randomized entry name and type in your own.
 
 .. warning::
 
-    Do not store sensitive information in the entry names, as the OTP encryption could be broken if you store thousands of entries. Also make sure the entry names are unique!
+    Make sure the entry names are unique!
 
-Here is an example:
 
 .. raw:: html
 
@@ -40,12 +42,19 @@ Here is an example:
    <script type="text/javascript" src="https://asciinema.org/a/0jky6qw2cccm54zcfs99awpwq.js" id="asciicast-0jky6qw2cccm54zcfs99awpwq" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
    </center>
 
+Then, to edit a specific entry, simply type in the entry name after running the program:
+
+.. raw:: html
+
+   <center>
+   <script type="text/javascript" src="https://asciinema.org/a/5zksx7garh7z2ndtz6psw502n.js" id="asciicast-5zksx7garh7z2ndtz6psw502n" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+   </center>
 
 
 ``--delete``
 --------------
 
-You can delete whole documents, or single entries. In both cases you just name the item you want to delete. 
+You can delete whole documents, or single entries. In both cases you just name the item you want to delete.
 
 .. warning::
 

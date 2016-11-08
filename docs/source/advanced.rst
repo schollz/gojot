@@ -2,6 +2,7 @@ How to setup ``git`` server
 ===========================
 
 
+
 The usage of *sdees* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
 
 *Easiest way:* Just dont. You can just use a `Github`_ or `Bitbucket`_

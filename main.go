@@ -44,7 +44,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "sdees"
 	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
-	app.Usage = `SDEES Does Editing, Encryption, and Synchronization
+	app.Usage = `sdees is for distributed editing of encrypted stuff
 
 	 https://github.com/schollz/sdees
 
@@ -53,9 +53,9 @@ FOLDERS:
 	'` + sdees.ConfigPath + `' stores all configuration files
 
 EXAMPLE USAGE:
-   sdees new.txt # edit a new document, new.txt
-	 sdees UglyDuckling # edit a entry in a document
-   sdees --summary -n 5 # list a summary of last five entries
+   sdees new.txt # create new / edit a document, 'new.txt'
+   sdees Entry123 # edit a entry, 'Entry123'
+   sdees --summary # list a summary of all entries
    sdees --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
 
 	app.Action = func(c *cli.Context) error {
