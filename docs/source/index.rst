@@ -32,13 +32,13 @@ Features
 --------
 
 -  *Only one* dependency: ``git`` (version 2.5+)
--  Cross-compatibility (Windows/Linux/OS X).
--  Built-in encryption, compatible with ``gpg``.
+-  Single binary, cross-compatibility (Windows/Linux/OS X).
+-  Fulltext encryption using OpenPGP, compatible with ``gpg``.
+-  Filename encryption using ChaCha20.
 -  Built-in text editor, ``micro`` (but options for
    ``emacs``/``vim``/``nano``).
 -  Built-in version control (all versions are saved, currently only
    newest is shown).
--  Encrypted filenamesmostly.
 -  Searching, summarizing, synchronized deletion, self-updating,
    collision management, and more.
 

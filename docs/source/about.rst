@@ -57,7 +57,20 @@ use.
 
 .. _local or remote: https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server
 
+Alternatives to *sdees*
+------------------------
 
+Here are some software which operate very similarly to *sdees*, but often require other software or system-specific utilities.
+I enjoy these software, and the use of some of them was the inpsiration for *sdees* (i.e. ``jrnl.sh``):
+
+*  **Cryptpad** `[site] <https://beta.cryptpad.fr/pad/>`_ - zero knowledge realtime encrypted editor in your web browser
+    Requires internet access, and a browser, difficult to reconstruct many documents.
+*  **jrnl.sh** `[site] <http://jrnl.sh/>`_ - command line journal application with encryption
+    Requires Python. Syncing only available via Dropbox which won't support merging encrypted files if editing offline.
+*  **vimwiki** `[site] <http://vimwiki.github.io/>`_ - command line editor with `capability of distributed encryption <http://www.stochasticgeometry.ie/2012/11/23/vimwiki/>`_
+    Requires system-specific filesystem encryption (e.g. `eCryptFS <http://ecryptfs.org/>`_). Works with any DVCS, but merges are not handled.
+*  **Org mode** `[site] <http://orgmode.org/>`_ - fast and effective plain-text system for authoring documents
+    Requires ``emacs``, requires adding DVCS later
 
 Limitations
 ------------

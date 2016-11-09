@@ -1,7 +1,7 @@
 ## `sdees` is for `distributed` `editing` of `encrypted` `stuff`
 
 
-[![Version 2.0.0beta](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
+[![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
 
@@ -12,15 +12,18 @@ Ok. But, really, `sdees` is just a fancy wrapper for `git` that allows you to ma
 _Note_: The previous non-`git` version of `sdees` can [be found here](https://github.com/schollz/sdees/tree/1.X).
 
 
-## Features
-
-- _Only one_ dependency: `git` (version 2.5+)
-- Cross-compatibility (Windows/Linux/OS X).
-- Built-in encryption, compatible with `gpg`.
-- Built-in text editor, `micro` (but options for `emacs`/`vim`/`nano`).
-- Built-in version control (all versions are saved, currently only newest is shown).
-- Encrypted filenames<sup><a href="https://github.com/schollz/sdees/blob/master/INFO.md#weak-encryption-of-filenames">mostly</a></sup>.
-- Searching, summarizing, synchronized deletion, self-updating, collision management, and more.
+Features
+--------
+-  *Only one* dependency: `git` (version 2.5+)
+-  Single binary, Cross-compatibility (Windows/Linux/OS X).
+-  Fulltext encryption using OpenPGP, compatible with `gpg`.
+-  Filename encryption using ChaCha20.
+-  Built-in text editor, `micro` (but options for
+   `emacs`/`vim`/`nano`).
+-  Built-in version control (all versions are saved, currently only
+   newest is shown).
+-  Searching, summarizing, synchronized deletion, self-updating,
+   collision management, and more.
 
 
 ## Install
@@ -52,10 +55,7 @@ sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
 sdees --help # for more information
 ```
 
-Here's `sdees` in action, editing a [demo repo](https://github.com/schollz/demo). Go check out the [demo repo](https://github.com/schollz/demo) and make sure its encrypted!
-
-![](https://raw.githubusercontent.com/schollz/sdees/master/branding/help3.gif)
-
+For more information, see https://sdees.schollz.com
 
 ### Acknowledgements
 

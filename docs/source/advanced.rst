@@ -1,5 +1,29 @@
+Advanced
+=========
+
+Contributing
+-----------------
+
+Contributions are welcome!
+
+Please feel free to `add an Issue`_ if you find a bug or have a feature
+request.
+
+Pull requests are welcome. If you’d like to test your changes, make sure
+that you change ``GITHUB_TEST_REPO`` in ``src/git_test.go`` to a Git
+repo that you have that can be used for testing. Then simply use
+
+::
+
+    make update
+    make test
+
+to perform tests.
+
+.. _add an Issue: https://github.com/schollz/sdees/issues/new
+
 How to setup ``git`` server
-===========================
+----------------------------
 
 
 
@@ -12,7 +36,7 @@ repository and skip this.
 following these steps.
 
 Remote server
--------------
+~~~~~~~~~~~~~~~~~~
 
 On the remote server ``remote.com``, install the ``git`` server
 dependencies and make a new user:
@@ -56,7 +80,7 @@ which you can add to ``sdees`` as ``git@remote:newrepo.git``.
 
 
 Local server
-------------
+~~~~~~~~~~~~~~~~~~
 
 If you want to just run locally, simply run:
 

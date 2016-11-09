@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=sdees
 
-VERSION=2.0.0beta
+VERSION=2.0.0
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
@@ -57,13 +57,13 @@ clean:
 
 .PHONY: release
 release:
-	echo "Deleting old release"
-	git tag -d ${VERSION};
-	git push origin :${VERSION};
-	github-release delete \
-			--user schollz \
-			--repo sdees \
-			--tag ${VERSION}
+	# echo "Deleting old release"
+	# git tag -d ${VERSION};
+	# git push origin :${VERSION};
+	# github-release delete \
+	# 		--user schollz \
+	# 		--repo sdees \
+	# 		--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
@@ -83,13 +83,13 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win32" -o sdees.exe
-	zip -j sdees-win32.zip sdees.exe
+	zip -j sdees-${VERSION}-win32.zip sdees.exe README.md LICENSE
 	github-release upload \
 			--user schollz \
 			--repo sdees \
 			--tag ${VERSION} \
-			--name "sdees-win32.zip" \
-			--file sdees-win32.zip
+			--name "sdees-${VERSION}-win32.zip" \
+			--file sdees-${VERSION}-win32.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
@@ -103,13 +103,13 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win64" -o sdees.exe
-	zip -j sdees-win64.zip sdees.exe
+	zip -j sdees-${VERSION}-win64.zip sdees.exe README.md LICENSE
 	github-release upload \
 			--user schollz \
 			--repo sdees \
 			--tag ${VERSION} \
-			--name "sdees-win64.zip" \
-			--file sdees-win64.zip
+			--name "sdees-${VERSION}-win64.zip" \
+			--file sdees-${VERSION}-win64.zip
 	rm sdees.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
@@ -122,15 +122,15 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux64" -o sdees
-	zip -j sdees-linux64.zip sdees
+	tar -czvf sdees-${VERSION}-linux64.tar.gz sdees README.md LICENSE
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag ${VERSION} \
-	    --name "sdees-linux64.zip" \
-	    --file sdees-linux64.zip
+	    --name "sdees-${VERSION}-linux64.tar.gz" \
+	    --file sdees-${VERSION}-linux64.tar.gz
 	rm sdees
-	rm -f *.zip
+	rm -f *.tar.gz
 	rm -rf micro*
 	echo "Uploading Linux 32"
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux32.tar.gz
@@ -140,15 +140,15 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=linux GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux32" -o sdees
-	zip -j sdees-linux32.zip sdees
+	tar -czvf sdees-${VERSION}-linux32.tar.gz sdees README.md LICENSE
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag ${VERSION} \
-	    --name "sdees-linux32.zip" \
-	    --file sdees-linux32.zip
+	    --name "sdees-${VERSION}-linux32.tar.gz" \
+	    --file sdees-${VERSION}-linux32.tar.gz
 	rm sdees
-	rm -f *.zip
+	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading Linux ARM ------------"
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux-arm.tar.gz
@@ -158,15 +158,15 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=linux GOARCH=arm go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux-arm" -o sdees
-	zip -j sdees-linux-arm.zip sdees
+	tar -czvf sdees-${VERSION}-linux-arm.tar.gz sdees README.md LICENSE
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag ${VERSION} \
-	    --name "sdees-linux-arm.zip" \
-	    --file sdees-linux-arm.zip
+	    --name "sdees-${VERSION}-linux-arm.tar.gz" \
+	    --file sdees-${VERSION}-linux-arm.tar.gz
 	rm sdees
-	rm -f *.zip
+	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading OSX ------------"
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-osx.tar.gz
@@ -176,13 +176,85 @@ release:
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
 	env GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
-	zip -j sdees-osx.zip sdees
+	tar -czvf sdees-${VERSION}-osx.tar.gz sdees README.md LICENSE
 	github-release upload \
 	    --user schollz \
 	    --repo sdees \
 	    --tag ${VERSION} \
-	    --name "sdees-osx.zip" \
-	    --file sdees-osx.zip
+	    --name "sdees-${VERSION}-osx.tar.gz" \
+	    --file sdees-${VERSION}-osx.tar.gz
 	rm sdees
-	rm -f *.zip
+	rm -f *.tar.gz
+	rm -rf micro*
+	echo "---------- Uploading freebsd32 ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-freebsd32.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=freebsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o sdees
+	tar -czvf sdees-${VERSION}-freebsd32.tar.gz sdees README.md LICENSE
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-${VERSION}-freebsd32.tar.gz" \
+	    --file sdees-${VERSION}-freebsd32.tar.gz
+	rm sdees
+	rm -f *.tar.gz
+	rm -rf micro*
+	echo "---------- Uploading freebsd64 ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-freebsd64.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=freebsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o sdees
+	tar -czvf sdees-${VERSION}-freebsd64.tar.gz sdees README.md LICENSE
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-${VERSION}-freebsd64.tar.gz" \
+	    --file sdees-${VERSION}-freebsd64.tar.gz
+	rm sdees
+	rm -f *.tar.gz
+	rm -rf micro*
+	echo "---------- Uploading openbsd32 ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-openbsd32.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=openbsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o sdees
+	tar -czvf sdees-${VERSION}-openbsd32.tar.gz sdees README.md LICENSE
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-${VERSION}-openbsd32.tar.gz" \
+	    --file sdees-${VERSION}-openbsd32.tar.gz
+	rm sdees
+	rm -f *.tar.gz
+	rm -rf micro*
+	echo "---------- Uploading openbsd64 ------------"
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-openbsd64.tar.gz
+	tar -xvzf micro*.tar.gz
+	mv micro*/micro ./src/bin
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	env GOOS=openbsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o sdees
+	tar -czvf sdees-${VERSION}-openbsd64.tar.gz sdees README.md LICENSE
+	github-release upload \
+	    --user schollz \
+	    --repo sdees \
+	    --tag ${VERSION} \
+	    --name "sdees-${VERSION}-openbsd64.tar.gz" \
+	    --file sdees-${VERSION}-openbsd64.tar.gz
+	rm sdees
+	rm -f *.tar.gz
 	rm -rf micro*

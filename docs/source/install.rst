@@ -25,7 +25,10 @@ If you are on Ubuntu, you can install the latest from apt:
 
 .. include:: ./downloads.rst
 
+Alternative downloads
+-----------------------
 
+Previous versions of *sdees* and also downloads for FreeBSD, OpenBSD, and 32-bit versions can be found on the `Github releases <https://github.com/schollz/sdees/releases/latest>`_.
 
 Install from source
 ----------------------
