@@ -258,3 +258,5 @@ release:
 	rm sdees
 	rm -f *.tar.gz
 	rm -rf micro*
+	git reset --hard HEAD
+	git pull
