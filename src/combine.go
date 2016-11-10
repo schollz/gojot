@@ -33,13 +33,13 @@ func CombineEntries(cache Cache) ([]string, []string, map[string]string) {
 	for branch := range cache.Branch {
 		textData := HeadMatter(cache.Branch[branch].Date, branch) + cache.Branch[branch].Text
 		branchHashes[branch] = GetMD5Hash(cache.Branch[branch].Text)
-		parsedData, err := ParseDate(strings.TrimSpace(cache.Branch[branch].Date))
+		parsedDate, err := ParseDate(strings.TrimSpace(cache.Branch[branch].Date))
 		if err != nil {
 			logger.Debug(strings.TrimSpace(cache.Branch[branch].Date))
 			logger.Error(err.Error())
 		}
-		data[branch] = combineData{date: parsedData, text: textData}
-		dateBranch[parsedData.String()] = branch
+		data[branch] = combineData{date: parsedDate, text: textData}
+		dateBranch[FormatDate(parsedDate)] = branch
 	}
 
 	sortedCombineData := make(timeSlice, 0, len(data))
@@ -51,7 +51,7 @@ func CombineEntries(cache Cache) ([]string, []string, map[string]string) {
 	branches := make([]string, len(data))
 	for i, val := range sortedCombineData {
 		texts[i] = val.text
-		branches[i] = dateBranch[val.date.String()]
+		branches[i] = dateBranch[FormatDate(val.date)]
 	}
 	return texts, branches, branchHashes
 }

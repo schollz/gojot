@@ -29,7 +29,7 @@ func TestFormatDate(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if FormatDate(date) != testDate {
+	if FormatDate(date) != "Thu Apr 07 22:13:13 2005" {
 		t.Errorf("Expected %s and got %s", testDate, FormatDate(date))
 	}
 
@@ -38,7 +38,7 @@ func TestFormatDate(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if FormatDate(date) != testDate {
+	if FormatDate(date) != "Fri Sep 23 21:50:57 2016" {
 		t.Errorf("Expected %s and got %s", testDate, FormatDate(date))
 	}
 

@@ -53,7 +53,8 @@ func GetInfo(folder string, branchNames []string) ([]Entry, error) {
 			continue
 		}
 		result.Hash = items[1]
-		result.Date = items[2]
+		parsedDate, _ := ParseDate(items[2])
+		result.Date = FormatDate(parsedDate)
 		result.Message = strings.TrimSpace(items[3])
 		result.Document = strings.TrimSpace(items[4])
 		if _, ok := branchesToGet[result.Branch]; ok {
