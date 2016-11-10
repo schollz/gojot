@@ -183,7 +183,7 @@ func updateDevVersion(lastcommit string) error {
 	}
 	logger.Debug("Github: %s, Current: %s", j[0].Commit.Author.Date.String(), currentCommit.String())
 	if currentCommit.Sub(j[0].Commit.Author.Date).Hours() < 0 {
-		fmt.Println("New version of sdees available! Run\n\n\tgo get -u github.com/schollz/sdees\n\nto download.")
+		fmt.Println("New version of sdees available! Run\n\n\tgo get -u github.com/schollz/sdees\n\not download.")
 	}
 	return nil
 }
@@ -271,8 +271,8 @@ func checkGithub(version string) (bool, string, []int) {
 	}
 	majorMinorWeb := []int{}
 	for i := 0; i < 3; i++ {
-		i, _ := strconv.Atoi(versions[i])
-		majorMinorWeb = append(majorMinorWeb, i)
+		num, _ := strconv.Atoi(versions[i])
+		majorMinorWeb = append(majorMinorWeb, num)
 	}
 
 	versions = strings.Split(version, ".")
@@ -281,8 +281,8 @@ func checkGithub(version string) (bool, string, []int) {
 	}
 	majorMinor := []int{}
 	for i := 0; i < 3; i++ {
-		i, _ := strconv.Atoi(versions[i])
-		majorMinor = append(majorMinor, i)
+		num, _ := strconv.Atoi(versions[i])
+		majorMinor = append(majorMinor, num)
 	}
 
 	newVersionAvailable := false

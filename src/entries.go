@@ -44,8 +44,8 @@ func UpdateEntryFromText(fulltext string, branchHashes map[string]string) []stri
 		if _, ok := branchHashes[blob.Branch]; !ok {
 			logger.Debug("Branch not present updating entry for branch %s ", blob.Branch)
 			if len(blob.Text) < 10 {
-				logger.Debug("No new data, not commiting entry for branch %s\n", blob.Branch)
-				fmt.Printf("No new data, not commiting entry for branch %s\n", DecryptOTP(blob.Branch))
+				logger.Debug("No new data, not committing entry for branch %s\n", blob.Branch)
+				fmt.Printf("No new data, not committing entry for branch %s\n", DecryptOTP(blob.Branch))
 				continue
 			}
 			_, err := NewDocument(RemoteFolder, CurrentDocument, blob.Text, GetMessage(blob.Text), blob.Date, blob.Branch)

@@ -336,7 +336,7 @@ func Fetch(gitfolder string) error {
 		DeleteCache()
 	}
 	if gettingPassword {
-		// Wait until password is recieved
+		// Wait until password is received
 		wg.Wait()
 	}
 	var gotErr error
@@ -377,11 +377,11 @@ func Fetch(gitfolder string) error {
 		decrypted, _ := DecryptString(strings.TrimSpace(strings.Replace(foo[1], "'", "", -1)), Passphrase)
 		logger.Debug("Decrypted message:%s", decrypted)
 		if strings.TrimSpace(decrypted) == "deleted" {
-			cmd := exec.Command("git", "rebase")
-			out2, _ := cmd.StderrPipe()
-			cmd.Start()
+			cmd2 := exec.Command("git", "rebase")
+			out2, _ := cmd2.StderrPipe()
+			cmd2.Start()
 			out2b, _ := ioutil.ReadAll(out2)
-			cmd.Wait()
+			cmd2.Wait()
 			logger.Debug("git rebase : " + string(out2b))
 		} else {
 			logger.Debug("pulling...")
@@ -451,7 +451,6 @@ func NewDocument(gitfolder string, documentname string, fulltext string, message
 	if len(branchNameOverride) == 0 {
 		newBranch = GenerateEntryName()
 	}
-	newBranch = newBranch
 
 	// Encrypt everything
 	documentname = EncryptOTP(documentname)

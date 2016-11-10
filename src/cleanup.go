@@ -7,7 +7,7 @@ import (
 )
 
 // CleanUp deletes all temporary files and also deletes documents that were
-// made accidently (documents with no data)
+// made accidentally (documents with no data)
 func CleanUp() error {
 	logger.Debug("Cleaning...")
 	dir := TempPath

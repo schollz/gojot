@@ -66,13 +66,13 @@ func SetupConfig() {
 		}
 		// check if it actually exists
 		cmd := exec.Command(path.Join(ProgramPath, configParameters.Editor+Extension), "--version")
-		_, err := cmd.Output()
-		if err == nil {
+		_, err2 := cmd.Output()
+		if err2 == nil {
 			break
 		}
 		cmd = exec.Command(path.Join(".", configParameters.Editor+Extension), "--version")
-		_, err = cmd.Output()
-		if err == nil {
+		_, err2 = cmd.Output()
+		if err2 == nil {
 			break
 		}
 		fmt.Printf("\n%s not found, are you sure its installed?\n\n", configParameters.Editor+Extension)

@@ -8,12 +8,12 @@ func TestGetTextOfOne(t *testing.T) {
 		t.Errorf("Got no text! Or error: " + err.Error())
 	}
 
-	text, err = GetTextOfOne("./gittest10", EncryptOTP("76868761"), EncryptOTP("test.txt"))
+	_, err = GetTextOfOne("./gittest10", EncryptOTP("76868761"), EncryptOTP("test.txt"))
 	if err == nil {
 		t.Errorf("Wrong branch should throw error")
 	}
 
-	text, err = GetTextOfOne("./gittest10", EncryptOTP("1"), EncryptOTP("kjllkjklkjlkj.txt"))
+	_, err = GetTextOfOne("./gittest10", EncryptOTP("1"), EncryptOTP("kjllkjklkjlkj.txt"))
 	if err == nil {
 		t.Errorf("Wrong document should throw error")
 	}
