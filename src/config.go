@@ -39,6 +39,8 @@ func SetupConfig() {
 				fmt.Println(strings.TrimSpace(string(out2b)))
 				fmt.Println("Could not clone, please re-enter")
 			} else {
+				// Remove, this cloning only was to check that it was a valid thing
+				os.RemoveAll(path.Join(CachePath, EncodeBase58(yesno)))
 				break
 			}
 		} else {

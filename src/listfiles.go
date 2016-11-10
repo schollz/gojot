@@ -24,6 +24,9 @@ func ListFiles(gitfolder string) []string {
 	}
 	documents := []string{}
 	for _, document := range strings.Split(strings.TrimSpace(string(stdout)), "\n") {
+		if len(document) < 1 {
+			continue
+		}
 		if document[0] == '.' {
 			document = DecryptOTP(document[1:])
 			logger.Debug("Found document: %s", document)

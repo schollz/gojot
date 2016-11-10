@@ -20,7 +20,7 @@ Here's what it looks like in action:
    <script type="text/javascript" src="https://asciinema.org/a/cwc20isy2dz7vepn05sghsdgn.js" id="asciicast-cwc20isy2dz7vepn05sghsdgn" async data-autoplay="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
    </center>
 
-All local files are encrypted, and all temporary files are shredded. You can browse the local files, but this is what you will see:
+All local files are encrypted, and all temporary files are shredded. You can browse the local files, but it will only look like encrypted gibberish:
 
 .. raw:: html
 

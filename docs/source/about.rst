@@ -5,8 +5,9 @@ Why *sdees*
 -----------
 
 **Problem:** I would like to write into a document (e.g., a journal with
-time stamped entries) and also have it be available on all computers I
-use, and I want it to be locally encrypted. Unfortunately, typical cloud
+time stamped entries) and also have it to be compatible with all the computers
+I use (Windows + Linux, work + home),
+and I want it to be locally encrypted. Unfortunately, typical cloud
 storage synchronization utilities (e.g. Dropbox) do not play well with
 syncing a single document that is encrypted locally.
 
@@ -16,10 +17,11 @@ document. You don’t need any special tool for this - you can just use a
 text editor, ``gpg``, and synchronization software like ``git`` or
 Dropbox.
 
-My program, *sdees*, just makes this solution easier to attain.
-*sdees* comes as a single executable file with the text-editor and
-``gpg`` bulit-in - the only system requirement is the installation of
-``git`` (which is pretty easy to get on any system). The other benefit
+*sdees* just makes this solution easier to attain.
+*sdees* is a single executable file with the text-editor and
+``gpg`` bulit-in, compatible with all major OS/architectures.
+The only system requirement is the installation of a DVCS,
+``git``, which is easy to get on any system. The other benefit
 of *sdees* is that it will automatically combine all the time-stamped
 entries so it appears that you are editing a single document, and it
 will also resolve merges that can occur if you edit the same entry
@@ -61,7 +63,8 @@ Alternatives to *sdees*
 ------------------------
 
 Here are some software which operate very similarly to *sdees*, but often require other software or system-specific utilities.
-I enjoy these software, and the use of some of them was the inpsiration for *sdees* (i.e. ``jrnl.sh``):
+I enjoy these software, and used a lot of inpsiration from them (i.e. jrnl.sh), but ultimately I found
+that *sdees* could provide some functionality or utility that was still absent.
 
 *  **Cryptpad** `[site] <https://beta.cryptpad.fr/pad/>`_ - zero knowledge realtime encrypted editor in your web browser
     Requires internet access, and a browser, difficult to reconstruct many documents.

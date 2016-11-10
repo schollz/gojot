@@ -541,6 +541,21 @@ func Clone(folder string, remote string) error {
 		}
 	}
 
+	// make sure it has a master branch
+	os.Chdir(folder)
+	cmd := exec.Command("git", "checkout", "master")
+	_, err = cmd.Output()
+	if err != nil {
+		logger.Debug("No master branch detected, adding one myself")
+		ioutil.WriteFile("sdees", []byte("."), 0644)
+		cmd2 := exec.Command("git", "add", "sdees")
+		cmd2.Output()
+		cmd2 = exec.Command("git", "commit", "-m", "'added master branch'")
+		cmd2.Output()
+		cmd2 = exec.Command("git", "push", "origin", "master")
+		cmd2.Output()
+	}
+
 	Fetch(folder)
 
 	return nil
