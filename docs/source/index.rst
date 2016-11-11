@@ -6,41 +6,59 @@ Overview
 *sdees does editing, encryption* and *synchronization*.
 
 
-But, really, *sdees* is just a fancy wrapper for ``git`` that
-allows you to make time-stamped entries to encrypted documents while
-keeping the entire document synchronized. *sdees* is great for a
-*distributed and encrypted* journal and is compatible any local repo or
-hosted service (Gitlab/Bitbucket/Github).
+Ok. But, really, *sdees* is just a fancy wrapper for ``git`` that allows
+you to make time-stamped entries to encrypted documents while keeping
+the entire document synchronized. *sdees* is great for a *distributed
+and encrypted* journal and is compatible with all major operating
+systems. *sdees* is a single binary (with a text-editor built-in!), so
+you only need ``git`` to get started and is compatible any local repo or
+hosted service (`Gitlab`_/`Bitbucket`_/`Github`_).
 
 Here's what it looks like in action:
 
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/cwc20isy2dz7vepn05sghsdgn.js" id="asciicast-cwc20isy2dz7vepn05sghsdgn" async data-autoplay="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91969.json" async autoplay="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
-All local files are encrypted, and all temporary files are shredded. You can browse the local files, but it will only look like encrypted gibberish:
 
-.. raw:: html
-
-   <center>
-   <script type="text/javascript" src="https://asciinema.org/a/7ph7viak75hgbeqnfvayeafu3.js" id="asciicast-7ph7viak75hgbeqnfvayeafu3" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
-   </center>
 
 Features
---------
+------------
 
--  *Only one* dependency: ``git`` (version 2.5+)
--  Single binary, cross-compatibility (Windows/Linux/OS X).
--  Fulltext encryption using OpenPGP, compatible with ``gpg``.
--  Filename encryption using ChaCha20.
--  Built-in text editor, ``micro`` (but options for
-   ``emacs``/``vim``/``nano``).
--  Built-in version control (all versions are saved, currently only
-   newest is shown).
--  Searching, summarizing, synchronized deletion, self-updating,
-   collision management, and more.
+-  *Single* dependency
+    Requires `git`_ (version 2.5+).
+-  *Single* binary
+    Available on `all major systems and architectures`_.
+-  Built-in text editor
+    `micro`_ is built-in by default, but can also uses `vim`_/`emacs`_/`nano`_.
+-  Fulltext encryption
+    Uses `OpenPGP`_, compatible with ``gpg``.
+-  Filename encryption
+    Uses `ChaCha20`_.
+-  Built-in version control
+    All versions are saved, currently only newest is shown.
+-  Lots of other neat features.
+    Searching, summarizing, synchronized deletion, self-updating, collision management, and more.
+-  Open-source
+     `Source on Github`_, written in `Go`_ and licensed under the MIT, with exception of a few open source components from third parties.
+
+.. _see mine: https://github.com/schollz/demo
+.. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
+.. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
+.. _all major systems and architectures: /install.html
+.. _Source on Github: https://github.com/schollz/sdees
+.. _Gitlab: https://gitlab.com/users/sign_in
+.. _Bitbucket: https://bitbucket.org/account/signin/
+.. _Github: https://github.com/
+.. _micro: https://github.com/zyedidia/micro
+.. _vim: http://www.vim.org/download.php
+.. _nano: https://www.nano-editor.org/
+.. _emacs: https://www.gnu.org/software/emacs/
+.. _Go: https://golang.org/
+.. _git: https://git-scm.com/
+
 
 
 .. toctree::

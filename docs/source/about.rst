@@ -50,20 +50,28 @@ entries. Multiple documents can be stored in a single ``git``
 repository.
 
 All information saved in the ``git`` repo is encrypted. The text of each entry
-is encrypted using OpenPGP with a symmetric cipher with a user-provided passphrase.
+is encrypted using `OpenPGP`_ with a symmetric cipher with a user-provided passphrase.
 The passphrase is not stored anywhere on the machine or repo.
-All the filenames and branch names are encrypted using ChaCha20 with a key generated
+All the filenames and branch names are encrypted using `ChaCha20`_ with a key generated
 upon initialization. When editing an encrypted document, a decrypted temp file is
 stored and then shredded (random bytes written and then deleted) after
-use.
+use. Thus, you can use sdees with a public git repository (for example, `see mine`_) without
+revealing information since it will look like gibberish, for example:
 
-.. _local or remote: https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server
+.. raw:: html
+
+   <center>
+  <asciinema-player src="/_static/asciicast/asciicast-91963.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+   </center>
+
+
 
 Alternatives to *sdees*
 ------------------------
 
-Here are some software which operate very similarly to *sdees*, but often require other software or system-specific utilities.
-I enjoy these software, and used a lot of inpsiration from them (i.e. jrnl.sh), but ultimately I found
+Here is some software which are similar to *sdees*, but often require other software
+or system-specific utilities.
+I enjoy these software, and used a lot of inpsiration from them, but ultimately I found
 that *sdees* could provide some functionality or utility that was still absent.
 
 *  **Cryptpad** `[site] <https://beta.cryptpad.fr/pad/>`_ - zero knowledge realtime encrypted editor in your web browser
@@ -85,13 +93,13 @@ Entry names need to be unique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Entry names allow you quick access to a specific entry without having to recall
-a d ate. Entry names should be unique, as currently **sdees** will load a random
+a date. Entry names should be unique, as currently **sdees** will load a random
 entry if their are two entries with the same name.
 
 Collision of entry names
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Currently there are only 14,260,682,650 adjective+verb combinations
-available for random entry names. Thus, a collision probability of 50%
+available for random entry names. Thus, a `collision probability`_ of 50%
 will occur after ~120,000 entries. Collisions are not detrimental, but
 it will only allow one document to be loaded with the same entry name.
 The reason that this happens is technical, and `is slated to be
@@ -106,4 +114,23 @@ with the ``push:track`` option, which is not introduced until
 `version 2.5.0, released March, 2016`_.
 The alternative to this is ``git branch -vv`` but that is not considered stable.
 
+.. _local or remote: https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server
+.. _see mine: https://github.com/schollz/demo
+.. _all major systems and architectures: /install.html
 .. _is slated to be resolved: https://github.com/schollz/sdees/issues/73
+.. _version 2.5.0, released March, 2016: https://git-scm.com/docs/git-for-each-ref/2.5.0
+.. _see mine: https://github.com/schollz/demo
+.. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
+.. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
+.. _all major systems and architectures: /install.html
+.. _Source on Github: https://github.com/schollz/sdees
+.. _Gitlab: https://gitlab.com/users/sign_in
+.. _Bitbucket: https://bitbucket.org/account/signin/
+.. _Github: https://github.com/
+.. _micro: https://github.com/zyedidia/micro
+.. _vim: http://www.vim.org/download.php
+.. _nano: https://www.nano-editor.org/
+.. _emacs: https://www.gnu.org/software/emacs/
+.. _Go: https://golang.org/
+.. _git: https://git-scm.com/
+.. _collision probability: https://en.wikipedia.org/wiki/Birthday_problem#Approximation_of_number_of_people

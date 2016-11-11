@@ -1,15 +1,21 @@
-## `sdees` is for `distributed` `editing` of `encrypted` `stuff`
-
+<p align="center">
+  <img src="https://sdees.schollz.com/_static/logo.png"/>
+</p>
 
 [![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/sdees/releases/latest)
 [![Build Status](https://travis-ci.org/schollz/sdees.svg?branch=master)](https://travis-ci.org/schollz/sdees)
 ![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
+[![](https://img.shields.io/badge/sdees-documentation-blue.svg)](https://sdees.schollz.com/)
 
+*sdees* is for *distributed editing* of *encrypted stuff*.
 
-Ok. But, really, `sdees` is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. `sdees` is great for a *distributed and encrypted* journal and is compatible any local repo or hosted service (Gitlab/Bitbucket/Github). More info can be found in [INFO.md](https://github.com/schollz/sdees/blob/master/INFO.md).
+*sdees does editing, encryption,* and *synchronization*.
 
+Ok. But, really, *sdees* is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. *sdees* is great for a *distributed and encrypted* journal and is compatible with all major operating systems. *sdees* is a single binary (with a text-editor built-in!), so you only need `git` to get started.
 
-_Note_: The previous non-`git` version of `sdees` can [be found here](https://github.com/schollz/sdees/tree/1.X).
+More info can be found in [the documentation](https://sdees.schollz.com/).
+
+_Note_: The previous non-`git` version of *sdees* can [be found here](https://github.com/schollz/sdees/tree/1.X).
 
 
 Features
@@ -25,18 +31,30 @@ Features
 -  Searching, summarizing, synchronized deletion, self-updating,
    collision management, and more.
 
+## Usage
 
-## Install
+![](https://sdees.schollz.com/_static/main_demo.gif)
+```
+sdees new.txt # edit a new document, new.txt
+sdees --summary # list a summary
+sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
+sdees --help # for more information
+```
+For more information, see https://sdees.schollz.com
 
-First install the latest `git`. If you are on Windows/OSX just [use the build version](https://git-scm.com/downloads). If you are on Ubuntu, make sure to add the latest repo:
 
+## Requirements
+
+First [install git](https://git-scm.com/downloads) (version 2.5+). If you are on Ubuntu, you can get the latest version of `git` using:
 ```
 add-apt-repository ppa:git-core/ppa -y
 apt-get update
 apt-get install git -y
 ```
 
-Then, to install `sdees`, simply download [the latest release binary](https://github.com/schollz/sdees/releases/latest)
+## Install
+
+To install, just [download the latest *sdees* release](https://github.com/schollz/sdees/releases/latest).
 
 _OR_
 
@@ -46,16 +64,6 @@ use `go get` if you have [installed Go](https://golang.org/dl/):
 go get -u github.com/schollz/sdees
 ```
 
-## Usage
-
-```
-sdees new.txt # edit a new document, new.txt
-sdees --summary # list a summary
-sdees --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
-sdees --help # for more information
-```
-
-For more information, see https://sdees.schollz.com
 
 ### Acknowledgements
 

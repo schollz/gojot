@@ -57,13 +57,13 @@ clean:
 
 .PHONY: release
 release:
-	# echo "Deleting old release"
-	# git tag -d ${VERSION};
-	# git push origin :${VERSION};
-	# github-release delete \
-	# 		--user schollz \
-	# 		--repo sdees \
-	# 		--tag ${VERSION}
+	echo "Deleting old release"
+	git tag -d ${VERSION};
+	git push origin :${VERSION};
+	github-release delete \
+			--user schollz \
+			--repo sdees \
+			--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
@@ -99,6 +99,9 @@ release:
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
 	unzip micro*.zip
 	mv micro*/micro.exe ./src/bin
+	wget ftp://ftp.vim.org/pub/vim/pc/vim80-069w32.zip
+	unzip vim*zip
+	mv vim/vim80/vim.exe ./src/bin/
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
 	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
@@ -114,6 +117,7 @@ release:
 	cd src && git reset --hard HEAD
 	rm -f *.zip
 	rm -rf micro*
+	rm -rf vim80*zip
 	echo "Uploading Linux 64"
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-linux64.tar.gz
 	tar -xvzf micro*.tar.gz

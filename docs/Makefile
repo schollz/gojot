@@ -46,6 +46,8 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 
 html:
+	-rm -rf $(BUILDDIR)/*
+	# python makeDownloads.py
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

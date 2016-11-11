@@ -1,7 +1,7 @@
 Download latest
 ---------------------------
 
-The latest version is 2.0.0, released 2016-11-09.
+The latest version is 2.0.0, released 2016-11-10.
 
 .. raw:: html
 
@@ -12,7 +12,7 @@ The latest version is 2.0.0, released 2016-11-09.
 	<span class="filename">sdees-2.0.0-win64.zip</span>
 	<span class="size">(6 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 70b052eba131532f1202a21d56fceda929932373c9b414e40c4c89a0b6b76237</div>
+	<div class="checksum">SHA256: caff8b7caa1bbbc867ff07c3212e3d62894e1d57c5b502d2b3a18c5cdf66a23d</div>
 	</a>
 
 
@@ -25,7 +25,7 @@ The latest version is 2.0.0, released 2016-11-09.
 	<span class="filename">sdees-2.0.0-osx.tar.gz</span>
 	<span class="size">(6 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 9cbd62e2c8bda3a5c6c00a7c208ab6a69b18a35a5e5cea83add34de4aa81b58b</div>
+	<div class="checksum">SHA256: 737985a87af86259d0fea6ae799f0448f383bfb2004d6d39e65c4eb49686b184</div>
 	</a>
 
 
@@ -38,7 +38,7 @@ The latest version is 2.0.0, released 2016-11-09.
 	<span class="filename">sdees-2.0.0-linux64.tar.gz</span>
 	<span class="size">(6 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 49296ebd80b7db9488a27096ed87d3184a64df5e15caf6dcf4e2838b4f09c848</div>
+	<div class="checksum">SHA256: 17abb78b17f8fef79efb213d7dba3e5e6a0e2370ffa2abb6bb0bdb433934472a</div>
 	</a>
 
 
@@ -51,7 +51,7 @@ The latest version is 2.0.0, released 2016-11-09.
 	<span class="filename">sdees-2.0.0-linux-arm.tar.gz</span>
 	<span class="size">(5 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 695012f4a4d7ed2f73c05f82fbb92225cab12735daf18dd2e77ea1a9e83cde0a</div>
+	<div class="checksum">SHA256: 4bc70bb1543efc74ffbcd3b7c826f7070848c913f43902709c30ec7422d3ccdc</div>
 	</a>
 
 

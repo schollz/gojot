@@ -29,11 +29,24 @@ How to setup ``git`` server
 
 The usage of *sdees* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
 
-*Easiest way:* Just dont. You can just use a `Github`_ or `Bitbucket`_
+*Easiest way:* Just dont. You can just use a `Github`_ / `Bitbucket`_ / `Gitlab`_
 repository and skip this.
 
 *Alternatively:* You can also make your own personal ``git`` server by
 following these steps.
+
+Local server
+~~~~~~~~~~~~~~~~~~
+
+If you want to just run locally, simply run:
+
+::
+
+    git init --bare /folder/to/newrepo.git
+
+to make a new repo ``newrepo.git``, and then add it to ``sdees`` as
+``/folder/to/newrepo.git``.
+
 
 Remote server
 ~~~~~~~~~~~~~~~~~~
@@ -63,40 +76,14 @@ server:
 
     ssh git@remote.com "\
       mkdir -p newrepo.git && \
-      git init --bare newrepo.git/ && \
-      rm -rf clonetest && \
-      git clone newrepo.git clonetest && \
-      cd clonetest && \
-      touch .new && \
-      git add . && \
-      git commit -m 'added master' && \
-      git push origin master && cd .. && \
-      rm -rf clonetest"
+      git init --bare newrepo.git
 
-which you can add to ``sdees`` as ``git@remote:newrepo.git``.
+which you can add to ``sdees`` as ``git@remote.com:newrepo.git``.
 
 .. _Github: https://github.com/
 .. _Bitbucket: https://bitbucket.org/
-
-
-Local server
-~~~~~~~~~~~~~~~~~~
-
-If you want to just run locally, simply run:
-
-::
-
-    cd /folder/to/put/repo
-    mkdir -p newrepo.git && \
-      git init --bare newrepo.git/ && \
-      rm -rf clonetest && \
-      git clone newrepo.git clonetest && \
-      cd clonetest && \
-      touch .new && \
-      git add . && \
-      git commit -m 'added master' && \
-      git push origin master && cd .. && \
-      rm -rf clonetest
-
-to make a new repo ``newrepo.git``, and then add it to ``sdees`` as
-``/folder/to/put/repo/newrepo.git``.
+.. _Gitlab: https://gitlab.com/users/sign_in
+.. _micro: https://github.com/zyedidia/micro
+.. _vim: http://www.vim.org/download.php
+.. _nano: https://www.nano-editor.org/
+.. _emacs: https://www.gnu.org/software/emacs/

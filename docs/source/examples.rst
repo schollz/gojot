@@ -6,12 +6,13 @@ First time startup
 
 On the first use you will be asked to point *sdees* to a repository.
 You will also be able to select which editor you'd like to use.
-Currently only four editors are supported: ``micro``, ``vim``, ``emacs``, and ``nano``.
+Currently only four editors are supported: `micro`_, `vim`_, `emacs`_, and `nano`_.
+All released versions of *sdees* (2.0.0+) include `micro`_ built-in.
 
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/4afttloazk5indyvszueds7ot.js" id="asciicast-4afttloazk5indyvszueds7ot" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91955.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
 
 Adding an entry
@@ -24,22 +25,17 @@ Here is a simple example of adding an entry:
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/bwgsyl52a7vmtsbwwvbjxm4ii.js" id="asciicast-bwgsyl52a7vmtsbwwvbjxm4ii" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91838.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
 
 Each entry is assigned a random name.
 The random name is only used to keep track of things internally, but you can also
 use the name to quickly edit a specific entry. To do this, simply delete the randomized entry name and type in your own.
 
-.. warning::
-
-    Make sure the entry names are unique!
-
-
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/0jky6qw2cccm54zcfs99awpwq.js" id="asciicast-0jky6qw2cccm54zcfs99awpwq" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91960.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
 
 Then, to edit a specific entry, simply type in the entry name after running the program:
@@ -47,7 +43,7 @@ Then, to edit a specific entry, simply type in the entry name after running the 
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/5zksx7garh7z2ndtz6psw502n.js" id="asciicast-5zksx7garh7z2ndtz6psw502n" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-92038.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
 
 
@@ -65,16 +61,19 @@ Here is an example for deleting a document:
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/8y4l3uj4ygodujf5kzpdaj3in.js" id="asciicast-8y4l3uj4ygodujf5kzpdaj3in" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91952.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
 
 And here is an example of deleting an entry:
 
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/7gegbsn3eiw81t3qwf6urzgxh.js" id="asciicast-7gegbsn3eiw81t3qwf6urzgxh" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91951.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
+
 
 ``--all``
 -------------------------------------
@@ -86,8 +85,9 @@ Here is an example of loading a whole document:
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/drgeyew22fagwmezn7ff9qdxb.js" id="asciicast-drgeyew22fagwmezn7ff9qdxb" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91956.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
 
 
 
@@ -99,8 +99,9 @@ You can export your whole document as a text-file using the `--export` flag. Her
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/boocc1jgv4quydvhyom35pr4p.js" id="asciicast-boocc1jgv4quydvhyom35pr4p" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91961.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
 
 
 ``--stats``
@@ -111,8 +112,9 @@ If you'd like to get information about wordcounts and entry counts in all your d
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/8ifdjbwe2ujgcqlzvjw7uzkl5.js" id="asciicast-8ifdjbwe2ujgcqlzvjw7uzkl5" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91953.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
 
 
 ``--summary``
@@ -125,5 +127,10 @@ Here is an example:
 .. raw:: html
 
    <center>
-   <script type="text/javascript" src="https://asciinema.org/a/478ig89xc0dsr0bmsk8nco6mz.js" id="asciicast-478ig89xc0dsr0bmsk8nco6mz" async data-autoplay="false" data-preload="true" data-size="small" data-speed="0.9" data-theme="asciinema"></script>
+  <asciinema-player src="/_static/asciicast/asciicast-91967.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
    </center>
+
+.. _micro: https://github.com/zyedidia/micro
+.. _vim: http://www.vim.org/download.php
+.. _nano: https://www.nano-editor.org/
+.. _emacs: https://www.gnu.org/software/emacs/
