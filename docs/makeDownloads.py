@@ -7,9 +7,7 @@ from hashlib import sha256
 import requests
 
 
-header = """Download latest
----------------------------
-
+header = """
 The latest version is %(version)s, released %(date)s.
 
 """

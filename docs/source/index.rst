@@ -68,5 +68,5 @@ Features
     Overview <index>
     About <about>
     Install <install>
-    Usage <examples>
+    Help <examples>
     Advanced <advanced>

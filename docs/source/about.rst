@@ -134,3 +134,16 @@ The alternative to this is ``git branch -vv`` but that is not considered stable.
 .. _Go: https://golang.org/
 .. _git: https://git-scm.com/
 .. _collision probability: https://en.wikipedia.org/wiki/Birthday_problem#Approximation_of_number_of_people
+
+Acknowledgements
+-----------------
+
+*sdees* was written by `schollz`_. There are number of third-party code snippets and imports
+(see source for attribution and License information for each),
+and I am very grateful to these authors for their code:
+`mholt`_, `jbenet`_, and `aryann`_.
+
+.. _schollz: https://schollz.com
+.. _mholt: httsp://github.com/mholt
+.. _jbenet: https://github.com/jbenet
+.. _aryann: https://github.com/aryann

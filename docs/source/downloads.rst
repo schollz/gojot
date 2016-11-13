@@ -1,6 +1,3 @@
-Download latest
----------------------------
-
 The latest version is 2.0.0, released 2016-11-10.
 
 .. raw:: html
@@ -53,5 +50,3 @@ The latest version is 2.0.0, released 2016-11-10.
 	</div>
 	<div class="checksum">SHA256: 4bc70bb1543efc74ffbcd3b7c826f7070848c913f43902709c30ec7422d3ccdc</div>
 	</a>
-
-

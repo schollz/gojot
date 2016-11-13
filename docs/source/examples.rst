@@ -12,7 +12,7 @@ All released versions of *sdees* (2.0.0+) include `micro`_ built-in.
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91955.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91955.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Adding an entry
@@ -25,7 +25,7 @@ Here is a simple example of adding an entry:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91838.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91838.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Each entry is assigned a random name.
@@ -35,7 +35,7 @@ use the name to quickly edit a specific entry. To do this, simply delete the ran
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91960.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91960.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Then, to edit a specific entry, simply type in the entry name after running the program:
@@ -43,7 +43,7 @@ Then, to edit a specific entry, simply type in the entry name after running the 
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-92038.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-92038.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -61,7 +61,7 @@ Here is an example for deleting a document:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91952.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91952.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -70,7 +70,7 @@ And here is an example of deleting an entry:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91951.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91951.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -85,7 +85,7 @@ Here is an example of loading a whole document:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91956.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91956.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -99,7 +99,7 @@ You can export your whole document as a text-file using the `--export` flag. Her
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91961.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91961.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -112,9 +112,36 @@ If you'd like to get information about wordcounts and entry counts in all your d
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91953.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91953.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
+
+
+``--config``
+----------------------------
+
+With the `--config` flag you can change the repository that is being used and the editor that is being used.
+
+.. raw:: html
+
+    <center>
+    <asciinema-player src="/_static/asciicast/asciicast-92593.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    </center>
+
+
+
+
+``--clean``
+----------------------------
+
+With the `--clean` flag you can erase all the *sdees* folders. This includes the cache of currently known ``git`` repositories, ``$HOME/.cache/sdees``,
+as well as any configuration files in ``$HOME/.config/sdees``. You will be prompted to verify that this is what you want.
+
+.. raw:: html
+
+    <center>
+    <asciinema-player src="/_static/asciicast/asciicast-92592.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    </center>
 
 
 ``--summary``
@@ -127,9 +154,15 @@ Here is an example:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91967.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player> 
+  <asciinema-player src="/_static/asciicast/asciicast-91967.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
+Problems?
+----------
+
+If you have any problems at all, please `submit an Issue`_ and someone can help you sort it out.
+
+.. _submit an Issue: https://github.com/schollz/sdees/issues/new
 .. _micro: https://github.com/zyedidia/micro
 .. _vim: http://www.vim.org/download.php
 .. _nano: https://www.nano-editor.org/
