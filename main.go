@@ -185,13 +185,16 @@ func setBuild() {
 		if err != nil {
 			return
 		}
-		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%ad'")
+		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%h||%ad'")
 		stdout, err := cmd.Output()
 		if err != nil {
 			return
 		}
-		LastCommit = strings.Replace(string(stdout), "'", "", -1)
+		items := strings.Split(string(stdout),"||")
+		LastCommit = strings.Replace(items[1], "'", "", -1)
+		Build = strings.Replace(items[0], "'", "", -1)
 		BuildTime = LastCommit
+		fmt.Println(LastCommit,Version)
 	} else {
 		Build = Build[0:7]
 	}
