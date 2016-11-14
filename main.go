@@ -194,7 +194,6 @@ func setBuild() {
 		LastCommit = strings.Replace(items[1], "'", "", -1)
 		Build = strings.Replace(items[0], "'", "", -1)
 		BuildTime = LastCommit
-		fmt.Println(LastCommit,Version)
 	} else {
 		Build = Build[0:7]
 	}
