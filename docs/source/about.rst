@@ -74,6 +74,8 @@ or system-specific utilities.
 I enjoy these software, and used a lot of inpsiration from them, but ultimately I found
 that *sdees* could provide some functionality or utility that was still absent.
 
+*  **8 lines of bash** `[site] <https://gist.github.com/schollz/27b4ffe562b0b74bf8ee1e8055680d22>`_ - git-based journal
+    No encryption capabilities, limited viewing.
 *  **Cryptpad** `[site] <https://beta.cryptpad.fr/pad/>`_ - zero knowledge realtime encrypted editor in your web browser
     Requires internet access, and a browser, difficult to reconstruct many documents.
 *  **jrnl.sh** `[site] <http://jrnl.sh/>`_ - command line journal application with encryption
