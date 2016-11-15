@@ -41,6 +41,11 @@ func ProcessEntriesOld(fulltext string) ([]string, []string) {
 	currentBlob.Text = ""
 	for _, line := range strings.Split(fulltext, "\n") {
 		splitLine := strings.Split(line, " ")
+		if len(line) > 30 {
+			if line[0:2] == "# " {
+				continue
+			}			
+		}
 		if len(splitLine) >= 1 {
 			var possibleDate string
 			var newText string

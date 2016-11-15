@@ -77,8 +77,8 @@ func SetupConfig() {
 		if err2 == nil {
 			break
 		}
-		_, err := Asset("bin/" + configParameters.Editor + Extension)
-		if err == nil {
+		_, err2 = Asset("bin/" + configParameters.Editor + Extension)
+		if err2 == nil {
 			break
 		}
 		fmt.Printf("\n%s not found, are you sure its installed?\n\n", configParameters.Editor+Extension)
