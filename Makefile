@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=jot
 
-VERSION=2.0.0
+VERSION=2.0.0beta
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`
@@ -77,12 +77,12 @@ windows:
 .PHONY: release
 release:
 	echo "Deleting old release"
-	git tag -d ${VERSION};
-	git push origin :${VERSION};
-	github-release delete \
-			--user schollz \
-			--repo jot \
-			--tag ${VERSION}
+	#git tag -d ${VERSION};
+	#git push origin :${VERSION};
+	#github-release delete \
+	#		--user schollz \
+	#		--repo jot \
+	#		--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
