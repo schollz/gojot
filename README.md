@@ -7,9 +7,7 @@
 ![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
 [![](https://img.shields.io/badge/jot-documentation-blue.svg)](https://jot.schollz.com/)
 
-*jot* is for *distributed editing* of *encrypted stuff*.
-
-*jot does editing, encryption,* and *synchronization*.
+*jot* is a modern command-line journal that is distributed and encrypted by default.
 
 Ok. But, really, *jot* is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. *jot* is great for a *distributed and encrypted* journal and is compatible with all major operating systems. *jot* is a single binary (with a text-editor built-in!), so you only need `git` to get started.
 
@@ -69,7 +67,7 @@ go get -u github.com/schollz/jot
 
 Logo graphic from [logodust](http://logodust.com).
 
-Inspiration from [jrnl](http://jrnl.sh/).
+Inspiration from [these tools](https://jot.schollz.com/about.html#alternatives-to-jot).
 
 Southwest Airlines for providing two mechanical failures that gave me 8+ extra hours to code this.
 
