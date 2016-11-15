@@ -1,16 +1,16 @@
 Overview
 =========
 
-*sdees* is for *distributed* *editing* of *encrypted* *stuff*.
+*jot* is for *distributed* *editing* of *encrypted* *stuff*.
 
-*sdees does editing, encryption* and *synchronization*.
+*jot does editing, encryption* and *synchronization*.
 
 
-Ok. But, really, *sdees* is just a fancy wrapper for ``git`` that allows
+Ok. But, really, *jot* is just a fancy wrapper for ``git`` that allows
 you to make time-stamped entries to encrypted documents while keeping
-the entire document synchronized. *sdees* is great for a *distributed
+the entire document synchronized. *jot* is great for a *distributed
 and encrypted* journal and is compatible with all major operating
-systems. *sdees* is a single binary (with a text-editor built-in!), so
+systems. *jot* is a single binary (with a text-editor built-in!), so
 you only need ``git`` to get started and is compatible any local repo or
 hosted service (`Gitlab`_/`Bitbucket`_/`Github`_).
 
@@ -48,7 +48,7 @@ Features
 .. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 .. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 .. _all major systems and architectures: /install.html
-.. _Source on Github: https://github.com/schollz/sdees
+.. _Source on Github: https://github.com/schollz/jot
 .. _Gitlab: https://gitlab.com/users/sign_in
 .. _Bitbucket: https://bitbucket.org/account/signin/
 .. _Github: https://github.com/

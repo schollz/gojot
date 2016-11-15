@@ -1,7 +1,7 @@
 About
 =========
 
-Why *sdees*
+Why *jot*
 -----------
 
 **Problem:** I would like to write into a document (e.g., a journal with
@@ -17,27 +17,27 @@ document. You don’t need any special tool for this - you can just use a
 text editor, ``gpg``, and synchronization software like ``git`` or
 Dropbox.
 
-*sdees* just makes this solution easier to attain.
-*sdees* is a single executable file with the text-editor and
+*jot* just makes this solution easier to attain.
+*jot* is a single executable file with the text-editor and
 ``gpg`` bulit-in, compatible with all major OS/architectures.
 The only system requirement is the installation of a DVCS,
 ``git``, which is easy to get on any system. The other benefit
-of *sdees* is that it will automatically combine all the time-stamped
+of *jot* is that it will automatically combine all the time-stamped
 entries so it appears that you are editing a single document, and it
 will also resolve merges that can occur if you edit the same entry
 offline on two computers.
 
 
-How *sdees* works
+How *jot* works
 --------------------
 
-When *sdees* starts for the first time it will request a ``git``
-repository which can be `local or remote`_. Then *sdees* provides an
+When *jot* starts for the first time it will request a ``git``
+repository which can be `local or remote`_. Then *jot* provides an
 option to write text using the editor of choice into a new *entry*. Each
 new entry is inserted into a new orphan branch in the supplied ``git``
 repository. The benefit of placing each entry into its own orphan branch
 is that merge collisions are avoided after creating new entries on
-different machines. Thus, *sdees* makes it perfectly safe to make
+different machines. Thus, *jot* makes it perfectly safe to make
 *new* entries without internet access.
 
 The combination of entries be displayed as a *document*. The document is
@@ -55,7 +55,7 @@ The passphrase is not stored anywhere on the machine or repo.
 All the filenames and branch names are encrypted using `ChaCha20`_ with a key generated
 upon initialization. When editing an encrypted document, a decrypted temp file is
 stored and then shredded (random bytes written and then deleted) after
-use. Thus, you can use sdees with a public git repository (for example, `see mine`_) without
+use. Thus, you can use jot with a public git repository (for example, `see mine`_) without
 revealing information since it will look like gibberish, for example:
 
 .. raw:: html
@@ -66,13 +66,13 @@ revealing information since it will look like gibberish, for example:
 
 
 
-Alternatives to *sdees*
+Alternatives to *jot*
 ------------------------
 
-Here is some software which are similar to *sdees*, but often require other software
+Here is some software which are similar to *jot*, but often require other software
 or system-specific utilities.
 I enjoy these software, and used a lot of inpsiration from them, but ultimately I found
-that *sdees* could provide some functionality or utility that was still absent.
+that *jot* could provide some functionality or utility that was still absent.
 
 *  **15 lines of shell** `[site] <https://gist.github.com/schollz/27b4ffe562b0b74bf8ee1e8055680d22>`_ - git-based journal
     No encryption, no editing past entries, no version control, no deletion - but only 15 lines!
@@ -88,14 +88,14 @@ that *sdees* could provide some functionality or utility that was still absent.
 Limitations
 ------------
 
-*sdees* is not meant as an encrypted file system, as it has limits to
+*jot* is not meant as an encrypted file system, as it has limits to
 the number of entries that can be stored.
 
 Entry names need to be unique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Entry names allow you quick access to a specific entry without having to recall
-a date. Entry names should be unique, as currently **sdees** will load a random
+a date. Entry names should be unique, as currently **jot** will load a random
 entry if their are two entries with the same name.
 
 Collision of entry names
@@ -116,16 +116,16 @@ with the ``push:track`` option, which is not introduced until
 `version 2.5.0, released March, 2016`_.
 The alternative to this is ``git branch -vv`` but that is not considered stable.
 
-.. _local or remote: https://github.com/schollz/sdees/blob/master/INFO.md#setting-up-git-server
+.. _local or remote: https://github.com/schollz/jot/blob/master/INFO.md#setting-up-git-server
 .. _see mine: https://github.com/schollz/demo
 .. _all major systems and architectures: /install.html
-.. _is slated to be resolved: https://github.com/schollz/sdees/issues/73
+.. _is slated to be resolved: https://github.com/schollz/jot/issues/73
 .. _version 2.5.0, released March, 2016: https://git-scm.com/docs/git-for-each-ref/2.5.0
 .. _see mine: https://github.com/schollz/demo
 .. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 .. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 .. _all major systems and architectures: /install.html
-.. _Source on Github: https://github.com/schollz/sdees
+.. _Source on Github: https://github.com/schollz/jot
 .. _Gitlab: https://gitlab.com/users/sign_in
 .. _Bitbucket: https://bitbucket.org/account/signin/
 .. _Github: https://github.com/
@@ -140,7 +140,7 @@ The alternative to this is ``git branch -vv`` but that is not considered stable.
 Acknowledgements
 -----------------
 
-*sdees* was written by `schollz`_. There are number of third-party code snippets and imports
+*jot* was written by `schollz`_. There are number of third-party code snippets and imports
 (see source for attribution and License information for each),
 and I am very grateful to these authors for their code:
 `mholt`_, `jbenet`_, and `aryann`_.

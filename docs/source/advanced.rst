@@ -20,14 +20,14 @@ repo that you have that can be used for testing. Then simply use
 
 to perform tests.
 
-.. _add an Issue: https://github.com/schollz/sdees/issues/new
+.. _add an Issue: https://github.com/schollz/jot/issues/new
 
 How to setup ``git`` server
 ----------------------------
 
 
 
-The usage of *sdees* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
+The usage of *jot* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
 
 *Easiest way:* Just dont. You can just use a `Github`_ / `Bitbucket`_ / `Gitlab`_
 repository and skip this.
@@ -44,7 +44,7 @@ If you want to just run locally, simply run:
 
     git init --bare /folder/to/newrepo.git
 
-to make a new repo ``newrepo.git``, and then add it to ``sdees`` as
+to make a new repo ``newrepo.git``, and then add it to ``jot`` as
 ``/folder/to/newrepo.git``.
 
 
@@ -78,7 +78,7 @@ server:
       mkdir -p newrepo.git && \
       git init --bare newrepo.git
 
-which you can add to ``sdees`` as ``git@remote.com:newrepo.git``.
+which you can add to ``jot`` as ``git@remote.com:newrepo.git``.
 
 .. _Github: https://github.com/
 .. _Bitbucket: https://bitbucket.org/

@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import "github.com/jcelliott/lumber"
 

@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import (
 	"io/ioutil"

@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import (
 	"os"
@@ -23,19 +23,19 @@ func setupPaths() {
 		}
 	}
 
-	CachePath = path.Join(homeDir, ".cache", "sdees")
+	CachePath = path.Join(homeDir, ".cache", "jot")
 	if !exists(CachePath) {
 		err := os.MkdirAll(CachePath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "sdees"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "jot"))
 		}
 	}
 
-	TempPath = path.Join(homeDir, ".cache", "sdees", "temp")
+	TempPath = path.Join(homeDir, ".cache", "jot", "temp")
 	if !exists(TempPath) {
 		err := os.MkdirAll(TempPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "sdees", "temp"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "jot", "temp"))
 		}
 	}
 
@@ -46,11 +46,11 @@ func setupPaths() {
 		}
 	}
 
-	ConfigPath = path.Join(homeDir, ".config", "sdees")
+	ConfigPath = path.Join(homeDir, ".config", "jot")
 	if !exists(ConfigPath) {
 		err := os.MkdirAll(ConfigPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".config", "sdees"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".config", "jot"))
 		}
 	}
 

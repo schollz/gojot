@@ -1,6 +1,6 @@
 SOURCEDIR=.
 
-BINARY=sdees
+BINARY=jot
 
 VERSION=2.0.0
 BUILD_TIME=`date +%FT%T%z`
@@ -32,7 +32,7 @@ update:
 .PHONY: test
 test:
 	cd src && $(GOPATH)/bin/go-bindata bin
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
 	cd src && go test -v -cover
 
 .PHONY: cloc
@@ -43,14 +43,14 @@ cloc:
 
 .PHONY: install
 install:
-	sudo mv sdees /usr/local/bin/
+	sudo mv jot /usr/local/bin/
 
 .PHONY: clean
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf binaries
 	rm -rf vim
-	rm -rf tempsdees
+	rm -rf tempjot
 	rm -rf src/gittest
 	rm -rf src/test
 	rm -rf src/gittest10
@@ -62,7 +62,7 @@ release:
 	git push origin :${VERSION};
 	github-release delete \
 			--user schollz \
-			--repo sdees \
+			--repo jot \
 			--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
@@ -70,10 +70,10 @@ release:
 	echo "Creating new release"
 	github-release release \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
 	    --name "${VERSION}" \
-	    --description "This is a standalone latest of sdees."
+	    --description "This is a standalone latest of jot."
 	echo "Uploading Windows 32"
 	rm -rf micro*
 	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win32.zip
@@ -81,16 +81,16 @@ release:
 	mv micro*/micro.exe ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win32" -o sdees.exe
-	zip -j sdees-${VERSION}-win32.zip sdees.exe README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=windows GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win32" -o jot.exe
+	zip -j jot-${VERSION}-win32.zip jot.exe README.md LICENSE
 	github-release upload \
 			--user schollz \
-			--repo sdees \
+			--repo jot \
 			--tag ${VERSION} \
-			--name "sdees-${VERSION}-win32.zip" \
-			--file sdees-${VERSION}-win32.zip
-	rm sdees.exe
+			--name "jot-${VERSION}-win32.zip" \
+			--file jot-${VERSION}-win32.zip
+	rm jot.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
 	rm -rf micro*
@@ -104,16 +104,16 @@ release:
 	mv vim/vim80/vim.exe ./src/bin/
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win64" -o sdees.exe
-	zip -j sdees-${VERSION}-win64.zip sdees.exe README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win64" -o jot.exe
+	zip -j jot-${VERSION}-win64.zip jot.exe README.md LICENSE
 	github-release upload \
 			--user schollz \
-			--repo sdees \
+			--repo jot \
 			--tag ${VERSION} \
-			--name "sdees-${VERSION}-win64.zip" \
-			--file sdees-${VERSION}-win64.zip
-	rm sdees.exe
+			--name "jot-${VERSION}-win64.zip" \
+			--file jot-${VERSION}-win64.zip
+	rm jot.exe
 	cd src && git reset --hard HEAD
 	rm -f *.zip
 	rm -rf micro*
@@ -124,16 +124,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux64" -o sdees
-	tar -czvf sdees-${VERSION}-linux64.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux64" -o jot
+	tar -czvf jot-${VERSION}-linux64.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-linux64.tar.gz" \
-	    --file sdees-${VERSION}-linux64.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-linux64.tar.gz" \
+	    --file jot-${VERSION}-linux64.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "Uploading Linux 32"
@@ -142,16 +142,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=linux GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux32" -o sdees
-	tar -czvf sdees-${VERSION}-linux32.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=linux GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux32" -o jot
+	tar -czvf jot-${VERSION}-linux32.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-linux32.tar.gz" \
-	    --file sdees-${VERSION}-linux32.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-linux32.tar.gz" \
+	    --file jot-${VERSION}-linux32.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading Linux ARM ------------"
@@ -160,16 +160,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=linux GOARCH=arm go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux-arm" -o sdees
-	tar -czvf sdees-${VERSION}-linux-arm.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=linux GOARCH=arm go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=linux-arm" -o jot
+	tar -czvf jot-${VERSION}-linux-arm.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-linux-arm.tar.gz" \
-	    --file sdees-${VERSION}-linux-arm.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-linux-arm.tar.gz" \
+	    --file jot-${VERSION}-linux-arm.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading OSX ------------"
@@ -178,16 +178,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o sdees
-	tar -czvf sdees-${VERSION}-osx.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=osx" -o jot
+	tar -czvf jot-${VERSION}-osx.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-osx.tar.gz" \
-	    --file sdees-${VERSION}-osx.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-osx.tar.gz" \
+	    --file jot-${VERSION}-osx.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading freebsd32 ------------"
@@ -196,16 +196,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=freebsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o sdees
-	tar -czvf sdees-${VERSION}-freebsd32.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=freebsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o jot
+	tar -czvf jot-${VERSION}-freebsd32.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-freebsd32.tar.gz" \
-	    --file sdees-${VERSION}-freebsd32.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-freebsd32.tar.gz" \
+	    --file jot-${VERSION}-freebsd32.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading freebsd64 ------------"
@@ -214,16 +214,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=freebsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o sdees
-	tar -czvf sdees-${VERSION}-freebsd64.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=freebsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=freebsd" -o jot
+	tar -czvf jot-${VERSION}-freebsd64.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-freebsd64.tar.gz" \
-	    --file sdees-${VERSION}-freebsd64.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-freebsd64.tar.gz" \
+	    --file jot-${VERSION}-freebsd64.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading openbsd32 ------------"
@@ -232,16 +232,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=openbsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o sdees
-	tar -czvf sdees-${VERSION}-openbsd32.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=openbsd GOARCH=386 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o jot
+	tar -czvf jot-${VERSION}-openbsd32.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-openbsd32.tar.gz" \
-	    --file sdees-${VERSION}-openbsd32.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-openbsd32.tar.gz" \
+	    --file jot-${VERSION}-openbsd32.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	echo "---------- Uploading openbsd64 ------------"
@@ -250,16 +250,16 @@ release:
 	mv micro*/micro ./src/bin
 	cd src && $(GOPATH)/bin/go-bindata ./bin
 	rm -rf ./src/bin/micro*
-	cd src && sed -i -- 's/package main/package sdees/g' bindata.go
-	env GOOS=openbsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o sdees
-	tar -czvf sdees-${VERSION}-openbsd64.tar.gz sdees README.md LICENSE
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=openbsd GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=openbsd" -o jot
+	tar -czvf jot-${VERSION}-openbsd64.tar.gz jot README.md LICENSE
 	github-release upload \
 	    --user schollz \
-	    --repo sdees \
+	    --repo jot \
 	    --tag ${VERSION} \
-	    --name "sdees-${VERSION}-openbsd64.tar.gz" \
-	    --file sdees-${VERSION}-openbsd64.tar.gz
-	rm sdees
+	    --name "jot-${VERSION}-openbsd64.tar.gz" \
+	    --file jot-${VERSION}-openbsd64.tar.gz
+	rm jot
 	rm -f *.tar.gz
 	rm -rf micro*
 	git reset --hard HEAD

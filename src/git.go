@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import (
 	"errors"
@@ -547,8 +547,8 @@ func Clone(folder string, remote string) error {
 	_, err = cmd.Output()
 	if err != nil {
 		logger.Debug("No master branch detected, adding one myself")
-		ioutil.WriteFile("sdees", []byte("."), 0644)
-		cmd2 := exec.Command("git", "add", "sdees")
+		ioutil.WriteFile("jot", []byte("."), 0644)
+		cmd2 := exec.Command("git", "add", "jot")
 		cmd2.Output()
 		cmd2 = exec.Command("git", "commit", "-m", "'added master branch'")
 		cmd2.Output()
