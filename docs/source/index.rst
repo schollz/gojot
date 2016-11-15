@@ -17,7 +17,7 @@ Here's what it looks like in action:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciinema-index.json" async autoplay="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-overview.json" async autoplay="true" size="small" speed="1.2" theme="asciinema"></asciinema-player>
    </center>
 
 
