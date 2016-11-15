@@ -63,7 +63,7 @@ which you can add to ``jot`` as
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciinema-repo.json" async autoplay="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-firsttime.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 That's it! If you'd like to see help, simply use ``--help`` or check out `usage guide`_ for more information about what *jot* can do.

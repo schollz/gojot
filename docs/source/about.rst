@@ -20,12 +20,15 @@ Dropbox.
 *jot* just makes this solution easier to attain.
 *jot* is a single executable file with the text-editor and
 ``gpg`` bulit-in, compatible with all major OS/architectures.
-The only system requirement is the installation of a DVCS,
-``git``, which is easy to get on any system. The other benefit
+The only system requirement is the installation of
+the distributed version control software ``git``,
+`which is easy to get on any system`_. The other benefit
 of *jot* is that it will automatically combine all the time-stamped
 entries so it appears that you are editing a single document, and it
 will also resolve merges that can occur if you edit the same entry
 offline on two computers.
+
+.. _which is easy to get on any system: https://git-scm.com/downloads
 
 
 How *jot* works
