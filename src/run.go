@@ -89,7 +89,7 @@ func Run() {
 		table.Render()
 
 		if len(CurrentDocument) == 0 {
-			CurrentDocument = "notes.txt"
+			CurrentDocument = "notes"
 		}
 		fmt.Printf("\n\nWhich document (press enter for '%s', or type name): ", DecryptOTP(CurrentDocument))
 		fmt.Scanln(&editDocument)
@@ -98,7 +98,7 @@ func Run() {
 		} else if len(editDocument) == 0 && len(availableFiles) > 0 {
 			CurrentDocument = availableFiles[0]
 		} else if len(CurrentDocument) == 0 && len(editDocument) == 0 && len(availableFiles) == 0 {
-			CurrentDocument = ("notes.txt")
+			CurrentDocument = ("notes")
 		} else if len(editDocument) > 0 {
 			fileNum, err := strconv.Atoi(strings.TrimSpace(editDocument))
 			if err == nil {
