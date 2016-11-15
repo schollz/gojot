@@ -31,7 +31,7 @@ Features
 
 ## Usage
 
-![](https://jot.schollz.com/_static/main_demo.gif)
+![](https://raw.githubusercontent.com/schollz/jot/master/docs/source/_static/main_demo.gif)
 ```
 jot new.txt # edit a new document, new.txt
 jot --summary # list a summary
