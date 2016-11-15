@@ -1,4 +1,5 @@
-The latest version is 2.0.0, released 2016-11-10.
+
+The latest version is 2.0.0, released 2016-11-15.
 
 .. raw:: html
 
@@ -7,9 +8,9 @@ The latest version is 2.0.0, released 2016-11-10.
 	<div class="reqs">Windows XP or later, Intel 64-bit processor</div>
 	<div>
 	<span class="filename">jot-2.0.0-win64.zip</span>
-	<span class="size">(6 MB)</span>
+	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: caff8b7caa1bbbc867ff07c3212e3d62894e1d57c5b502d2b3a18c5cdf66a23d</div>
+	<div class="checksum">SHA256: 536ebdda5811a5b54daa6ca274b073946c49c0030febbfefde0f955cfb89eddc</div>
 	</a>
 
 
@@ -20,9 +21,9 @@ The latest version is 2.0.0, released 2016-11-10.
 	<div class="reqs">OS X 10.8 or later, Intel 64-bit processor</div>
 	<div>
 	<span class="filename">jot-2.0.0-osx.tar.gz</span>
-	<span class="size">(6 MB)</span>
+	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 737985a87af86259d0fea6ae799f0448f383bfb2004d6d39e65c4eb49686b184</div>
+	<div class="checksum">SHA256: 8c60b6aeac92cc5c87bdcabcc6c17d1e8bc919beabc6ae44afc486b4e063983e</div>
 	</a>
 
 
@@ -33,9 +34,9 @@ The latest version is 2.0.0, released 2016-11-10.
 	<div class="reqs">Linux 2.6.23 or later, Intel 64-bit processor</div>
 	<div>
 	<span class="filename">jot-2.0.0-linux64.tar.gz</span>
-	<span class="size">(6 MB)</span>
+	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 17abb78b17f8fef79efb213d7dba3e5e6a0e2370ffa2abb6bb0bdb433934472a</div>
+	<div class="checksum">SHA256: b8a8b495b3600a549fd2993fbb4c3dfd48e2f1d5fbcb011708b01b625dfca584</div>
 	</a>
 
 
@@ -46,7 +47,9 @@ The latest version is 2.0.0, released 2016-11-10.
 	<div class="reqs">Linux 2.6.23 or later, ARM processor</div>
 	<div>
 	<span class="filename">jot-2.0.0-linux-arm.tar.gz</span>
-	<span class="size">(5 MB)</span>
+	<span class="size">(6 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 4bc70bb1543efc74ffbcd3b7c826f7070848c913f43902709c30ec7422d3ccdc</div>
+	<div class="checksum">SHA256: c0c49909abfb49ca8f81cdc08ab4ec9fe3fde6f16a266e837a16ba5c74d4c895</div>
 	</a>
+
+
