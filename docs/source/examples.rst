@@ -12,7 +12,7 @@ All released versions of *jot* (2.0.0+) include `micro`_ built-in.
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91955.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-firsttime.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Adding an entry
@@ -25,7 +25,7 @@ Here is a simple example of adding an entry:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91838.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-adding.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Each entry is assigned a random name.
@@ -35,7 +35,7 @@ use the name to quickly edit a specific entry. To do this, simply delete the ran
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91960.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-changingentry.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Then, to edit a specific entry, simply type in the entry name after running the program:
@@ -43,7 +43,7 @@ Then, to edit a specific entry, simply type in the entry name after running the 
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-92038.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-editingentry.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -61,7 +61,7 @@ Here is an example for deleting a document:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91952.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-deletedoc.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -70,7 +70,7 @@ And here is an example of deleting an entry:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91951.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-deleteentry.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -85,7 +85,7 @@ Here is an example of loading a whole document:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91956.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-all.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -99,7 +99,7 @@ You can export your whole document as a text-file using the `--export` flag. Her
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91961.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-export.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -112,7 +112,7 @@ If you'd like to get information about wordcounts and entry counts in all your d
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91953.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-stats.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
@@ -125,7 +125,7 @@ With the `--config` flag you can change the repository that is being used and th
 .. raw:: html
 
     <center>
-    <asciinema-player src="/_static/asciicast/asciicast-92593.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    <asciinema-player src="/_static/asciicast/asciinema-config.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
     </center>
 
 
@@ -140,7 +140,7 @@ as well as any configuration files in ``$HOME/.config/jot``. You will be prompte
 .. raw:: html
 
     <center>
-    <asciinema-player src="/_static/asciicast/asciicast-92592.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    <asciinema-player src="/_static/asciicast/asciinema-clean.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
     </center>
 
 
@@ -154,7 +154,7 @@ Here is an example:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91967.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-summary.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 Problems?

@@ -61,7 +61,7 @@ revealing information since it will look like gibberish, for example:
 .. raw:: html
 
    <center>
-  <asciinema-player src="/_static/asciicast/asciicast-91963.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+  <asciinema-player src="/_static/asciicast/asciinema-about.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
    </center>
 
 
