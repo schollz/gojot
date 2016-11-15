@@ -55,6 +55,25 @@ clean:
 	rm -rf src/test
 	rm -rf src/gittest10
 
+.PHONE: windows
+windows:
+	rm -rf micro*
+	wget https://github.com/zyedidia/micro/releases/download/v1.1.2/micro-1.1.2-win64.zip
+	unzip micro*.zip
+	mv micro*/micro.exe ./src/bin
+	wget ftp://ftp.vim.org/pub/vim/pc/vim80-069w32.zip
+	unzip vim*zip
+	mv vim/vim80/vim.exe ./src/bin/
+	cd src && $(GOPATH)/bin/go-bindata ./bin
+	rm -rf ./src/bin/micro*
+	cd src && sed -i -- 's/package main/package jot/g' bindata.go
+	env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD} -X main.BuildTime=${BUILD_TIME} -X main.OS=win64" -o jot.exe
+	zip -j jot-${VERSION}-win64.zip jot.exe README.md LICENSE
+	cd src && git reset --hard HEAD
+	rm -f *.zip
+	rm -rf micro*
+	rm -rf vim80*zip
+
 .PHONY: release
 release:
 	echo "Deleting old release"
