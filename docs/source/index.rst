@@ -12,7 +12,7 @@ systems. *jot* is a single binary (with a text-editor built-in!), so
 you only need ``git`` to get started and is compatible any local repo or
 hosted service (`Gitlab`_/`Bitbucket`_/`Github`_).
 
-Here's what it looks like in action:
+Here's what it looks like in action (`check if its encrypted`_):
 
 .. raw:: html
 
@@ -42,6 +42,7 @@ Features
 -  Open-source
      `Source on Github`_, written in `Go`_ and licensed under the MIT, with exception of a few open source components from third parties.
 
+.. _check if its encrypted: https://github.com/schollz/demo
 .. _see mine: https://github.com/schollz/demo
 .. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 .. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
