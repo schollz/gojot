@@ -1,9 +1,7 @@
 Overview
 =========
 
-*jot* is for *distributed* *editing* of *encrypted* *stuff*.
-
-*jot does editing, encryption* and *synchronization*.
+*jot* is a modern command-line journal that is distributed and encrypted by default.
 
 
 Ok. But, really, *jot* is just a fancy wrapper for ``git`` that allows

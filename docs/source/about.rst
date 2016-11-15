@@ -80,6 +80,8 @@ that *jot* could provide some functionality or utility that was still absent.
     Requires internet access, and a browser, difficult to reconstruct many documents.
 *  **jrnl.sh** `[site] <http://jrnl.sh/>`_ - command line journal application with encryption
     Requires Python. Syncing only available via Dropbox which won't support merging encrypted files if editing offline.
+*  **ntbk** `[site] <hhttps://www.npmjs.com/package/ntbk>`_ - command line journal
+    Requires Node.js. Syncing only available via Dropbox which won't support merging encrypted files if editing offline.
 *  **vimwiki** `[site] <http://vimwiki.github.io/>`_ - command line editor with `capability of distributed encryption <http://www.stochasticgeometry.ie/2012/11/23/vimwiki/>`_
     Requires system-specific filesystem encryption (e.g. `eCryptFS <http://ecryptfs.org/>`_). Works with any DVCS, but merges are not handled.
 *  **Org mode** `[site] <http://orgmode.org/>`_ - fast and effective plain-text system for authoring documents
