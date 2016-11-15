@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/kardianos/osext"
-	sdees "github.com/schollz/sdees/src"
+	jot "github.com/schollz/jot/src"
 	"github.com/urfave/cli"
 )
 
@@ -27,7 +27,7 @@ var (
 
 func main() {
 	// Delete temp files upon exit
-	defer sdees.CleanUp()
+	defer jot.CleanUp()
 
 	// Handle Ctl+C for cleanUp
 	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
@@ -35,62 +35,62 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		sdees.CleanUp()
+		jot.CleanUp()
 		os.Exit(1)
 	}()
 
 	// App information
 	setBuild()
 	app := cli.NewApp()
-	app.Name = "sdees"
+	app.Name = "jot"
 	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
-	app.Usage = `sdees is for distributed editing of encrypted stuff
+	app.Usage = `jot is for distributed editing of encrypted stuff
 
-	 https://github.com/schollz/sdees
+	 https://github.com/schollz/jot
 
 FOLDERS:
-	'` + sdees.CachePath + `' stores all encrypted files and repositories
-	'` + sdees.ConfigPath + `' stores all configuration files
+	'` + jot.CachePath + `' stores all encrypted files and repositories
+	'` + jot.ConfigPath + `' stores all configuration files
 
 EXAMPLE USAGE:
-   sdees new.txt # create new / edit a document, 'new.txt'
-   sdees Entry123 # edit a entry, 'Entry123'
-   sdees --summary # list a summary of all entries
-   sdees --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
+   jot new.txt # create new / edit a document, 'new.txt'
+   jot Entry123 # edit a entry, 'Entry123'
+   jot --summary # list a summary of all entries
+   jot --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
 
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
 		if Debug {
-			sdees.DebugMode()
+			jot.DebugMode()
 		}
 
 		CheckIfGitIsInstalled()
 
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
-			sdees.InputDocument = workingFile
+			jot.InputDocument = workingFile
 		}
 
 		// Check if its Windows
 		if runtime.GOOS == "windows" {
-			sdees.Extension = ".exe"
+			jot.Extension = ".exe"
 		} else {
-			sdees.Extension = ""
+			jot.Extension = ""
 		}
-		sdees.Version = Version
+		jot.Version = Version
 
 		// Check new Version
 		programPath, _ := osext.Executable()
-		sdees.CheckNewVersion(programPath, Version, LastCommit, OS)
-		sdees.ProgramPath, _ = osext.ExecutableFolder()
+		jot.CheckNewVersion(programPath, Version, LastCommit, OS)
+		jot.ProgramPath, _ = osext.ExecutableFolder()
 
 		// Process some flags
 		if ResetConfig {
-			sdees.SetupConfig()
+			jot.SetupConfig()
 		} else if Clean {
-			sdees.CleanAll()
+			jot.CleanAll()
 		} else {
-			sdees.Run()
+			jot.Run()
 		}
 		return nil
 	}
@@ -102,28 +102,28 @@ EXAMPLE USAGE:
 		},
 		cli.BoolFlag{
 			Name:        "clean",
-			Usage:       "Deletes all sdees files",
+			Usage:       "Deletes all jot files",
 			Destination: &Clean,
 		},
 		cli.StringFlag{
 			Name:        "search",
 			Usage:       "Search for `word`",
-			Destination: &sdees.Search,
+			Destination: &jot.Search,
 		},
 		cli.BoolFlag{
 			Name:        "importold",
 			Usage:       "Import `document` (JRNL-format)",
-			Destination: &sdees.ImportOldFlag,
+			Destination: &jot.ImportOldFlag,
 		},
 		cli.BoolFlag{
 			Name:        "import",
 			Usage:       "Import `document`",
-			Destination: &sdees.ImportFlag,
+			Destination: &jot.ImportFlag,
 		},
 		cli.BoolFlag{
 			Name:        "export",
 			Usage:       "Export `document`",
-			Destination: &sdees.Export,
+			Destination: &jot.Export,
 		},
 		cli.BoolFlag{
 			Name:        "config",
@@ -133,22 +133,22 @@ EXAMPLE USAGE:
 		cli.BoolFlag{
 			Name:        "all, a",
 			Usage:       "Edit all of the document",
-			Destination: &sdees.All,
+			Destination: &jot.All,
 		},
 		cli.BoolFlag{
 			Name:        "delete",
 			Usage:       "Delete `X`, where X is a document or entry",
-			Destination: &sdees.DeleteFlag,
+			Destination: &jot.DeleteFlag,
 		},
 		cli.BoolFlag{
 			Name:        "summary",
 			Usage:       "Gets summary",
-			Destination: &sdees.Summarize,
+			Destination: &jot.Summarize,
 		},
 		cli.BoolFlag{
 			Name:        "stats",
 			Usage:       "Print stats",
-			Destination: &sdees.ShowStats,
+			Destination: &jot.ShowStats,
 		},
 	}
 	app.Run(os.Args)
@@ -181,16 +181,18 @@ func setBuild() {
 		Build = "dev"
 		Version = "dev"
 		BuildTime = time.Now().String()
-		err := os.Chdir(path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "sdees"))
+		err := os.Chdir(path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "jot"))
 		if err != nil {
 			return
 		}
-		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%ad'")
+		cmd := exec.Command("git", "log", "-1", "--pretty=format:'%h||%ad'")
 		stdout, err := cmd.Output()
 		if err != nil {
 			return
 		}
-		LastCommit = strings.Replace(string(stdout), "'", "", -1)
+		items := strings.Split(string(stdout),"||")
+		LastCommit = strings.Replace(items[1], "'", "", -1)
+		Build = strings.Replace(items[0], "'", "", -1)
 		BuildTime = LastCommit
 	} else {
 		Build = Build[0:7]

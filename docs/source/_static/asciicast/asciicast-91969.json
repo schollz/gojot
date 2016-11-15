@@ -52,11 +52,11 @@
     ],
     [
       0.000587,
-      "\u001b]2;sdees\u0007"
+      "\u001b]2;jot\u0007"
     ],
     [
       4.1e-05,
-      "\u001b]1;sdees\u0007"
+      "\u001b]1;jot\u0007"
     ],
     [
       0.344683,
@@ -176,7 +176,7 @@
     ],
     [
       0.001176,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/sdees/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
     ],
     [
       0.000178,
@@ -192,7 +192,7 @@
     ],
     [
       0.000465,
-      "\u001b[2;1HMon Nov 7 16:38:03 2016 -0500  -==- DistributedEncryptedEditing\r\n\r\n* sdees is for distributed editing of encrypted stuff.\r\n\r\n* sdees does encryption, editing, and synchronization.\r\n\r\n* sdees is open-source and available at https://github.com/schollz/sdees\r\n\r\n* Documentation and examples are at https://sdees.schollz.com\r\n\r\nMon Nov 07 17:13:21 2016 -0500 -==- HellishJoblessShootdown"
+      "\u001b[2;1HMon Nov 7 16:38:03 2016 -0500  -==- DistributedEncryptedEditing\r\n\r\n* jot is for distributed editing of encrypted stuff.\r\n\r\n* jot does encryption, editing, and synchronization.\r\n\r\n* jot is open-source and available at https://github.com/schollz/jot\r\n\r\n* Documentation and examples are at https://jot.schollz.com\r\n\r\nMon Nov 07 17:13:21 2016 -0500 -==- HellishJoblessShootdown"
     ],
     [
       4.4e-05,
@@ -496,7 +496,7 @@
     ],
     [
       9.5e-05,
-      "\".cache/sdees/temp/temp\""
+      "\".cache/jot/temp/temp\""
     ],
     [
       0.005549,

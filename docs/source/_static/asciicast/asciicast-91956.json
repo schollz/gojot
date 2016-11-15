@@ -119,11 +119,11 @@
     ],
     [
       0.000621,
-      "\u001b]2;sdees --all notes.txt\u0007"
+      "\u001b]2;jot --all notes.txt\u0007"
     ],
     [
       3.8e-05,
-      "\u001b]1;sdees\u0007"
+      "\u001b]1;jot\u0007"
     ],
     [
       0.296809,
@@ -139,7 +139,7 @@
     ],
     [
       0.000578,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/sdees/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
     ],
     [
       2.8e-05,
@@ -407,7 +407,7 @@
     ],
     [
       0.000111,
-      "\".cache/sdees/temp/temp\""
+      "\".cache/jot/temp/temp\""
     ],
     [
       0.005877,

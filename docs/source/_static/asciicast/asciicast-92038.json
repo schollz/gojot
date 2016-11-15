@@ -87,11 +87,11 @@
     ],
     [
       0.000579,
-      "\u001b]2;sdees Entry123\u0007"
+      "\u001b]2;jot Entry123\u0007"
     ],
     [
       4.7e-05,
-      "\u001b]1;sdees\u0007"
+      "\u001b]1;jot\u0007"
     ],
     [
       0.239149,
@@ -115,7 +115,7 @@
     ],
     [
       0.001241,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/sdees/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
     ],
     [
       4.9e-05,
@@ -131,7 +131,7 @@
     ],
     [
       0.00035,
-      "\u001b[1;1HTue Nov 8 08:16:02 2016 -0500  -==- Entry123\r\n\r\nThis is an entry named \"Entry123\", in document new.txt.\r\nIt can be edited instantly using:\r\n\r\nsdees Entry123\r\n\u001b[1m\u001b[34m~                                                                               \u001b[8;1H~                                                                               \u001b[9;1H~                                                                               \u001b[10;1H~                                                                               \u001b[11;1H~                                                                               \u001b[12;1H~                                                                               \u001b[13;1H~                                                                               \u001b[14;1H~                                                                               \u001b[m\u001b[15;1H\u001b[1m-- INSERT --\u001b[6;14H\u001b[?12l\u001b[?25h"
+      "\u001b[1;1HTue Nov 8 08:16:02 2016 -0500  -==- Entry123\r\n\r\nThis is an entry named \"Entry123\", in document new.txt.\r\nIt can be edited instantly using:\r\n\r\njot Entry123\r\n\u001b[1m\u001b[34m~                                                                               \u001b[8;1H~                                                                               \u001b[9;1H~                                                                               \u001b[10;1H~                                                                               \u001b[11;1H~                                                                               \u001b[12;1H~                                                                               \u001b[13;1H~                                                                               \u001b[14;1H~                                                                               \u001b[m\u001b[15;1H\u001b[1m-- INSERT --\u001b[6;14H\u001b[?12l\u001b[?25h"
     ],
     [
       2.438331,
@@ -223,7 +223,7 @@
     ],
     [
       0.000102,
-      "\".cache/sdees/temp/temp\""
+      "\".cache/jot/temp/temp\""
     ],
     [
       0.00569,

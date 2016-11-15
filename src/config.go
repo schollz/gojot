@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import (
 	"encoding/json"
@@ -21,9 +21,9 @@ func SetupConfig() {
 	var configParameters Config
 
 	var yesno string
-	err := errors.New("Incorrect remote")
+	err := errors.New("Incorrect git repo")
 	for {
-		fmt.Print("Enter remote (e.g.: git@github.com:USER/REPO.git): ")
+		fmt.Print("Enter git repo (e.g.: git@github.com:USER/REPO.git): ")
 		fmt.Scanln(&yesno)
 		cwd, _ := os.Getwd()
 		os.Chdir(CachePath)

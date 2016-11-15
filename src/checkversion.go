@@ -1,4 +1,4 @@
-package sdees
+package jot
 
 import (
 	"encoding/json"
@@ -161,8 +161,8 @@ func CheckNewVersion(dir string, version string, lastcommit string, osType strin
 }
 
 func updateDevVersion(lastcommit string) error {
-	logger.Debug("Updating dev version of sdees")
-	url := "https://api.github.com/repos/schollz/sdees/commits"
+	logger.Debug("Updating dev version of jot")
+	url := "https://api.github.com/repos/schollz/jot/commits"
 	r, err := http.Get(url)
 	if err != nil {
 		return errors.New("Couldn't call Github API for getting new date")
@@ -183,7 +183,7 @@ func updateDevVersion(lastcommit string) error {
 	}
 	logger.Debug("Github: %s, Current: %s", j[0].Commit.Author.Date.String(), currentCommit.String())
 	if currentCommit.Sub(j[0].Commit.Author.Date).Hours() < 0 {
-		fmt.Println("New version of sdees available! Run\n\n\tgo get -u github.com/schollz/sdees\n\not download.")
+		fmt.Println("New version of jot available! Run\n\n\tgo get -u github.com/schollz/jot\n\not download.")
 	}
 	return nil
 }
@@ -211,11 +211,11 @@ func updateDownloadVersion(dir string, version string, lastcommit string, osType
 
 	// Download
 	downloadVersion := versionName
-	downloadName := "sdees_" + osType + ".zip"
+	downloadName := "jot_" + osType + ".zip"
 	fmt.Printf("\nDownloading %s/%s...", downloadVersion, downloadName)
-	err = DownloadFile(downloadName, "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
+	err = DownloadFile(downloadName, "https://github.com/schollz/jot/releases/download/"+downloadVersion+"/"+downloadName)
 	if err != nil {
-		logger.Debug("Problem downloading file: %s", "https://github.com/schollz/sdees/releases/download/"+downloadVersion+"/"+downloadName)
+		logger.Debug("Problem downloading file: %s", "https://github.com/schollz/jot/releases/download/"+downloadVersion+"/"+downloadName)
 	}
 
 	// Unzip
@@ -229,7 +229,7 @@ func updateDownloadVersion(dir string, version string, lastcommit string, osType
 	// Move file
 	files, _ := ioutil.ReadDir("./")
 	for _, f := range files {
-		if strings.Contains(f.Name(), "sdees") {
+		if strings.Contains(f.Name(), "jot") {
 			logger.Debug("Moving %s to %s", f.Name(), dir)
 			err = os.Remove(dir)
 			if err != nil {
@@ -248,12 +248,12 @@ func updateDownloadVersion(dir string, version string, lastcommit string, osType
 	os.RemoveAll("tmp11")
 
 	// Done!
-	fmt.Printf("\n\nsdees Version %s installed!\n", versionName)
+	fmt.Printf("\n\njot Version %s installed!\n", versionName)
 	os.Exit(0)
 }
 
 func checkGithub(version string) (bool, string, []int) {
-	url := "https://api.github.com/repos/schollz/sdees/releases/latest"
+	url := "https://api.github.com/repos/schollz/jot/releases/latest"
 	r, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)

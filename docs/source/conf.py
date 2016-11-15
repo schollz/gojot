@@ -53,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'sdees'
+project = u'jot'
 copyright = u'theme created by <a href="https://github.com/pmorissette/klink">Philippe Morissette</a> and used under MIT License.'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -110,7 +110,7 @@ html_theme = 'klink'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'github': 'schollz/sdees',
+    'github': 'schollz/jot',
     'analytics_id': ''
 }
 
@@ -199,7 +199,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'sdees.tex', u'sdees Documentation',
+    ('index', 'jot.tex', u'jot Documentation',
      u'Zack Scholl', 'manual'),
 ]
 
@@ -229,7 +229,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'sdees', u'sdees Documentation',
+    ('index', 'jot', u'jot Documentation',
      [u'Zack Scholl'], 1)
 ]
 
@@ -243,8 +243,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'sdees', u'sdees Documentation',
-     u'Zack Scholl', 'sdees', 'One line description of project.',
+    ('index', 'jot', u'jot Documentation',
+     u'Zack Scholl', 'jot', 'One line description of project.',
      'Miscellaneous'),
 ]
 
