@@ -90,6 +90,30 @@ Here is an example of loading a whole document:
 
 
 
+``--import``
+------------------------
+
+You can import prevoius *jot* journals using `import`.
+
+.. raw:: html
+
+    <center>
+    <asciinema-player src="/_static/asciicast/asciinema-import.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    </center>
+
+
+``--importold`` (DayOne importing)
+-----------------------------------
+
+You can import a DayOne type journal using `--importold`.
+
+.. raw:: html
+
+    <center>
+    <asciinema-player src="/_static/asciicast/asciinema-importold.json" async preload="true" size="small" speed="0.9" theme="asciinema"></asciinema-player>
+    </center>
+
+
 
 ``--export``
 ------------------------

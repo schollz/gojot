@@ -66,7 +66,7 @@ Another text2` {
 // # 2391048fe24111e1983ed49a20be6f9e
 // 2014-05-03 03:22 Second @entry
 // Wow, looks like its been a whole year!
-
+//
 // Thu May 02 15:30:00 2013 -==- FretfulUnusedAirline
 //
 // My first jot entry
