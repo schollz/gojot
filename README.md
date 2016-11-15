@@ -31,7 +31,9 @@ Features
 
 ## Usage
 
+Example editing a [public Github repository](https://github.com/schollz/demo):
 ![](https://raw.githubusercontent.com/schollz/jot/master/docs/source/_static/main_demo.gif)
+
 ```
 jot new.txt # edit a new document, new.txt
 jot --summary # list a summary
