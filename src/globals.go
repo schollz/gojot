@@ -13,6 +13,6 @@ var (
 	Search                                                          string
 	RemoteFolder, CacheFile                                         string
 	Extension                                                       string
-	Passphrase, Cryptkey                                            string
+	Passphrase, Cryptkey, HashSalt                                  string
 	Debug, ResetConfig, DeleteDocument, ShowStats                   bool
 )
