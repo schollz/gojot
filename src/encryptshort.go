@@ -1,6 +1,7 @@
 package jot
 
 import (
+	cr "crypto/rand"
 	"hash/fnv"
 	"math/rand"
 	"strings"
@@ -10,7 +11,7 @@ import (
 
 func GenerateCryptkey() string {
 	key := make([]byte, chacha20.KeySize)
-	rand.Read(key)
+	cr.Read(key)
 	return EncodeToString(key)
 }
 
