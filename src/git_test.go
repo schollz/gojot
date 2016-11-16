@@ -19,6 +19,7 @@ var GITHUB_TEST_REPO = "git@github.com:schollz/test.git"
 func TestMain(m *testing.M) {
 	Passphrase = "test"
 	Cryptkey = GenerateCryptkey()
+	HashSalt = GenerateHashSalt()
 	// DebugMode()
 	os.RemoveAll("./gittest")
 	os.RemoveAll("./gittest10")
