@@ -2,7 +2,7 @@ SOURCEDIR=.
 
 BINARY=jot
 
-VERSION=2.0.0
+VERSION=2.1.0
 BUILD_TIME=`date +%FT%T%z`
 BUILD=`git rev-parse HEAD`
 BUILDSHORT = `git rev-parse --short HEAD`

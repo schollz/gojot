@@ -1,9 +1,9 @@
 package jot
 
 import (
+	"crypto/hmac"
 	cr "crypto/rand"
-	"hash/fnv"
-	"math/rand"
+	"crypto/sha256"
 	"strings"
 
 	"github.com/codahale/chacha20"
@@ -15,6 +15,12 @@ func GenerateCryptkey() string {
 	return EncodeToString(key)
 }
 
+func GenerateHashSalt() string {
+	salt := make([]byte, 20)
+	cr.Read(salt)
+	return EncodeToString(salt)
+}
+
 // EncryptOTP runs a XOR encryption on the input string using ChaCha20
 // The nonce is generate from a hash so that its reproducible
 func EncryptOTP(s string) string {
@@ -23,15 +29,10 @@ func EncryptOTP(s string) string {
 	}
 	key := DecodeString(Cryptkey)
 
-	// Get integer hash of input, using some of the random bytes in key as salt
-	h := fnv.New32a()
-	h.Write(append([]byte(s), []byte(key)[:10]...))
-	inputToNum := h.Sum32()
-
-	// Use random integer to seed and generate nonce
-	rand.Seed(int64(inputToNum))
-	nonce := make([]byte, chacha20.NonceSize)
-	rand.Read(nonce)
+	// Get hash of input, using some of the random bytes in key as salt
+	h := hmac.New(sha256.New, []byte(HashSalt))
+	h.Write([]byte(s))
+	nonce := h.Sum(nil)[0:chacha20.NonceSize]
 
 	c, err := chacha20.New(key, nonce)
 	if err != nil {
