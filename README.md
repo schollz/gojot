@@ -2,7 +2,7 @@
   <img src="https://jot.schollz.com/_static/logo.png"/>
 </p>
 
-[![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/jot/releases/latest)
+[![Version 2.1.0](https://img.shields.io/badge/version-2.1.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/jot/releases/latest)
 [![Build Status](https://travis-ci.org/schollz/jot.svg?branch=master)](https://travis-ci.org/schollz/jot)
 ![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
 [![](https://img.shields.io/badge/jot-documentation-blue.svg)](https://jot.schollz.com/)
