@@ -14,7 +14,7 @@ import (
 func PromptPassword(gitfolder string) string {
 	var err error
 	password1 := "1"
-	textToTest, _ := GetTextOfOne(gitfolder, "master", ".gojot-key")
+	textToTest, _ := GetTextOfOne(gitfolder, "master", ".jot-key")
 	if len(textToTest) == 0 {
 		password2 := "2"
 		for password1 != password2 {
@@ -31,9 +31,9 @@ func PromptPassword(gitfolder string) string {
 		Passphrase = password1
 		logger.Debug("It seems key doesn't exist yet, making it")
 		Cryptkey = GenerateCryptkey()
-		WriteToMaster(gitfolder, ".gojot-key", Cryptkey)
+		WriteToMaster(gitfolder, ".jot-key", Cryptkey)
 		HashSalt = GenerateHashSalt()
-		WriteToMaster(gitfolder, ".gojot-hs", HashSalt)
+		WriteToMaster(gitfolder, ".jot-hs", HashSalt)
 	} else {
 		logger.Debug("Testing with master:key")
 		passwordAccepted := false
@@ -44,7 +44,7 @@ func PromptPassword(gitfolder string) string {
 			Cryptkey, err = DecryptString(textToTest, password1)
 			if err == nil {
 				passwordAccepted = true
-				hashText, _ := GetTextOfOne(gitfolder, "master", ".gojot-hs")
+				hashText, _ := GetTextOfOne(gitfolder, "master", ".jot-hs")
 				HashSalt, _ = DecryptString(hashText, password1)
 			} else {
 				fmt.Println("\nPasswords do not match.")

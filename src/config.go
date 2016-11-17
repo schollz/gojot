@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -67,6 +68,9 @@ func SetupConfig() {
 			break
 		}
 		// check if it actually exists
+		if runtime.GOOS == "windows" {
+			Extension = ".exe"
+		}
 		cmd := exec.Command(path.Join(ProgramPath, configParameters.Editor+Extension), "--version")
 		_, err2 := cmd.Output()
 		if err2 == nil {
