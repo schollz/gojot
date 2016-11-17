@@ -19,7 +19,7 @@ Dropbox.
 
 *gojot* just makes this solution easier to attain.
 *gojot* is a single executable file with the text-editor and
-``gpg`` bulit-in, compatible with all magojor OS/architectures.
+``gpg`` bulit-in, compatible with all major OS/architectures.
 The only system requirement is the installation of
 the distributed version control software ``git``,
 `which is easy to get on any system`_. The other benefit
@@ -123,13 +123,13 @@ The alternative to this is ``git branch -vv`` but that is not considered stable.
 
 .. _local or remote: https://github.com/schollz/gojot/blob/master/INFO.md#setting-up-git-server
 .. _see mine: https://github.com/schollz/demo
-.. _all magojor systems and architectures: /install.html
+.. _all major systems and architectures: /install.html
 .. _is slated to be resolved: https://github.com/schollz/gojot/issues/73
 .. _version 2.5.0, released March, 2016: https://git-scm.com/docs/git-for-each-ref/2.5.0
 .. _see mine: https://github.com/schollz/demo
 .. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 .. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
-.. _all magojor systems and architectures: /install.html
+.. _all major systems and architectures: /install.html
 .. _Source on Github: https://github.com/schollz/gojot
 .. _Gitlab: https://gitlab.com/users/sign_in
 .. _Bitbucket: https://bitbucket.org/account/signin/
