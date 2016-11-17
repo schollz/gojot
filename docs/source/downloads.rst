@@ -10,7 +10,7 @@ The latest version is 2.1.0, released 2016-11-17.
 	<span class="filename">gojot-2.1.0-win64.zip</span>
 	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 9c1d4ca8d4b4e8d508e00cdc6c6b223ed47cb1c13e2f315c3037c5f734ea247f</div>
+	<div class="checksum">SHA256: a4f71d82e38c1857cb45adc29041f55747468ef1734d9ef00468e36b60852db3</div>
 	</a>
 
 
@@ -23,7 +23,7 @@ The latest version is 2.1.0, released 2016-11-17.
 	<span class="filename">gojot-2.1.0-osx.tar.gz</span>
 	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: c0dcb1ed85ba386a3db725c9a3e7ca62480ab73ac203799ce6a3b00eabf5d984</div>
+	<div class="checksum">SHA256: 7f5548aee2e1ac4727de09af98edc557824b8717fd9d1f73e3c71ad49eb48f90</div>
 	</a>
 
 
@@ -36,7 +36,7 @@ The latest version is 2.1.0, released 2016-11-17.
 	<span class="filename">gojot-2.1.0-linux64.tar.gz</span>
 	<span class="size">(7 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 2dcc87d14f41a114d42ff2299f55eeda22dcfc913a4eb980c1ab9e9cf587a7aa</div>
+	<div class="checksum">SHA256: 871e57cdad9ef5749297f34cc0b913cc6b42d96441860467c081ed2229f044c7</div>
 	</a>
 
 
@@ -49,7 +49,7 @@ The latest version is 2.1.0, released 2016-11-17.
 	<span class="filename">gojot-2.1.0-linux-arm.tar.gz</span>
 	<span class="size">(6 MB)</span>
 	</div>
-	<div class="checksum">SHA256: 4c2f484bdbfd0aeae12b2c3af03c28f33acbee37d8dac96fe8670d3c5a3a709c</div>
+	<div class="checksum">SHA256: 6a15d9f4f5b8d5796316eb6a0f81cb0844fb255d205baca917c0fe059ac28781</div>
 	</a>
 
 

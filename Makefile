@@ -76,13 +76,13 @@ windows:
 
 .PHONY: release
 release:
-	#echo "Deleting old release"
-	#git tag -d ${VERSION};
-	#git push origin :${VERSION};
-	#github-release delete \
-	#		--user schollz \
-	#		--repo gojot \
-	#		--tag ${VERSION}
+	echo "Deleting old release"
+	git tag -d ${VERSION};
+	git push origin :${VERSION};
+	github-release delete \
+			--user schollz \
+			--repo gojot \
+			--tag ${VERSION}
 	echo "Moving tag"
 	git tag --force latest ${BUILD}
 	git push --force --tags
