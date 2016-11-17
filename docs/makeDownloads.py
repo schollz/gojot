@@ -27,7 +27,7 @@ template = """.. raw:: html
 
 """
 
-r = requests.get("https://api.github.com/repos/schollz/jot/releases/latest")
+r = requests.get("https://api.github.com/repos/schollz/gojot/releases/latest")
 data = json.loads(r.text)
 version = data['name']
 releaseDate = data['published_at'].split("T")[0]
@@ -64,9 +64,9 @@ for f in featured:
     extension = ".tar.gz"
     if f == "win64":
         extension = ".zip"
-    featured[f]["url"] = "https://github.com/schollz/jot/releases/download/" + \
-        data["name"] + "/jot-" + version + "-" + f + extension
-    featured[f]["filename"] = "jot-%s-%s%s" % (version, f, extension)
+    featured[f]["url"] = "https://github.com/schollz/gojot/releases/download/" + \
+        data["name"] + "/gojot-" + version + "-" + f + extension
+    featured[f]["filename"] = "gojot-%s-%s%s" % (version, f, extension)
     os.system("wget " + featured[f]["url"])
     featured[f]["size"] = str(
         int(os.path.getsize(featured[f]["filename"]) / 1000000)) + " MB"
