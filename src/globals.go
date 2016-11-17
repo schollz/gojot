@@ -1,4 +1,4 @@
-package jot
+package gojot
 
 // Structures
 type Entry struct {

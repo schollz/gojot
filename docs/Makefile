@@ -51,7 +51,7 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-	rsync -avrP $(BUILDDIR)/html/ zns@cowyo.com:/www/jot.schollz.com/
+	rsync -avrP $(BUILDDIR)/html/ zns@cowyo.com:/www/gojot.schollz.com/
 
 
 dirhtml:

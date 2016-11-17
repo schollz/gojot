@@ -90,7 +90,7 @@
     ],
     [
       4.4e-05,
-      "\u001b[J\u001b[01;34mtemp\u001b[0m/                                       \u001b[J\u001b[A\u001b[A\u001b[0m\u001b[27m\u001b[24m\u001b[0m\u001b[27m\u001b[24m\u001b[39m\u001b[49m\r\u001b[20Ccd ~/.cache/jot/\u001b[K\u001b[0m\u001b[27m\u001b[24m\u001b[39m\u001b[49m"
+      "\u001b[J\u001b[01;34mtemp\u001b[0m/                                       \u001b[J\u001b[A\u001b[A\u001b[0m\u001b[27m\u001b[24m\u001b[0m\u001b[27m\u001b[24m\u001b[39m\u001b[49m\r\u001b[20Ccd ~/.cache/gojot/\u001b[K\u001b[0m\u001b[27m\u001b[24m\u001b[39m\u001b[49m"
     ],
     [
       0.437019,
@@ -114,7 +114,7 @@
     ],
     [
       0.000735,
-      "\u001b]2;cd ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007\u001b]1;cd\u0007"
+      "\u001b]2;cd ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007\u001b]1;cd\u0007"
     ],
     [
       0.000109,
@@ -122,7 +122,7 @@
     ],
     [
       0.000129,
-      "\u001b]2;demo@server8: ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
+      "\u001b]2;demo@server8: ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
     ],
     [
       4.3e-05,
@@ -130,7 +130,7 @@
     ],
     [
       0.088934,
-      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
+      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
     ],
     [
       9.7e-05,
@@ -190,7 +190,7 @@
     ],
     [
       0.000197,
-      "\u001b]2;demo@server8: ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
+      "\u001b]2;demo@server8: ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
     ],
     [
       8.5e-05,
@@ -198,7 +198,7 @@
     ],
     [
       0.073499,
-      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
+      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
     ],
     [
       3.1e-05,
@@ -490,7 +490,7 @@
     ],
     [
       0.000262,
-      "\u001b]2;demo@server8: ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
+      "\u001b]2;demo@server8: ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
     ],
     [
       8.3e-05,
@@ -498,7 +498,7 @@
     ],
     [
       0.077815,
-      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
+      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
     ],
     [
       6e-05,
@@ -914,7 +914,7 @@
     ],
     [
       0.000181,
-      "\u001b]2;demo@server8: ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
+      "\u001b]2;demo@server8: ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD\u0007"
     ],
     [
       0.000121,
@@ -922,7 +922,7 @@
     ],
     [
       0.079865,
-      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/jot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
+      "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[40m\u001b[39m demo@server8 \u001b[44m\u001b[30m\u001b[30m ~/.cache/gojot/2aTZqAm36RE3YuBrjShsmfbJ2b2oobTvQ2w53CxPtPD \u001b[43m\u001b[34m\u001b[30m  669089.5wP3dSvBxgT4uQ6a155rMuZbL.otp \u001b[49m\u001b[33m\u001b[39m \u001b[K"
     ],
     [
       4.1e-05,

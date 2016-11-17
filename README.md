@@ -1,20 +1,20 @@
 <p align="center">
-  <img src="https://jot.schollz.com/_static/logo.png"/>
+  <img src="https://gojot.schollz.com/_static/logo.png"/>
 </p>
 
-[![Version 2.1.0](https://img.shields.io/badge/version-2.1.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/jot/releases/latest)
-[![Github Releases](https://img.shields.io/github/downloads/schollz/jot/latest/total.svg)](https://github.com/schollz/jot/releases/latest)
-[![Build Status](https://travis-ci.org/schollz/jot.svg?branch=master)](https://travis-ci.org/schollz/jot)
+[![Version 2.1.0](https://img.shields.io/badge/version-2.1.0-brightgreen.svg?version=flat-square)](https://github.com/schollz/gojot/releases/latest)
+[![Github Releases](https://img.shields.io/github/downloads/schollz/gojot/latest/total.svg)](https://github.com/schollz/gojot/releases/latest)
+[![Build Status](https://travis-ci.org/schollz/gojot.svg?branch=master)](https://travis-ci.org/schollz/gojot)
 ![](https://img.shields.io/badge/coverage-54%25-yellow.svg)
-[![](https://img.shields.io/badge/jot-documentation-blue.svg)](https://jot.schollz.com/)
+[![](https://img.shields.io/badge/gojot-documentation-blue.svg)](https://gojot.schollz.com/)
 
-*jot* is a modern command-line journal that is distributed and encrypted by default.
+*gojot* is a modern command-line journal that is distributed and encrypted by default.
 
-Ok. But, really, *jot* is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. *jot* is great for a *distributed and encrypted* journal and is compatible with all major operating systems. *jot* is a single binary (with a text-editor built-in!), so you only need `git` to get started.
+Ok. But, really, *gojot* is just a fancy wrapper for `git` that allows you to make time-stamped entries to encrypted documents while keeping the entire document synchronized. *gojot* is great for a *distributed and encrypted* journal and is compatible with all major operating systems. *gojot* is a single binary (with a text-editor built-in!), so you only need `git` to get started.
 
-More info can be found in [the documentation](https://jot.schollz.com/).
+More info can be found in [the documentation](https://gojot.schollz.com/).
 
-_Note_: The previous non-`git` version of *jot* can [be found here](https://github.com/schollz/jot/tree/1.X).
+_Note_: The previous non-`git` version of *gojot* can [be found here](https://github.com/schollz/gojot/tree/1.X).
 
 
 Features
@@ -34,15 +34,15 @@ Features
 
 Example editing a [public Github repository](https://github.com/schollz/demo):
 
-![](https://raw.githubusercontent.com/schollz/jot/master/docs/source/_static/main_demo.gif)
+![](https://raw.githubusercontent.com/schollz/gojot/master/docs/source/_static/main_demo.gif)
 
 ```
-jot new.txt # edit a new document, new.txt
-jot --summary # list a summary
-jot --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
-jot --help # for more information
+gojot new.txt # edit a new document, new.txt
+gojot --summary # list a summary
+gojot --search "dogs cats" # find all entries that mention 'dogs' or 'cats'`
+gojot --help # for more information
 ```
-For more information, see https://jot.schollz.com
+For more information, see https://gojot.schollz.com
 
 
 ## Requirements
@@ -56,14 +56,14 @@ apt-get install git -y
 
 ## Install
 
-To install, just [download the latest *jot* release](https://github.com/schollz/jot/releases/latest).
+To install, just [download the latest *gojot* release](https://github.com/schollz/gojot/releases/latest).
 
 _OR_
 
 use `go get` if you have [installed Go](https://golang.org/dl/):
 
 ```
-go get -u github.com/schollz/jot
+go get -u github.com/schollz/gojot
 ```
 
 
@@ -71,7 +71,7 @@ go get -u github.com/schollz/jot
 
 Logo graphic from [logodust](http://logodust.com).
 
-Inspiration from [these tools](https://jot.schollz.com/about.html#alternatives-to-jot).
+Inspiration from [these tools](https://gojot.schollz.com/about.html#alternatives-to-gojot).
 
 Southwest Airlines for providing two mechanical failures that gave me 8+ extra hours to code this.
 

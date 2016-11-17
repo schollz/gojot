@@ -110,11 +110,11 @@
     ],
     [
       0.000482,
-      "\u001b]2;jot --delete new.txt\u0007"
+      "\u001b]2;gojot --delete new.txt\u0007"
     ],
     [
       3e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.306426,

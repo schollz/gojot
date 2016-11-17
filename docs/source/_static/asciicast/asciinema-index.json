@@ -24,7 +24,7 @@
     ],
     [
       0.154355,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.163586,
@@ -40,11 +40,11 @@
     ],
     [
       0.000524,
-      "\u001b]2;jot\u0007"
+      "\u001b]2;gojot\u0007"
     ],
     [
       4.6e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.208479,
@@ -112,7 +112,7 @@
     ],
     [
       1.3e-05,
-      "journal  "
+      "gojournal  "
     ],
     [
       1.9e-05,
@@ -268,7 +268,7 @@
     ],
     [
       0.000357,
-      "\u001b[1;16r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[16;1H\"~/.cache/jot/temp/temp\""
+      "\u001b[1;16r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[16;1H\"~/.cache/gojot/temp/temp\""
     ],
     [
       4.1e-05,
@@ -284,7 +284,7 @@
     ],
     [
       0.000761,
-      "\u001b[1;1H2. Plays a song that has the same tempo as your heartbeat\r\n\r\nMon Nov 07 16:38:03 2016 -==- DistributedEncryptedEditing\r\n\r\n* jot is for distributed editing of encrypted stuff.\r\n\r\n* jot does encryption, editing, and synchronization.\r\n\r\n* jot is open-source and available at https://github.com/schollz/jot\r\n\r\n* Documentation and examples are at https://jot.schollz.com\r\n\r\nTue Nov 15 06:35:21 2016 -==- RectangularDefinitiveMarsh\r\n\r\n\r\n\u001b[1m-- INSERT --\u001b[15;1H\u001b[?12l\u001b[?25h"
+      "\u001b[1;1H2. Plays a song that has the same tempo as your heartbeat\r\n\r\nMon Nov 07 16:38:03 2016 -==- DistributedEncryptedEditing\r\n\r\n* gojot is for distributed editing of encrypted stuff.\r\n\r\n* gojot does encryption, editing, and synchronization.\r\n\r\n* gojot is open-source and available at https://github.com/schollz/gojot\r\n\r\n* Documentation and examples are at https://gojot.schollz.com\r\n\r\nTue Nov 15 06:35:21 2016 -==- RectangularDefinitiveMarsh\r\n\r\n\r\n\u001b[1m-- INSERT --\u001b[15;1H\u001b[?12l\u001b[?25h"
     ],
     [
       1.091299,
@@ -532,7 +532,7 @@
     ],
     [
       0.262889,
-      "\r\u001b[?25l\".cache/jot/temp/temp\""
+      "\r\u001b[?25l\".cache/gojot/temp/temp\""
     ],
     [
       0.003535,

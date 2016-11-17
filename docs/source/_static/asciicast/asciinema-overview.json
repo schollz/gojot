@@ -18,7 +18,7 @@
     ],
     [
       0.067597,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.089273,
@@ -38,11 +38,11 @@
     ],
     [
       0.000537,
-      "\u001b]2;jot notes\u0007"
+      "\u001b]2;gojot notes\u0007"
     ],
     [
       3.8e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.253611,
@@ -62,7 +62,7 @@
     ],
     [
       0.001227,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/gojot/temp/temp\""
     ],
     [
       0.000168,
@@ -294,7 +294,7 @@
     ],
     [
       0.389395,
-      "\u001b[?25lj\u001b[?12l\u001b[?25h"
+      "\u001b[?25lgoj\u001b[?12l\u001b[?25h"
     ],
     [
       0.0282,
@@ -1162,7 +1162,7 @@
     ],
     [
       1.210606,
-      "\r\u001b[?25l\".cache/jot/temp/temp\""
+      "\r\u001b[?25l\".cache/gojot/temp/temp\""
     ],
     [
       0.006154,
@@ -1202,7 +1202,7 @@
     ],
     [
       0.064711,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.099442,
@@ -1282,11 +1282,11 @@
     ],
     [
       0.000577,
-      "\u001b]2;jot --summary notes\u0007"
+      "\u001b]2;gojot --summary notes\u0007"
     ],
     [
       3.9e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.443011,
@@ -1302,7 +1302,7 @@
     ],
     [
       0.00012,
-      "MyFirstNote - Tue Nov 15 11:58:28 2016 (34 words):\r\n  jot is a simple command-line journal that makes it easy to have a distributed\r\n"
+      "MyFirstNote - Tue Nov 15 11:58:28 2016 (34 words):\r\n  gojot is a simple command-line gojournal that makes it easy to have a distributed\r\n"
     ],
     [
       0.001867,

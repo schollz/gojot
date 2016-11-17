@@ -20,14 +20,14 @@ repo that you have that can be used for testing. Then simply use
 
 to perform tests.
 
-.. _add an Issue: https://github.com/schollz/jot/issues/new
+.. _add an Issue: https://github.com/schollz/gojot/issues/new
 
 How to setup ``git`` server
 ----------------------------
 
 
 
-The usage of *jot* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
+The usage of *gojot* requires having a ``git`` repository hosted somewhere. You can have these repositories hosted locally or remotely, through a 3rd party service, or on your own server. Here's some examples on how to do either.
 
 *Easiest way:* Just dont. You can just use a `Github`_ / `Bitbucket`_ / `Gitlab`_
 repository and skip this.
@@ -44,7 +44,7 @@ If you want to just run locally, simply run:
 
     git init --bare /folder/to/newrepo.git
 
-to make a new repo ``newrepo.git``, and then add it to ``jot`` as
+to make a new repo ``newrepo.git``, and then add it to ``gojot`` as
 ``/folder/to/newrepo.git``.
 
 
@@ -78,7 +78,7 @@ server:
       mkdir -p newrepo.git && \
       git init --bare newrepo.git
 
-which you can add to ``jot`` as ``git@remote.com:newrepo.git``.
+which you can add to ``gojot`` as ``git@remote.com:newrepo.git``.
 
 .. _Github: https://github.com/
 .. _Bitbucket: https://bitbucket.org/

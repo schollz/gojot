@@ -1,4 +1,4 @@
-package jot
+package gojot
 
 import (
 	"os"
@@ -23,19 +23,19 @@ func setupPaths() {
 		}
 	}
 
-	CachePath = path.Join(homeDir, ".cache", "jot")
+	CachePath = path.Join(homeDir, ".cache", "gojot")
 	if !exists(CachePath) {
 		err := os.MkdirAll(CachePath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "jot"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gojot"))
 		}
 	}
 
-	TempPath = path.Join(homeDir, ".cache", "jot", "temp")
+	TempPath = path.Join(homeDir, ".cache", "gojot", "temp")
 	if !exists(TempPath) {
 		err := os.MkdirAll(TempPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "jot", "temp"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".cache", "gojot", "temp"))
 		}
 	}
 
@@ -46,11 +46,11 @@ func setupPaths() {
 		}
 	}
 
-	ConfigPath = path.Join(homeDir, ".config", "jot")
+	ConfigPath = path.Join(homeDir, ".config", "gojot")
 	if !exists(ConfigPath) {
 		err := os.MkdirAll(ConfigPath, 0711)
 		if err != nil {
-			logger.Error("Error creating %s", path.Join(homeDir, ".config", "jot"))
+			logger.Error("Error creating %s", path.Join(homeDir, ".config", "gojot"))
 		}
 	}
 

@@ -127,11 +127,11 @@
     ],
     [
       0.000546,
-      "\u001b]2;jot --summary ideas.txt\u0007"
+      "\u001b]2;gojot --summary ideas.txt\u0007"
     ],
     [
       3.9e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.377261,
@@ -151,7 +151,7 @@
     ],
     [
       6.9e-05,
-      "LuciferaseRefolding - Thu Nov 3 18:07:21 2016 (145 words):\r\n  I need to know whether Luc268-440 is stable. Does it give rise to one peak? If\r\nMusicFromTheHeart - Sat Nov 5 14:29:44 2016 (39 words):\r\n  Design a system that records your heartbeat and then either  1. Plays generated\r\nDistributedEncryptedEditing - Mon Nov 7 16:38:03 2016 (35 words):\r\n  * jot is for distributed editing of encrypted stuff.  * jot does encryption,\r\n"
+      "LuciferaseRefolding - Thu Nov 3 18:07:21 2016 (145 words):\r\n  I need to know whether Luc268-440 is stable. Does it give rise to one peak? If\r\nMusicFromTheHeart - Sat Nov 5 14:29:44 2016 (39 words):\r\n  Design a system that records your heartbeat and then either  1. Plays generated\r\nDistributedEncryptedEditing - Mon Nov 7 16:38:03 2016 (35 words):\r\n  * gojot is for distributed editing of encrypted stuff.  * gojot does encryption,\r\n"
     ],
     [
       0.00212,

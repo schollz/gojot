@@ -14,7 +14,7 @@
 
 // Package difflib provides functionality for computing the difference
 // between two sequences of strings.
-package jot
+package gojot
 
 import (
 	"bytes"

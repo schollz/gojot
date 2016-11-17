@@ -1,4 +1,4 @@
-package jot
+package gojot
 
 import (
 	"os"
@@ -30,7 +30,7 @@ func ListFiles(gitfolder string) []string {
 		if document[0] == '.' {
 			document = DecryptOTP(document[1:])
 			logger.Debug("Found document: %s", document)
-			if document == ".deleted" || document == "jot-key" || document == "jot-hs" {
+			if document == ".deleted" || document == "gojot-key" || document == "gojot-hs" {
 				continue
 			}
 			documents = append(documents, document)

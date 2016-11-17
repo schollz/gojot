@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/kardianos/osext"
-	jot "github.com/schollz/jot/src"
+	gojot "github.com/schollz/gojot/src"
 	"github.com/urfave/cli"
 )
 
@@ -27,7 +27,7 @@ var (
 
 func main() {
 	// Delete temp files upon exit
-	defer jot.CleanUp()
+	defer gojot.CleanUp()
 
 	// Handle Ctl+C for cleanUp
 	// from http://stackoverflow.com/questions/11268943/golang-is-it-possible-to-capture-a-ctrlc-signal-and-run-a-cleanup-function-in
@@ -35,62 +35,62 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		jot.CleanUp()
+		gojot.CleanUp()
 		os.Exit(1)
 	}()
 
 	// App information
 	setBuild()
 	app := cli.NewApp()
-	app.Name = "jot"
+	app.Name = "gojot"
 	app.Version = Version + " " + Build + " " + BuildTime + " " + OS
-	app.Usage = `jot is for distributed editing of encrypted stuff
+	app.Usage = `gojot is for distributed editing of encrypted stuff
 
-	 https://github.com/schollz/jot
+	 https://github.com/schollz/gojot
 
 FOLDERS:
-	'` + jot.CachePath + `' stores all encrypted files and repositories
-	'` + jot.ConfigPath + `' stores all configuration files
+	'` + gojot.CachePath + `' stores all encrypted files and repositories
+	'` + gojot.ConfigPath + `' stores all configuration files
 
 EXAMPLE USAGE:
-   jot new.txt # create new / edit a document, 'new.txt'
-   jot Entry123 # edit a entry, 'Entry123'
-   jot --summary # list a summary of all entries
-   jot --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
+   gojot new.txt # create new / edit a document, 'new.txt'
+   gojot Entry123 # edit a entry, 'Entry123'
+   gojot --summary # list a summary of all entries
+   gojot --search "dogs cats" # find entries that mention 'dogs' or 'cats'`
 
 	app.Action = func(c *cli.Context) error {
 		// Set the log level
 		if Debug {
-			jot.DebugMode()
+			gojot.DebugMode()
 		}
 
 		CheckIfGitIsInstalled()
 
 		workingFile := c.Args().Get(0)
 		if len(workingFile) > 0 {
-			jot.InputDocument = workingFile
+			gojot.InputDocument = workingFile
 		}
 
 		// Check if its Windows
 		if runtime.GOOS == "windows" {
-			jot.Extension = ".exe"
+			gojot.Extension = ".exe"
 		} else {
-			jot.Extension = ""
+			gojot.Extension = ""
 		}
-		jot.Version = Version
+		gojot.Version = Version
 
 		// Check new Version
 		programPath, _ := osext.Executable()
-		jot.CheckNewVersion(programPath, Version, LastCommit, OS)
-		jot.ProgramPath, _ = osext.ExecutableFolder()
+		gojot.CheckNewVersion(programPath, Version, LastCommit, OS)
+		gojot.ProgramPath, _ = osext.ExecutableFolder()
 
 		// Process some flags
 		if ResetConfig {
-			jot.SetupConfig()
+			gojot.SetupConfig()
 		} else if Clean {
-			jot.CleanAll()
+			gojot.CleanAll()
 		} else {
-			jot.Run()
+			gojot.Run()
 		}
 		return nil
 	}
@@ -102,28 +102,28 @@ EXAMPLE USAGE:
 		},
 		cli.BoolFlag{
 			Name:        "clean",
-			Usage:       "Deletes all jot files",
+			Usage:       "Deletes all gojot files",
 			Destination: &Clean,
 		},
 		cli.StringFlag{
 			Name:        "search",
 			Usage:       "Search for `word`",
-			Destination: &jot.Search,
+			Destination: &gojot.Search,
 		},
 		cli.BoolFlag{
 			Name:        "importold",
 			Usage:       "Import `document` (JRNL-format)",
-			Destination: &jot.ImportOldFlag,
+			Destination: &gojot.ImportOldFlag,
 		},
 		cli.BoolFlag{
 			Name:        "import",
 			Usage:       "Import `document`",
-			Destination: &jot.ImportFlag,
+			Destination: &gojot.ImportFlag,
 		},
 		cli.BoolFlag{
 			Name:        "export",
 			Usage:       "Export `document`",
-			Destination: &jot.Export,
+			Destination: &gojot.Export,
 		},
 		cli.BoolFlag{
 			Name:        "config",
@@ -133,22 +133,22 @@ EXAMPLE USAGE:
 		cli.BoolFlag{
 			Name:        "all, a",
 			Usage:       "Edit all of the document",
-			Destination: &jot.All,
+			Destination: &gojot.All,
 		},
 		cli.BoolFlag{
 			Name:        "delete",
 			Usage:       "Delete `X`, where X is a document or entry",
-			Destination: &jot.DeleteFlag,
+			Destination: &gojot.DeleteFlag,
 		},
 		cli.BoolFlag{
 			Name:        "summary",
 			Usage:       "Gets summary",
-			Destination: &jot.Summarize,
+			Destination: &gojot.Summarize,
 		},
 		cli.BoolFlag{
 			Name:        "stats",
 			Usage:       "Print stats",
-			Destination: &jot.ShowStats,
+			Destination: &gojot.ShowStats,
 		},
 	}
 	app.Run(os.Args)
@@ -181,7 +181,7 @@ func setBuild() {
 		Build = "dev"
 		Version = "dev"
 		BuildTime = time.Now().String()
-		err := os.Chdir(path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "jot"))
+		err := os.Chdir(path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "gojot"))
 		if err != nil {
 			return
 		}
