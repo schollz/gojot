@@ -1,4 +1,4 @@
-package jot
+package gojot
 
 import "testing"
 
@@ -69,7 +69,7 @@ Another text2` {
 //
 // Thu May 02 15:30:00 2013 -==- FretfulUnusedAirline
 //
-// My first jot entry
+// My first gojot entry
 // This is it, I probably won't edit for another yer.
 //
 // Sat May 03 03:22:00 2014 -==- ViolentZestyDonald

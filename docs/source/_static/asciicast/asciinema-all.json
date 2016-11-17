@@ -23,7 +23,7 @@
     ],
     [
       0.067931,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.133209,
@@ -87,7 +87,7 @@
     ],
     [
       0.000666,
-      "\u001b]2;jot --all notes\u0007\u001b]1;jot\u0007"
+      "\u001b]2;gojot --all notes\u0007\u001b]1;gojot\u0007"
     ],
     [
       0.273581,
@@ -119,7 +119,7 @@
     ],
     [
       0.000807,
-      "\u001b[1;16r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[16;1H\"~/.cache/jot/temp/temp\""
+      "\u001b[1;16r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[16;1H\"~/.cache/gojot/temp/temp\""
     ],
     [
       4.8e-05,
@@ -347,7 +347,7 @@
     ],
     [
       0.000128,
-      "\".cache/jot/temp/temp\""
+      "\".cache/gojot/temp/temp\""
     ],
     [
       0.005757,

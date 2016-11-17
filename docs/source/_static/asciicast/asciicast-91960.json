@@ -88,11 +88,11 @@
     ],
     [
       0.000456,
-      "\u001b]2;jot nuts.txt\u0007"
+      "\u001b]2;gojot nuts.txt\u0007"
     ],
     [
       3e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.329934,
@@ -108,7 +108,7 @@
     ],
     [
       0.000368,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/gojot/temp/temp\""
     ],
     [
       5.3e-05,
@@ -692,7 +692,7 @@
     ],
     [
       0.000119,
-      "\".cache/jot/temp/temp\""
+      "\".cache/gojot/temp/temp\""
     ],
     [
       0.005681,
@@ -852,11 +852,11 @@
     ],
     [
       0.000518,
-      "\u001b]2;jot --summary nuts.txt\u0007"
+      "\u001b]2;gojot --summary nuts.txt\u0007"
     ],
     [
       4.1e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.289977,

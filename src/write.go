@@ -1,4 +1,4 @@
-package jot
+package gojot
 
 import (
 	"io/ioutil"

@@ -4,10 +4,10 @@ Help
 First time startup
 --------------------
 
-On the first use you will be asked to point *jot* to a repository.
+On the first use you will be asked to point *gojot* to a repository.
 You will also be able to select which editor you'd like to use.
 Currently only four editors are supported: `micro`_, `vim`_, `emacs`_, and `nano`_.
-All released versions of *jot* (2.0.0+) include `micro`_ built-in.
+All released versions of *gojot* (2.0.0+) include `micro`_ built-in.
 
 .. raw:: html
 
@@ -93,7 +93,7 @@ Here is an example of loading a whole document:
 ``--import``
 ------------------------
 
-You can import prevoius *jot* journals using `import`.
+You can import prevoius *gojot* journals using `import`.
 
 .. raw:: html
 
@@ -158,8 +158,8 @@ With the `--config` flag you can change the repository that is being used and th
 ``--clean``
 ----------------------------
 
-With the `--clean` flag you can erase all the *jot* folders. This includes the cache of currently known ``git`` repositories, ``$HOME/.cache/jot``,
-as well as any configuration files in ``$HOME/.config/jot``. You will be prompted to verify that this is what you want.
+With the `--clean` flag you can erase all the *gojot* folders. This includes the cache of currently known ``git`` repositories, ``$HOME/.cache/gojot``,
+as well as any configuration files in ``$HOME/.config/gojot``. You will be prompted to verify that this is what you want.
 
 .. raw:: html
 
@@ -186,7 +186,7 @@ Problems?
 
 If you have any problems at all, please `submit an Issue`_ and someone can help you sort it out.
 
-.. _submit an Issue: https://github.com/schollz/jot/issues/new
+.. _submit an Issue: https://github.com/schollz/gojot/issues/new
 .. _micro: https://github.com/zyedidia/micro
 .. _vim: http://www.vim.org/download.php
 .. _nano: https://www.nano-editor.org/

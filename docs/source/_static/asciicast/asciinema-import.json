@@ -64,7 +64,7 @@
     ],
     [
       0.105184,
-      "journal\u001b[1m \u001b[0m"
+      "gojournal\u001b[1m \u001b[0m"
     ],
     [
       1.152091,
@@ -80,7 +80,7 @@
     ],
     [
       0.000677,
-      "\u001b]2;cat jotjournal\u0007"
+      "\u001b]2;cat gojotgojournal\u0007"
     ],
     [
       5e-05,
@@ -88,7 +88,7 @@
     ],
     [
       0.002309,
-      "Thu May 02 15:30:00 2013 -==- FretfulUnusedAirline\r\n\r\nMy first jot entry\r\nThis is it, I probably won't edit for another yer.\r\n\r\nSat May 03 03:22:00 2014 -==- ViolentZestyDonald\r\n\r\nSecond @entry\r\n"
+      "Thu May 02 15:30:00 2013 -==- FretfulUnusedAirline\r\n\r\nMy first gojot entry\r\nThis is it, I probably won't edit for another yer.\r\n\r\nSat May 03 03:22:00 2014 -==- ViolentZestyDonald\r\n\r\nSecond @entry\r\n"
     ],
     [
       5.8e-05,
@@ -120,7 +120,7 @@
     ],
     [
       0.074753,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.130642,
@@ -180,7 +180,7 @@
     ],
     [
       0.18831,
-      "journal\u001b[1m \u001b[0m"
+      "gojournal\u001b[1m \u001b[0m"
     ],
     [
       1.496494,
@@ -196,11 +196,11 @@
     ],
     [
       0.000587,
-      "\u001b]2;jot --import jotjournal\u0007"
+      "\u001b]2;gojot --import gojotgojournal\u0007"
     ],
     [
       4.1e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.287458,
@@ -212,7 +212,7 @@
     ],
     [
       5.4e-05,
-      "done (1.265081056s).\r\nImporting jotjournal"
+      "done (1.265081056s).\r\nImporting gojotgojournal"
     ],
     [
       4.1e-05,
@@ -256,7 +256,7 @@
     ],
     [
       0.08067,
-      "\bjo"
+      "\bgojo"
     ],
     [
       0.140475,
@@ -340,11 +340,11 @@
     ],
     [
       0.000536,
-      "\u001b]2;jot --all jotjournal\u0007"
+      "\u001b]2;gojot --all gojotgojournal\u0007"
     ],
     [
       3.9e-05,
-      "\u001b]1;jot\u0007"
+      "\u001b]1;gojot\u0007"
     ],
     [
       0.237384,
@@ -364,7 +364,7 @@
     ],
     [
       0.000597,
-      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/jot/temp/temp\""
+      "\u001b[1;15r\u001b[?12;25h\u001b[?12l\u001b[?25h\u001b[27m\u001b[m\u001b[H\u001b[2J\u001b[?25l\u001b[15;1H\"~/.cache/gojot/temp/temp\""
     ],
     [
       4.6e-05,
@@ -380,7 +380,7 @@
     ],
     [
       0.000258,
-      "\u001b[1;1HThu May 02 15:30:00 2013 -==- FretfulUnusedAirline\r\n\r\nMy first jot entry\r\nThis is it, I probably won't edit for another yer.\r\n\r\nSat May 03 03:22:00 2014 -==- ViolentZestyDonald\r\n\r\nSecond @entry\r\nWow, looks like its been a whole year!\r\n\r\nTue Nov 15 12:19:00 2016 -==- RudePalatableGiraffe\r\n\r\n\r\n\u001b[1m\u001b[34m~                                                                               "
+      "\u001b[1;1HThu May 02 15:30:00 2013 -==- FretfulUnusedAirline\r\n\r\nMy first gojot entry\r\nThis is it, I probably won't edit for another yer.\r\n\r\nSat May 03 03:22:00 2014 -==- ViolentZestyDonald\r\n\r\nSecond @entry\r\nWow, looks like its been a whole year!\r\n\r\nTue Nov 15 12:19:00 2016 -==- RudePalatableGiraffe\r\n\r\n\r\n\u001b[1m\u001b[34m~                                                                               "
     ],
     [
       4.3e-05,
@@ -552,7 +552,7 @@
     ],
     [
       0.000124,
-      "\".cache/jot/temp/temp\""
+      "\".cache/gojot/temp/temp\""
     ],
     [
       0.005814,

@@ -54,4 +54,4 @@ By the way, :func:`convert_notebooks <klink.__init__.convert_notebooks>` basical
 
     ipython nbconvert --to rst
 
-on all the notebooks it finds. It also handles special cases and adds special css classes for display formatting purposes. If you plan on using IPython Notebook integration, you will need an up-to-date version of `pandoc <http://johnmacfarlane.net/pandoc/>`_ for this to work properly.
+on all the notebooks it finds. It also handles special cases and adds special css classes for display formatting purposes. If you plan on using IPython Notebook integration, you will need an up-to-date version of `pandoc <http://gojohnmacfarlane.net/pandoc/>`_ for this to work properly.
