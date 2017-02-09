@@ -1,3 +1,5 @@
+# gojot is no longer supported, see the new, improved synchronized encrypted journal - [bol](https://github.com/schollz/bol)
+
 <p align="center">
   <img src="https://gojot.schollz.com/_static/logo.png"/>
 </p>
