@@ -8,6 +8,8 @@ from getpass import getpass
 from hashlib import md5
 from pick import pick
 from hashids import Hashids
+from termcolor import cprint
+
 hashids = Hashids("js")
 
 ALPHABET = "abcdefhijklmnopqrstuvwxyz"
@@ -23,6 +25,9 @@ formatter = Formatter('%(asctime)s - %(funcName)10s - %(levelname)s - %(message)
 fh.setFormatter(formatter)
 # add the handlers to the logger
 logger.addHandler(fh)
+
+class MyException(Exception):
+    pass
 
 def encode_str(s):
 	nums = []
@@ -41,7 +46,7 @@ def git_log():
 	GIT_LOG_FORMAT = ['%H', '%an', '%ae', '%ad', '%s']
 	GIT_LOG_FORMAT = '%x1f'.join(GIT_LOG_FORMAT) + '%x1e'
 
-	p = Popen('git log --format="%s"' % GIT_LOG_FORMAT, shell=True, stdout=PIPE)
+	p = Popen('git log --format="%s"' % GIT_LOG_FORMAT, shell=True, stdout=PIPE, stderr=PIPE)
 	(log, _) = p.communicate()
 	log = log.strip(b'\n\x1e').split(b"\x1e")
 	log = [row.strip().split(b"\x1f") for row in log]
@@ -57,7 +62,10 @@ def git_clone():
 def decrypt(fname,passphrase):
 	p = Popen('gpg --yes --passphrase "{passphrase}" --decrypt {fname}'.format(passphrase=passphrase,fname=fname), shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
+	logger.debug(log)
 	logger.debug(logerr)
+	if b"bad passphrase" in logerr:
+		raise MyException("Bad passphrase")
 	return log
 
 def add_file(fname, contents):
@@ -79,8 +87,8 @@ def add_file(fname, contents):
 
 
 call('clear',shell=True)
-
-p = Popen('gpg --list-keys', shell=True, stdout=PIPE)
+cprint("Working on schollz/test5","green")
+p = Popen('gpg --list-keys', shell=True, stdout=PIPE, stderr=PIPE)
 (log, _) = p.communicate()
 keys = []
 user_names = []
@@ -94,6 +102,7 @@ for gpg_key in log.split(b"------\n")[1].split(b"\n\n"):
 	keys.append("{uid} {pub}".format(pub=pub.decode('utf-8'),uid=uid.decode('utf-8')))
 	user_names.append(uid.decode('utf-8').split("<")[0].strip())
 [_,index] = pick(keys,"Pick key: ")
+
 
 
 
@@ -126,7 +135,7 @@ if subject == "New":
 subject = encode_str(subject)
 chdir(subject)
 
-passphrase = getpass("Passphrase: ")
+
 files_in_subject = [f for f in listdir(".") if isfile(join(".", f))]
 
 files = []
@@ -142,6 +151,7 @@ if file_to_edit != "New":
 	files = [all_files[index-1]]
 
 
+passphrase = getpass("Passphrase: ")
 file_contents = []
 for f in files:
 	content = decrypt(f,passphrase)

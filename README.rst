@@ -24,6 +24,13 @@ A command-line journal that is distributed and encrypted, making it easy to jot 
 * Free software: MIT license
 * Documentation: https://gojot.readthedocs.io.
 
+Install
+-------
+
+```
+sudo apt-get install gpg git
+echo 'no-tty' >> ~/.gnupg/gpg.conf
+```
 
 Features
 --------
