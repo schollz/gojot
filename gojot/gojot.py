@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+from logging import getLogger, FileHandler, Formatter, DEBUG
 from os import chdir, walk, mkdir, listdir, system, remove
 from os.path import isfile, join
-from subprocess import Popen,PIPE
+from subprocess import Popen, PIPE, call
 from getpass import getpass
 
 from hashlib import md5
@@ -12,11 +12,22 @@ hashids = Hashids("js")
 
 ALPHABET = "abcdefhijklmnopqrstuvwxyz"
 
+# create logger with 'spam_application'
+logger = getLogger('gojot')
+logger.setLevel(DEBUG)
+# create file handler which logs even debug messages
+fh = FileHandler('gojot.log')
+fh.setLevel(DEBUG)
+# create formatter and add it to the handlers
+formatter = Formatter('%(asctime)s - %(funcName)10s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+
 def encode_str(s):
 	nums = []
 	for let in s:
 		nums.append(int(ALPHABET.index(let)))
-	print(nums)
 	return hashids.encode(*nums)
 
 def decode_str(s):
@@ -40,36 +51,52 @@ def git_log():
 def git_clone():
 	p = Popen('git clone git@github.com:schollz/test5.git', shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
-	print(log)
-	print(logerr)
+	logger.debug(log)
+	logger.debug(logerr)
 
 def decrypt(fname,passphrase):
 	p = Popen('gpg --yes --passphrase "{passphrase}" --decrypt {fname}'.format(passphrase=passphrase,fname=fname), shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
-	print(logerr)
+	logger.debug(logerr)
 	return log
 
 def add_file(fname, contents):
 	with open(fname,"w") as f:
 		f.write(contents)
-	p = Popen('gpg --yes --armor --recipient "Zackary N. Scholl" --encrypt  %s' % fname, shell=True, stdout=PIPE, stderr=PIPE)
+	p = Popen('gpg --yes --armor --recipient "Zackary N. Scholl" --trust-model always --encrypt  %s' % fname, shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
-	print(log)
-	print(logerr)
+	logger.debug(log)
+	logger.debug(logerr)
 	remove(fname)
 	p = Popen('git add %s.asc' % fname, shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
-	print(log)
-	print(logerr)
+	logger.debug(log)
+	logger.debug(logerr)
 	p = Popen('git commit -m "%s.asc"' % fname, shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
-	print(log)
-	print(logerr)
+	logger.debug(log)
+	logger.debug(logerr)
 
 
-t = encode_str("tucan")
-print(t)
-print(decode_str(t))
+call('clear',shell=True)
+
+p = Popen('gpg --list-keys', shell=True, stdout=PIPE)
+(log, _) = p.communicate()
+keys = []
+user_names = []
+for gpg_key in log.split(b"------\n")[1].split(b"\n\n"):
+	try:
+		(pub,uid,sub) = gpg_key.split(b"\n")
+	except:
+		continue
+	pub = pub[4:].strip()
+	uid = uid[4:].strip()
+	keys.append("{uid} {pub}".format(pub=pub.decode('utf-8'),uid=uid.decode('utf-8')))
+	user_names.append(uid.decode('utf-8').split("<")[0].strip())
+[_,index] = pick(keys,"Pick key: ")
+
+
+
 
 chdir("/tmp/")
 git_clone()
@@ -89,7 +116,7 @@ subjects = []
 for d in [x[0] for x in walk(".")]:
 	if ".git" not in d and d != ".":
 		subjects.append(decode_str(d[2:]))
-print(subjects)
+
 
 [subject,index] = pick(["New"]+subjects,"Enter subject: ")
 if subject == "New":
@@ -114,11 +141,9 @@ for fname in all_files:
 if file_to_edit != "New":
 	files = [all_files[index-1]]
 
-print(files)
 
 file_contents = []
 for f in files:
-	print(f)
 	content = decrypt(f,passphrase)
 	if content != b'':
 		file_contents.append(content)
@@ -133,7 +158,6 @@ for entry in temp_contents.split("---"):
 	m = md5()
 	m.update(entry.encode('utf-8'))
 	entry_hash = m.hexdigest()
-	print(entry_hash)
 	if not isfile(entry_hash + ".asc"):
 		add_file(entry_hash,entry)
 remove("/tmp/temp.txt")
