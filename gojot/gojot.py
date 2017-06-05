@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger, FileHandler, Formatter, DEBUG
 from os import chdir, walk, mkdir, listdir, system, remove
-from os.path import isfile, join
+from os.path import isfile, join, isdir
 from subprocess import Popen, PIPE, call
 from getpass import getpass
 
@@ -12,7 +12,7 @@ from termcolor import cprint
 
 hashids = Hashids("js")
 
-ALPHABET = "abcdefhijklmnopqrstuvwxyz"
+ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 # create logger with 'spam_application'
 logger = getLogger('gojot')
@@ -55,6 +55,12 @@ def git_log():
 
 def git_clone():
 	p = Popen('git clone git@github.com:schollz/test5.git', shell=True, stdout=PIPE, stderr=PIPE)
+	(log, logerr) = p.communicate()
+	logger.debug(log)
+	logger.debug(logerr)
+
+def git_pull():
+	p = Popen('git pull --rebase origin master', shell=True, stdout=PIPE, stderr=PIPE)
 	(log, logerr) = p.communicate()
 	logger.debug(log)
 	logger.debug(logerr)
@@ -108,8 +114,13 @@ for gpg_key in log.split(b"------\n")[1].split(b"\n\n"):
 
 
 chdir("/tmp/")
-git_clone()
-chdir("test5")
+if isdir("test5"):
+	chdir("test5")
+	git_pull()
+else:
+	git_clone()
+	chdir("test5")
+
 
 all_files = []
 all_files_nicename = []
