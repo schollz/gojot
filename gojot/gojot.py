@@ -22,7 +22,27 @@ from ruamel.yaml.comments import CommentedMap
 
 from names import *
 
-ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
+
+VIMRC = """set nocompatible
+set backspace=2
+func! WordProcessorModeCLI()
+    setlocal formatoptions=t1
+    setlocal textwidth=80
+    map j gj
+    map k gk
+    set formatprg=par
+    setlocal wrap
+    setlocal linebreak
+    setlocal noexpandtab
+    normal G$
+    normal zt
+    set foldcolumn=7
+    highlight Normal ctermfg=black ctermbg=grey
+    hi NonText ctermfg=grey guifg=grey
+endfu
+com! WPCLI call WordProcessorModeCLI()
+"""
 
 # create logger with 'spam_application'
 logger = getLogger('gojot')
@@ -270,15 +290,24 @@ with open("/tmp/temp.txt", "wb") as f:
     current_entry['entry'] = str(random_name())
     f.write(b"\n---\n")
     f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
-    f.write(b"\n---\n\n")
-system("vim /tmp/temp.txt")
+    f.write(b"---\n\n")
+
+with open("/tmp/vimrc.config", "w") as f:
+    f.write(VIMRC)
+
+system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
 for entry in parse_entries(temp_contents):
+    if len(entry['text'].strip()) < 2:
+        continue
     if not isfile(entry['hash'] + '.asc'):
+        entry['meta']['last_modified'] = str(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        entry['meta']['document'] = decode_str(subject, config['salt'])
         entry_text = "---\n\n" + \
             yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
-            "\n---\n" + entry['text']
+            "\n---\n" + entry['text'].strip()
         add_file(entry['hash'], entry_text.strip(), config['user'])
 
 # meta_data = {}
