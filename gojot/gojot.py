@@ -19,6 +19,8 @@ from tqdm import tqdm
 import ruamel.yaml as yaml
 from ruamel.yaml.comments import CommentedMap
 
+from names import *
+
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 # create logger with 'spam_application'
@@ -224,26 +226,36 @@ with tqdm(total=max_) as pbar:
 
 with open("/tmp/temp.txt", "wb") as f:
     for file_data in file_contents:
+        f.write(b"\n---\n")
         f.write(yaml.dump(file_data['meta'],
                           Dumper=yaml.RoundTripDumper).encode('utf-8'))
         f.write(b"\n---\n")
         f.write(file_data['text'].encode('utf-8'))
-        f.write(b"\n---\n")
     current_entry = CommentedMap()
     current_entry['time'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    current_entry['entry'] = str(uuid4())
+    current_entry['entry'] = str(random_name())
+    f.write(b"\n---\n")
     f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
     f.write(b"\n---\n\n")
 system("vim /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
-for entry in temp_contents.split("---"):
+meta_data = {}
+for i, entry in enumerate(temp_contents.split("---")):
     entry = entry.strip()
-    m = md5()
-    m.update(entry.encode('utf-8'))
-    entry_hash = m.hexdigest()
-    if not isfile(entry_hash + ".asc"):
-        add_file(entry_hash, entry, config['user'])
+    print(i, entry)
+    if i % 2 == 1:
+        meta_data = yaml.load(entry, Loader=yaml.Loader)
+    elif meta_data != None and len(meta_data) != 0:
+        m = md5()
+        m.update(entry.encode('utf-8'))
+        entry_hash = m.hexdigest()
+        if not isfile(entry_hash + ".asc"):
+            entry = "---\n\n" + \
+                yaml.dump(meta_data,  Dumper=yaml.RoundTripDumper) + \
+                "\n---\n" + entry
+            add_file(entry_hash, entry.strip(), config['user'])
+
 remove("/tmp/temp.txt")
 
 
