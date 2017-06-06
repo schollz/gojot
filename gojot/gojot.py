@@ -9,6 +9,7 @@ from threading import Thread
 import json
 from multiprocessing import Pool
 from functools import partial
+from datetime import datetime
 
 from hashlib import md5
 from pick import pick
@@ -16,6 +17,7 @@ from hashids import Hashids
 from termcolor import cprint
 from tqdm import tqdm
 import ruamel.yaml as yaml
+from ruamel.yaml.comments import CommentedMap
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
@@ -227,6 +229,11 @@ with open("/tmp/temp.txt", "wb") as f:
         f.write(b"\n---\n")
         f.write(file_data['text'].encode('utf-8'))
         f.write(b"\n---\n")
+    current_entry = CommentedMap()
+    current_entry['time'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    current_entry['entry'] = str(uuid4())
+    f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
+    f.write(b"\n---\n\n")
 system("vim /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
