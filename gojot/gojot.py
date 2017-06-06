@@ -249,8 +249,11 @@ p = Pool(4)
 max_ = len(files)
 with tqdm(total=max_) as pbar:
     for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
-        file_contents.append(
-            {"text": datum.decode('utf-8'), "meta": {"file": "asldkfjaskdf"}})
+        pieces = datum.decode('utf-8').split('---')
+        data = {}
+        data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
+        data['text'] = pieces[2]
+        file_contents.append(data)
         pbar.update()
 
 
@@ -259,8 +262,9 @@ with open("/tmp/temp.txt", "wb") as f:
         f.write(b"\n---\n")
         f.write(yaml.dump(file_data['meta'],
                           Dumper=yaml.RoundTripDumper).encode('utf-8'))
-        f.write(b"\n---\n")
+        f.write(b"---\n")
         f.write(file_data['text'].encode('utf-8'))
+        f.write(b"\n")
     current_entry = CommentedMap()
     current_entry['time'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     current_entry['entry'] = str(random_name())
@@ -270,7 +274,13 @@ with open("/tmp/temp.txt", "wb") as f:
 system("vim /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
-print(parse_entries(temp_contents))
+for entry in parse_entries(temp_contents):
+    if not isfile(entry['hash'] + '.asc'):
+        entry_text = "---\n\n" + \
+            yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
+            "\n---\n" + entry['text']
+        add_file(entry['hash'], entry_text.strip(), config['user'])
+
 # meta_data = {}
 # for i, entry in enumerate(temp_contents.split("---")):
 #     entry = entry.strip()
