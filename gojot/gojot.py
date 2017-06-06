@@ -15,8 +15,7 @@ from pick import pick
 from hashids import Hashids
 from termcolor import cprint
 from tqdm import tqdm
-
-hashids = Hashids("js")
+import ruamel.yaml as yaml
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
@@ -38,14 +37,16 @@ class MyException(Exception):
     pass
 
 
-def encode_str(s):
+def encode_str(s, salt):
+    hashids = Hashids(salt=salt)
     nums = []
     for let in s:
         nums.append(int(ALPHABET.index(let)))
     return hashids.encode(*nums)
 
 
-def decode_str(s):
+def decode_str(s, salt):
+    hashids = Hashids(salt=salt)
     new_s = ""
     for num in hashids.decode(s):
         new_s += ALPHABET[num]
@@ -94,11 +95,11 @@ def decrypt(fname, passphrase):
     return log
 
 
-def add_file(fname, contents):
+def add_file(fname, contents, recipient):
     with open(fname, "w") as f:
         f.write(contents)
-    p = Popen('gpg --yes --armor --recipient "BlackBox2" --trust-model always --encrypt  %s' %
-              fname, shell=True, stdout=PIPE, stderr=PIPE)
+    p = Popen('gpg --yes --armor --recipient "%s" --trust-model always --encrypt  %s' %
+              (recipient, fname), shell=True, stdout=PIPE, stderr=PIPE)
     (log, logerr) = p.communicate()
     logger.debug(log)
     logger.debug(logerr)
@@ -153,9 +154,9 @@ if not isfile("config.asc"):
     cprint("Generating credentials...", "yellow")
     username = pick_key()
     config = {"user": username, "salt": str(uuid4())}
-    add_file("config", json.dumps(config))
+    add_file("config", json.dumps(config), config['user'])
     cprint("...ok.", "yellow")
-    
+
 # CHECK PASSPHRASE
 passphrase = getpass("Passphrase: ")
 cprint("Checking credentials...", "yellow")
@@ -170,13 +171,13 @@ config = json.loads(content.decode('utf-8'))
 
 if git_thread != None:
     git_thread.join()
-    cprint("...pulled latest.", "green")
+    cprint("...pulled latest.", "yellow")
 
 
 subjects = []
 for d in [x[0] for x in walk(".")]:
     if ".git" not in d and d != ".":
-        subjects.append(decode_str(d[2:]))
+        subjects.append(decode_str(d[2:], config['salt']))
 
 
 subject = "New"
@@ -184,9 +185,9 @@ if len(subjects) > 0:
     [subject, index] = pick(["New"] + subjects, "Enter subject: ")
 if subject == "New":
     subject = input("Document? ")
-    mkdir(encode_str(subject))
+    mkdir(encode_str(subject, config['salt']))
 
-subject = encode_str(subject)
+subject = encode_str(subject, config['salt'])
 chdir(subject)
 
 all_files = [f for f in listdir(".") if isfile(join(".", f))]
@@ -213,17 +214,19 @@ file_contents = []
 p = Pool(4)
 max_ = len(files)
 with tqdm(total=max_) as pbar:
-    for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt,passphrase=passphrase), files))):
-        file_contents.append(datum)
+    for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
+        file_contents.append(
+            {"text": datum.decode('utf-8'), "meta": {"file": "asldkfjaskdf"}})
         pbar.update()
 
-for f in tqdm(files):
-    content = decrypt(f, passphrase)
-    if content != b'':
-        file_contents.append(content)
 
 with open("/tmp/temp.txt", "wb") as f:
-    f.write(b'\n\n---\n\n'.join(file_contents))
+    for file_data in file_contents:
+        f.write(yaml.dump(file_data['meta'],
+                          Dumper=yaml.RoundTripDumper).encode('utf-8'))
+        f.write(b"\n---\n")
+        f.write(file_data['text'].encode('utf-8'))
+        f.write(b"\n---\n")
 system("vim /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
@@ -233,7 +236,7 @@ for entry in temp_contents.split("---"):
     m.update(entry.encode('utf-8'))
     entry_hash = m.hexdigest()
     if not isfile(entry_hash + ".asc"):
-        add_file(entry_hash, entry)
+        add_file(entry_hash, entry, config['user'])
 remove("/tmp/temp.txt")
 
 
