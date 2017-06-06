@@ -10,6 +10,7 @@ import json
 from multiprocessing import Pool
 from functools import partial
 from datetime import datetime
+from copy import deepcopy
 
 from hashlib import md5
 from pick import pick
@@ -138,6 +139,35 @@ def pick_key():
     return usernames[index]
 
 
+def parse_entries(entry_data):
+    """
+    Data should be in the format:
+
+    ---
+
+    yaml
+
+    ---
+
+    text
+
+
+    """
+    datas = []
+    data = {'meta': {}}
+    for i, entry in enumerate(entry_data.split("---")):
+        entry = entry.strip()
+        if i % 2 == 1:
+            data['meta'] = yaml.load(entry, Loader=yaml.Loader)
+        elif data['meta'] != None and len(data['meta']) != 0:
+            m = md5()
+            m.update(entry.encode('utf-8'))
+            entry_hash = m.hexdigest()
+            data['hash'] = entry_hash
+            data['text'] = entry
+            datas.append(deepcopy(data))
+    return datas
+
 call('clear', shell=True)
 cprint("Working on schollz/test5", "green")
 chdir("/tmp/")
@@ -240,21 +270,22 @@ with open("/tmp/temp.txt", "wb") as f:
 system("vim /tmp/temp.txt")
 
 temp_contents = open("/tmp/temp.txt", "r").read()
-meta_data = {}
-for i, entry in enumerate(temp_contents.split("---")):
-    entry = entry.strip()
-    print(i, entry)
-    if i % 2 == 1:
-        meta_data = yaml.load(entry, Loader=yaml.Loader)
-    elif meta_data != None and len(meta_data) != 0:
-        m = md5()
-        m.update(entry.encode('utf-8'))
-        entry_hash = m.hexdigest()
-        if not isfile(entry_hash + ".asc"):
-            entry = "---\n\n" + \
-                yaml.dump(meta_data,  Dumper=yaml.RoundTripDumper) + \
-                "\n---\n" + entry
-            add_file(entry_hash, entry.strip(), config['user'])
+print(parse_entries(temp_contents))
+# meta_data = {}
+# for i, entry in enumerate(temp_contents.split("---")):
+#     entry = entry.strip()
+#     print(i, entry)
+#     if i % 2 == 1:
+#         meta_data = yaml.load(entry, Loader=yaml.Loader)
+#     elif meta_data != None and len(meta_data) != 0:
+#         m = md5()
+#         m.update(entry.encode('utf-8'))
+#         entry_hash = m.hexdigest()
+#         if not isfile(entry_hash + ".asc"):
+#             entry = "---\n\n" + \
+#                 yaml.dump(meta_data,  Dumper=yaml.RoundTripDumper) + \
+#                 "\n---\n" + entry
+#             add_file(entry_hash, entry.strip(), config['user'])
 
 remove("/tmp/temp.txt")
 
