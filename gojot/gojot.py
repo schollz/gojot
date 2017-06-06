@@ -7,6 +7,8 @@ from getpass import getpass
 from uuid import uuid4
 from threading import Thread
 import json
+from multiprocessing import Pool
+from functools import partial
 
 from hashlib import md5
 from pick import pick
@@ -95,7 +97,7 @@ def decrypt(fname, passphrase):
 def add_file(fname, contents):
     with open(fname, "w") as f:
         f.write(contents)
-    p = Popen('gpg --yes --armor --recipient "Zackary N. Scholl" --trust-model always --encrypt  %s' %
+    p = Popen('gpg --yes --armor --recipient "BlackBox2" --trust-model always --encrypt  %s' %
               fname, shell=True, stdout=PIPE, stderr=PIPE)
     (log, logerr) = p.communicate()
     logger.debug(log)
@@ -146,22 +148,25 @@ else:
     chdir("test5")
 
 # Check if config file exists
-passphrase = getpass("Passphrase: ")
 config = {}
-if isfile("config.asc"):
-    cprint("Checking credentials...", "yellow")
-    try:
-        content = decrypt("config.asc", passphrase)
-        cprint("...ok.", "green")
-    except:
-        cprint("...bad credentials.", "red")
-        exit(1)
-    config = json.loads(content.decode('utf-8'))
-else:
+if not isfile("config.asc"):
     cprint("Generating credentials...", "yellow")
     username = pick_key()
     config = {"user": username, "salt": str(uuid4())}
     add_file("config", json.dumps(config))
+    cprint("...ok.", "yellow")
+    
+# CHECK PASSPHRASE
+passphrase = getpass("Passphrase: ")
+cprint("Checking credentials...", "yellow")
+try:
+    content = decrypt("config.asc", passphrase)
+    cprint("...ok.", "yellow")
+except:
+    cprint("...bad credentials.", "red")
+    exit(1)
+config = json.loads(content.decode('utf-8'))
+
 
 if git_thread != None:
     git_thread.join()
@@ -208,7 +213,7 @@ file_contents = []
 p = Pool(4)
 max_ = len(files)
 with tqdm(total=max_) as pbar:
-    for i, datum in tqdm(enumerate(p.imap_unordered(decrypt, self.raw_data))):
+    for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt,passphrase=passphrase), files))):
         file_contents.append(datum)
         pbar.update()
 
