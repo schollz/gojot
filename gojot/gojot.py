@@ -260,15 +260,20 @@ def init(repo):
     return config
 
 
-def import_file(config, fname):
-
-    temp_contents = open(fname, "r").read()
+def import_file(config, temp_contents):
     for entry in parse_entries(temp_contents):
         if len(entry['text'].strip()) < 2:
             continue
         if not isfile(entry['hash'] + '.asc'):
             entry['meta']['last_modified'] = str(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            if "time" not in entry['meta']:
+                entry['meta']['time'] = str(
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            if "document" not in entry['meta']:
+                entry['meta']['document'] = "imported"
+            if "entry" not in entry['meta']:
+                entry['meta']['entry'] = random_name()
             encoded_subject = encode_str(
                 entry['meta']['document'], config['salt'])
             if not isdir(encoded_subject):
@@ -316,10 +321,11 @@ def get_file_contents(config, encoded_subject):
             data = {}
             data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
             data['text'] = pieces[2]
+            key = data['meta']['time'] + data['meta']['entry']
             if data['meta']['time'] in file_contents:
-                if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
+                if data['meta']['last_modified'] < file_contents[key]['meta']['last_modified']:
                     continue
-            file_contents[data['meta']['time']] = data
+            file_contents[key] = data
             pbar.update()
     add_file(join(encoded_subject, "file_contents.json"), json.dumps(
         file_contents), config['user'], add_to_git=False)
@@ -328,8 +334,9 @@ def get_file_contents(config, encoded_subject):
 
 
 def run_import(repo, fname):
+    contents = open(fname, 'r').read()
     config = init(repo)
-    import_file(config, fname)
+    import_file(config, contents)
 
 
 def run(repo, subject):
@@ -374,7 +381,7 @@ def run(repo, subject):
 
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
-    import_file(config, "/tmp/temp.txt")
+    import_file(config, open("/tmp/temp.txt", 'r').read())
 
 
 # Import
