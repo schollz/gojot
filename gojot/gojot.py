@@ -273,6 +273,7 @@ def run(repo):
     chdir(subject)
 
     all_files = [f for f in listdir(".") if isfile(join(".", f))]
+    all_files.remove("file_contents.json.asc")
 
     # files_in_subject = [f for f in listdir(".") if isfile(join(".", f))]
 
@@ -290,30 +291,39 @@ def run(repo):
     else:
         files = all_files
 
+    # Get the file contents
+    file_contents = {}
+    # Check if file_contents already exists
     if isfile('file_contents.json.asc'):
         file_contents_string = decrypt('file_contents.json.asc', passphrase)
         file_contents = json.loads(file_contents_string.decode('utf-8'))
-        # TODO
-        # Need to check to see if there are any files
-        # not accounted for by looking
-        # at hash of the strings
-    else:
-        file_contents = {}
-        p = Pool(4)
-        max_ = len(files)
-        with tqdm(total=max_) as pbar:
-            for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
-                pieces = datum.decode('utf-8').split('---')
-                data = {}
-                data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
-                data['text'] = pieces[2]
-                if data['meta']['time'] in file_contents:
-                    if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
-                        continue
-                file_contents[data['meta']['time']] = data
-                pbar.update()
-        add_file("file_contents.json", json.dumps(
-            file_contents), config['user'], add_to_git=False)
+        known_files = []
+        for f in file_contents:
+            m = md5()
+            m.update(file_contents[f]['text'].strip().encode('utf-8'))
+            fname = m.hexdigest() + ".asc"
+            known_files.append(fname)
+        # Update files to only get ones that aren't accounted for
+        logger.debug(known_files)
+        logger.debug(files)
+        logger.debug(len(files))
+        files = list(set(files) - set(known_files))
+        logger.debug(len(files))
+    p = Pool(4)
+    max_ = len(files)
+    with tqdm(total=max_) as pbar:
+        for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
+            pieces = datum.decode('utf-8').split('---')
+            data = {}
+            data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
+            data['text'] = pieces[2]
+            if data['meta']['time'] in file_contents:
+                if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
+                    continue
+            file_contents[data['meta']['time']] = data
+            pbar.update()
+    add_file("file_contents.json", json.dumps(
+        file_contents), config['user'], add_to_git=False)
 
     date_strings = sorted(file_contents.keys())
     with open("/tmp/temp.txt", "wb") as f:
