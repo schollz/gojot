@@ -198,7 +198,7 @@ def parse_entries(entry_data):
             data['meta'] = yaml.load(entry, Loader=yaml.Loader)
         elif data['meta'] != None and len(data['meta']) != 0:
             m = md5()
-            m.update(entry.encode('utf-8'))
+            m.update(entry.encode('utf-8').strip())
             entry_hash = m.hexdigest()
             data['hash'] = entry_hash
             data['text'] = entry.strip()
@@ -256,13 +256,12 @@ def init(repo):
         git_thread.join()
         cprint("...pulled latest.", "yellow")
 
-    # TODO
-    # CD INTO MAIN GIT FOLDER
     config['passphrase'] = passphrase
     return config
 
 
-def import_file(config, fname, subject=None):
+def import_file(config, fname):
+
     temp_contents = open(fname, "r").read()
     for entry in parse_entries(temp_contents):
         if len(entry['text'].strip()) < 2:
@@ -270,15 +269,62 @@ def import_file(config, fname, subject=None):
         if not isfile(entry['hash'] + '.asc'):
             entry['meta']['last_modified'] = str(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            if 'document' not in entry['meta'] and subject != None:
-                entry['meta']['document'] = decode_str(subject, config['salt'])
+            encoded_subject = encode_str(
+                entry['meta']['document'], config['salt'])
+            if not isdir(encoded_subject):
+                mkdir(encoded_subject)
             entry_text = "---\n\n" + \
                 yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
                 "\n---\n" + entry['text'].strip()
-            add_file(entry['hash'], entry_text.strip(), config['user'])
-            # TODO
-            # Encode document (it should be nonencoded)
-            # and create directory if it doesn't exist
+            add_file(join(encoded_subject, entry[
+                     'hash']), entry_text.strip(), config['user'])
+
+
+def get_file_contents(config, encoded_subject):
+    if not isdir(encoded_subject):
+        return {}
+    all_files = []
+    for filename in [f for f in listdir(
+            encoded_subject) if isfile(join(encoded_subject, f))]:
+        if "file_contents.json.asc" not in filename:
+            all_files.append(join(encoded_subject, filename))
+
+    file_contents = {}
+    if isfile(join(encoded_subject, 'file_contents.json.asc')):
+        logger.debug("Using cache")
+        file_contents_string = decrypt(
+            join(encoded_subject, 'file_contents.json.asc'), config['passphrase'])
+        file_contents = json.loads(file_contents_string.decode('utf-8'))
+        known_files = []
+        for f in file_contents:
+            m = md5()
+            m.update(file_contents[f]['text'].strip().encode('utf-8'))
+            fname = m.hexdigest() + ".asc"
+            known_files.append(join(encoded_subject, fname))
+        # Update files to only get ones that aren't accounted for
+        logger.debug(known_files)
+        logger.debug(all_files)
+        logger.debug(len(known_files))
+        all_files = list(set(all_files) - set(known_files))
+        logger.debug(len(all_files))
+
+    p = Pool(4)
+    max_ = len(all_files)
+    with tqdm(total=max_) as pbar:
+        for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=config['passphrase']), all_files))):
+            pieces = datum.decode('utf-8').split('---')
+            data = {}
+            data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
+            data['text'] = pieces[2]
+            if data['meta']['time'] in file_contents:
+                if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
+                    continue
+            file_contents[data['meta']['time']] = data
+            pbar.update()
+    add_file(join(encoded_subject, "file_contents.json"), json.dumps(
+        file_contents), config['user'], add_to_git=False)
+
+    return file_contents
 
 
 def run_import(repo, fname):
@@ -300,68 +346,10 @@ def run(repo, subject):
             [subject, index] = pick(["New"] + subjects, "Enter subject: ")
         else:
             subject = input("Document? ")
-            mkdir(encode_str(subject, config['salt']))
 
-    subject = encode_str(subject, config['salt'])
-    chdir(subject)
+    encoded_subject = encode_str(subject, config['salt'])
 
-    all_files = [f for f in listdir(".") if isfile(join(".", f))]
-    all_files.remove("file_contents.json.asc")
-
-    # files_in_subject = [f for f in listdir(".") if isfile(join(".", f))]
-
-    # files = []
-    # files_names = []
-    # for fname in all_files:
-    #     if fname in files_in_subject:
-    #         files.append(fname)
-    #         files_names.append(all_files_nicename[all_files.index(fname)])
-
-    # [file_to_edit, index] = pick(["New"] + all_files_nicename, "Pick entry: ")
-    file_to_edit = "New"
-    if file_to_edit != "New":
-        files = [all_files[index - 1]]
-    else:
-        files = all_files
-
-    # Get the file contents
-    file_contents = {}
-    # Check if file_contents already exists
-    if isfile('file_contents.json.asc'):
-        file_contents_string = decrypt(
-            'file_contents.json.asc', config['passphrase'])
-        file_contents = json.loads(file_contents_string.decode('utf-8'))
-        known_files = []
-        for f in file_contents:
-            m = md5()
-            m.update(file_contents[f]['text'].strip().encode('utf-8'))
-            fname = m.hexdigest() + ".asc"
-            known_files.append(fname)
-        # Update files to only get ones that aren't accounted for
-        logger.debug(known_files)
-        logger.debug(files)
-        logger.debug(len(files))
-        files = list(set(files) - set(known_files))
-        logger.debug(len(files))
-    p = Pool(4)
-    max_ = len(files)
-    with tqdm(total=max_) as pbar:
-        for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=config['passphrase']), files))):
-            pieces = datum.decode('utf-8').split('---')
-            data = {}
-            data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
-            data['text'] = pieces[2]
-            if data['meta']['time'] in file_contents:
-                if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
-                    continue
-            file_contents[data['meta']['time']] = data
-            pbar.update()
-    add_file("file_contents.json", json.dumps(
-        file_contents), config['user'], add_to_git=False)
-
-    # TODO
-    # Add Document to meta of each
-    # so that it can be added as a normal import
+    file_contents = get_file_contents(config, encoded_subject)
     date_strings = sorted(file_contents.keys())
     with open("/tmp/temp.txt", "wb") as f:
         for date_str in date_strings:
@@ -376,6 +364,7 @@ def run(repo, subject):
         current_entry['time'] = str(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         current_entry['entry'] = str(random_name())
+        current_entry['document'] = subject
         f.write(b"\n---\n")
         f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
         f.write(b"---\n\n")
@@ -385,7 +374,7 @@ def run(repo, subject):
 
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
-    import_file(config, "/tmp/temp.txt", subject=subject)
+    import_file(config, "/tmp/temp.txt")
 
 
 # Import
