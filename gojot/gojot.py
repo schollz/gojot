@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger, FileHandler, Formatter, DEBUG
 from os import chdir, walk, mkdir, listdir, system, remove
-from os.path import isfile, join, isdir
+from os.path import isfile, join, isdir, expanduser
 from subprocess import Popen, PIPE, call
 from getpass import getpass
 from uuid import uuid4
@@ -70,6 +70,11 @@ def clean_files():
         cprint("Removed temp files.", "yellow")
     except:
         cprint("Exited.", "yellow")
+    try:
+        system(
+            'mv {0}/.gnupg/gpg.conf.backup {0}/.gnupg/gpg.conf'.format(expanduser('~')))
+    except:
+        pass
 
 
 def encode_str(s, salt):
@@ -130,7 +135,7 @@ def decrypt(fname, passphrase):
     return log
 
 
-def add_file(fname, contents, recipient):
+def add_file(fname, contents, recipient, add_to_git=True):
     with open(fname, "w") as f:
         f.write(contents)
     p = Popen('gpg --yes --armor --recipient "%s" --trust-model always --encrypt  %s' %
@@ -139,6 +144,8 @@ def add_file(fname, contents, recipient):
     logger.debug(log)
     logger.debug(logerr)
     remove(fname)
+    if not add_to_git:
+        return
     p = Popen('git add %s.asc' % fname, shell=True, stdout=PIPE, stderr=PIPE)
     (log, logerr) = p.communicate()
     logger.debug(log)
@@ -199,130 +206,150 @@ def parse_entries(entry_data):
     return datas
 
 
-call('clear', shell=True)
-cprint("Working on schollz/test5", "green")
-chdir("/tmp/")
-git_thread = None
-if isdir("test5"):
-    cprint("Pulling the latest...", "yellow")
-    chdir("test5")
-    git_thread = Thread(target=git_pull)
-    git_thread.start()
-else:
-    cprint("Cloning the latest...", "yellow")
-    git_clone()
-    chdir("test5")
-
-# Check if config file exists
-config = {}
-if not isfile("config.asc"):
-    cprint("Generating credentials...", "yellow")
-    username = pick_key()
-    config = {"user": username, "salt": str(uuid4())}
-    add_file("config", json.dumps(config), config['user'])
-    cprint("...ok.", "yellow")
-
-# CHECK PASSPHRASE
-passphrase = getpass("Passphrase: ")
-cprint("Checking credentials...", "yellow")
-try:
-    content = decrypt("config.asc", passphrase)
-    cprint("...ok.", "yellow")
-except:
-    cprint("...bad credentials.", "red")
-    exit(1)
-config = json.loads(content.decode('utf-8'))
+def fix_gpg_conf():
+    gpg_conf = open('{0}/.gnupg/gpg.conf'.format(expanduser('~')), 'r').read()
+    if 'no-tty' not in gpg_conf:
+        system(
+            'cp {0}/.gnupg/gpg.conf {0}/.gnupg/gpg.conf.backup'.format(expanduser('~')))
+    with open('{0}/.gnupg/gpg.conf'.format(expanduser('~')), 'a') as f:
+        f.write("\nno-tty")
 
 
-if git_thread != None:
-    git_thread.join()
-    cprint("...pulled latest.", "yellow")
+def run(repo):
+    fix_gpg_conf()
+    call('clear', shell=True)
+    cprint("Working on schollz/test5", "green")
+    chdir("/tmp/")
+    git_thread = None
+    if isdir("test5"):
+        cprint("Pulling the latest...", "yellow")
+        chdir("test5")
+        git_thread = Thread(target=git_pull)
+        git_thread.start()
+    else:
+        cprint("Cloning the latest...", "yellow")
+        git_clone()
+        chdir("test5")
 
+    # Check if config file exists
+    config = {}
+    if not isfile("config.asc"):
+        cprint("Generating credentials...", "yellow")
+        username = pick_key()
+        config = {"user": username, "salt": str(uuid4())}
+        add_file("config", json.dumps(config), config['user'])
+        cprint("...ok.", "yellow")
 
-subjects = []
-for d in [x[0] for x in walk(".")]:
-    if ".git" not in d and d != ".":
-        subjects.append(decode_str(d[2:], config['salt']))
+    # Check passphrase
+    passphrase = getpass("Passphrase: ")
+    cprint("Checking credentials...", "yellow")
+    try:
+        content = decrypt("config.asc", passphrase)
+        cprint("...ok.", "yellow")
+    except:
+        cprint("...bad credentials.", "red")
+        exit(1)
+    config = json.loads(content.decode('utf-8'))
 
+    # Wait for pulling to finish before continuing
+    if git_thread != None:
+        git_thread.join()
+        cprint("...pulled latest.", "yellow")
 
-subject = "New"
-if len(subjects) > 0:
-    [subject, index] = pick(["New"] + subjects, "Enter subject: ")
-if subject == "New":
-    subject = input("Document? ")
-    mkdir(encode_str(subject, config['salt']))
+    # Decode subjects
+    subjects = []
+    for d in [x[0] for x in walk(".")]:
+        if ".git" not in d and d != ".":
+            subjects.append(decode_str(d[2:], config['salt']))
 
-subject = encode_str(subject, config['salt'])
-chdir(subject)
+    subject = "New"
+    if len(subjects) > 0:
+        [subject, index] = pick(["New"] + subjects, "Enter subject: ")
+    if subject == "New":
+        subject = input("Document? ")
+        mkdir(encode_str(subject, config['salt']))
 
-all_files = [f for f in listdir(".") if isfile(join(".", f))]
+    subject = encode_str(subject, config['salt'])
+    chdir(subject)
 
+    all_files = [f for f in listdir(".") if isfile(join(".", f))]
 
-# files_in_subject = [f for f in listdir(".") if isfile(join(".", f))]
+    # files_in_subject = [f for f in listdir(".") if isfile(join(".", f))]
 
-# files = []
-# files_names = []
-# for fname in all_files:
-#     if fname in files_in_subject:
-#         files.append(fname)
-#         files_names.append(all_files_nicename[all_files.index(fname)])
+    # files = []
+    # files_names = []
+    # for fname in all_files:
+    #     if fname in files_in_subject:
+    #         files.append(fname)
+    #         files_names.append(all_files_nicename[all_files.index(fname)])
 
-# [file_to_edit, index] = pick(["New"] + all_files_nicename, "Pick entry: ")
-file_to_edit = "New"
-if file_to_edit != "New":
-    files = [all_files[index - 1]]
-else:
-    files = all_files
+    # [file_to_edit, index] = pick(["New"] + all_files_nicename, "Pick entry: ")
+    file_to_edit = "New"
+    if file_to_edit != "New":
+        files = [all_files[index - 1]]
+    else:
+        files = all_files
 
-file_contents = {}
-p = Pool(4)
-max_ = len(files)
-with tqdm(total=max_) as pbar:
-    for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
-        pieces = datum.decode('utf-8').split('---')
-        data = {}
-        data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
-        data['text'] = pieces[2]
-        if data['meta']['time'] in file_contents:
-            if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
-                continue
-        file_contents[data['meta']['time']] = data
-        pbar.update()
+    if isfile('file_contents.json.asc'):
+        file_contents_string = decrypt('file_contents.json.asc', passphrase)
+        file_contents = json.loads(file_contents_string.decode('utf-8'))
+        # TODO
+        # Need to check to see if there are any files
+        # not accounted for by looking
+        # at hash of the strings
+    else:
+        file_contents = {}
+        p = Pool(4)
+        max_ = len(files)
+        with tqdm(total=max_) as pbar:
+            for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
+                pieces = datum.decode('utf-8').split('---')
+                data = {}
+                data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
+                data['text'] = pieces[2]
+                if data['meta']['time'] in file_contents:
+                    if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
+                        continue
+                file_contents[data['meta']['time']] = data
+                pbar.update()
+        add_file("file_contents.json", json.dumps(
+            file_contents), config['user'], add_to_git=False)
 
-date_strings = sorted(file_contents.keys())
-with open("/tmp/temp.txt", "wb") as f:
-    for date_str in date_strings:
-        file_data = file_contents[date_str]
-        f.write(b"\n---\n")
-        f.write(yaml.dump(file_data['meta'],
-                          Dumper=yaml.RoundTripDumper).encode('utf-8'))
-        f.write(b"---\n")
-        f.write(file_data['text'].encode('utf-8'))
-        f.write(b"\n")
-    current_entry = CommentedMap()
-    current_entry['time'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    current_entry['entry'] = str(uuid4())
-    f.write(b"\n---\n")
-    f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
-    f.write(b"---\n\n")
-
-with open("/tmp/vimrc.config", "w") as f:
-    f.write(VIMRC)
-
-system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
-
-temp_contents = open("/tmp/temp.txt", "r").read()
-for entry in parse_entries(temp_contents):
-    if len(entry['text'].strip()) < 2:
-        continue
-    if not isfile(entry['hash'] + '.asc'):
-        entry['meta']['last_modified'] = str(
+    date_strings = sorted(file_contents.keys())
+    with open("/tmp/temp.txt", "wb") as f:
+        for date_str in date_strings:
+            file_data = file_contents[date_str]
+            f.write(b"\n---\n")
+            f.write(yaml.dump(file_data['meta'],
+                              Dumper=yaml.RoundTripDumper).encode('utf-8'))
+            f.write(b"---\n")
+            f.write(file_data['text'].encode('utf-8'))
+            f.write(b"\n")
+        current_entry = CommentedMap()
+        current_entry['time'] = str(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        entry['meta']['document'] = decode_str(subject, config['salt'])
-        entry_text = "---\n\n" + \
-            yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
-            "\n---\n" + entry['text'].strip()
-        add_file(entry['hash'], entry_text.strip(), config['user'])
+        current_entry['entry'] = str(uuid4())
+        f.write(b"\n---\n")
+        f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
+        f.write(b"---\n\n")
+
+    with open("/tmp/vimrc.config", "w") as f:
+        f.write(VIMRC)
+
+    system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
+
+    temp_contents = open("/tmp/temp.txt", "r").read()
+    for entry in parse_entries(temp_contents):
+        if len(entry['text'].strip()) < 2:
+            continue
+        if not isfile(entry['hash'] + '.asc'):
+            entry['meta']['last_modified'] = str(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            entry['meta']['document'] = decode_str(subject, config['salt'])
+            entry_text = "---\n\n" + \
+                yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
+                "\n---\n" + entry['text'].strip()
+            add_file(entry['hash'], entry_text.strip(), config['user'])
 
 
 # Import
