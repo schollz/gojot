@@ -263,8 +263,7 @@ if file_to_edit != "New":
 else:
     files = all_files
 
-file_contents = []
-
+file_contents = {}
 p = Pool(4)
 max_ = len(files)
 with tqdm(total=max_) as pbar:
@@ -273,12 +272,17 @@ with tqdm(total=max_) as pbar:
         data = {}
         data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
         data['text'] = pieces[2]
-        file_contents.append(data)
+        if data['meta']['time'] in file_contents:
+            if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
+                print("SLKDJF")
+                continue
+        file_contents[data['meta']['time']] = data
         pbar.update()
 
-
+date_strings = sorted(file_contents.keys())
 with open("/tmp/temp.txt", "wb") as f:
-    for file_data in file_contents:
+    for date_str in date_strings:
+        file_data = file_contents[date_str]
         f.write(b"\n---\n")
         f.write(yaml.dump(file_data['meta'],
                           Dumper=yaml.RoundTripDumper).encode('utf-8'))
@@ -309,22 +313,6 @@ for entry in parse_entries(temp_contents):
             yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
             "\n---\n" + entry['text'].strip()
         add_file(entry['hash'], entry_text.strip(), config['user'])
-
-# meta_data = {}
-# for i, entry in enumerate(temp_contents.split("---")):
-#     entry = entry.strip()
-#     print(i, entry)
-#     if i % 2 == 1:
-#         meta_data = yaml.load(entry, Loader=yaml.Loader)
-#     elif meta_data != None and len(meta_data) != 0:
-#         m = md5()
-#         m.update(entry.encode('utf-8'))
-#         entry_hash = m.hexdigest()
-#         if not isfile(entry_hash + ".asc"):
-#             entry = "---\n\n" + \
-#                 yaml.dump(meta_data,  Dumper=yaml.RoundTripDumper) + \
-#                 "\n---\n" + entry
-#             add_file(entry_hash, entry.strip(), config['user'])
 
 remove("/tmp/temp.txt")
 
