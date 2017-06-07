@@ -21,7 +21,7 @@ from tqdm import tqdm
 import ruamel.yaml as yaml
 from ruamel.yaml.comments import CommentedMap
 
-# from names import *
+from names import *
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
 
@@ -128,7 +128,7 @@ def decrypt(fname, passphrase):
     p = Popen('gpg --yes --passphrase "{passphrase}" --decrypt {fname}'.format(
         passphrase=passphrase, fname=fname), shell=True, stdout=PIPE, stderr=PIPE)
     (log, logerr) = p.communicate()
-    logger.debug(log)
+    # logger.debug(log)
     logger.debug(logerr)
     if b"bad passphrase" in logerr:
         raise MyException("Bad passphrase")
@@ -215,7 +215,7 @@ def fix_gpg_conf():
         f.write("\nno-tty")
 
 
-def run(repo, subject):
+def init(repo):
     fix_gpg_conf()
     call('clear', shell=True)
     cprint("Working on schollz/test5", "green")
@@ -256,6 +256,39 @@ def run(repo, subject):
         git_thread.join()
         cprint("...pulled latest.", "yellow")
 
+    # TODO
+    # CD INTO MAIN GIT FOLDER
+    config['passphrase'] = passphrase
+    return config
+
+
+def import_file(config, fname, subject=None):
+    temp_contents = open(fname, "r").read()
+    for entry in parse_entries(temp_contents):
+        if len(entry['text'].strip()) < 2:
+            continue
+        if not isfile(entry['hash'] + '.asc'):
+            entry['meta']['last_modified'] = str(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            if 'document' not in entry['meta'] and subject != None:
+                entry['meta']['document'] = decode_str(subject, config['salt'])
+            entry_text = "---\n\n" + \
+                yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
+                "\n---\n" + entry['text'].strip()
+            add_file(entry['hash'], entry_text.strip(), config['user'])
+            # TODO
+            # Encode document (it should be nonencoded)
+            # and create directory if it doesn't exist
+
+
+def run_import(repo, fname):
+    config = init(repo)
+    import_file(config, fname)
+
+
+def run(repo, subject):
+    config = init(repo)
+
     # Decode subjects
     subjects = []
     for d in [x[0] for x in walk(".")]:
@@ -295,7 +328,8 @@ def run(repo, subject):
     file_contents = {}
     # Check if file_contents already exists
     if isfile('file_contents.json.asc'):
-        file_contents_string = decrypt('file_contents.json.asc', passphrase)
+        file_contents_string = decrypt(
+            'file_contents.json.asc', config['passphrase'])
         file_contents = json.loads(file_contents_string.decode('utf-8'))
         known_files = []
         for f in file_contents:
@@ -312,7 +346,7 @@ def run(repo, subject):
     p = Pool(4)
     max_ = len(files)
     with tqdm(total=max_) as pbar:
-        for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=passphrase), files))):
+        for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=config['passphrase']), files))):
             pieces = datum.decode('utf-8').split('---')
             data = {}
             data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
@@ -325,6 +359,9 @@ def run(repo, subject):
     add_file("file_contents.json", json.dumps(
         file_contents), config['user'], add_to_git=False)
 
+    # TODO
+    # Add Document to meta of each
+    # so that it can be added as a normal import
     date_strings = sorted(file_contents.keys())
     with open("/tmp/temp.txt", "wb") as f:
         for date_str in date_strings:
@@ -338,7 +375,7 @@ def run(repo, subject):
         current_entry = CommentedMap()
         current_entry['time'] = str(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        current_entry['entry'] = str(uuid4())
+        current_entry['entry'] = str(random_name())
         f.write(b"\n---\n")
         f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
         f.write(b"---\n\n")
@@ -348,18 +385,7 @@ def run(repo, subject):
 
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
-    temp_contents = open("/tmp/temp.txt", "r").read()
-    for entry in parse_entries(temp_contents):
-        if len(entry['text'].strip()) < 2:
-            continue
-        if not isfile(entry['hash'] + '.asc'):
-            entry['meta']['last_modified'] = str(
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            entry['meta']['document'] = decode_str(subject, config['salt'])
-            entry_text = "---\n\n" + \
-                yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
-                "\n---\n" + entry['text'].strip()
-            add_file(entry['hash'], entry_text.strip(), config['user'])
+    import_file(config, "/tmp/temp.txt", subject=subject)
 
 
 # Import
