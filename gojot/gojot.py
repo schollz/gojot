@@ -11,6 +11,7 @@ from multiprocessing import Pool
 from functools import partial
 from datetime import datetime
 from copy import deepcopy
+import atexit
 
 from hashlib import md5
 from pick import pick
@@ -20,7 +21,7 @@ from tqdm import tqdm
 import ruamel.yaml as yaml
 from ruamel.yaml.comments import CommentedMap
 
-from names import *
+# from names import *
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
 
@@ -60,6 +61,15 @@ logger.addHandler(fh)
 
 class MyException(Exception):
     pass
+
+
+@atexit.register
+def clean_files():
+    try:
+        remove("/tmp/temp.txt")
+        cprint("Removed temp files.", "yellow")
+    except:
+        cprint("Exited.", "yellow")
 
 
 def encode_str(s, salt):
@@ -188,6 +198,7 @@ def parse_entries(entry_data):
             datas.append(deepcopy(data))
     return datas
 
+
 call('clear', shell=True)
 cprint("Working on schollz/test5", "green")
 chdir("/tmp/")
@@ -274,7 +285,6 @@ with tqdm(total=max_) as pbar:
         data['text'] = pieces[2]
         if data['meta']['time'] in file_contents:
             if data['meta']['last_modified'] < file_contents[data['meta']['time']]['meta']['last_modified']:
-                print("SLKDJF")
                 continue
         file_contents[data['meta']['time']] = data
         pbar.update()
@@ -291,7 +301,7 @@ with open("/tmp/temp.txt", "wb") as f:
         f.write(b"\n")
     current_entry = CommentedMap()
     current_entry['time'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    current_entry['entry'] = str(random_name())
+    current_entry['entry'] = str(uuid4())
     f.write(b"\n---\n")
     f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
     f.write(b"---\n\n")
@@ -313,8 +323,6 @@ for entry in parse_entries(temp_contents):
             yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
             "\n---\n" + entry['text'].strip()
         add_file(entry['hash'], entry_text.strip(), config['user'])
-
-remove("/tmp/temp.txt")
 
 
 # Import
