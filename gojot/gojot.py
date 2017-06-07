@@ -201,7 +201,7 @@ def parse_entries(entry_data):
             m.update(entry.encode('utf-8'))
             entry_hash = m.hexdigest()
             data['hash'] = entry_hash
-            data['text'] = entry
+            data['text'] = entry.strip()
             datas.append(deepcopy(data))
     return datas
 
@@ -215,7 +215,7 @@ def fix_gpg_conf():
         f.write("\nno-tty")
 
 
-def run(repo):
+def run(repo, subject):
     fix_gpg_conf()
     call('clear', shell=True)
     cprint("Working on schollz/test5", "green")
@@ -262,12 +262,12 @@ def run(repo):
         if ".git" not in d and d != ".":
             subjects.append(decode_str(d[2:], config['salt']))
 
-    subject = "New"
-    if len(subjects) > 0:
-        [subject, index] = pick(["New"] + subjects, "Enter subject: ")
-    if subject == "New":
-        subject = input("Document? ")
-        mkdir(encode_str(subject, config['salt']))
+    if subject == None:
+        if len(subjects) > 0:
+            [subject, index] = pick(["New"] + subjects, "Enter subject: ")
+        else:
+            subject = input("Document? ")
+            mkdir(encode_str(subject, config['salt']))
 
     subject = encode_str(subject, config['salt'])
     chdir(subject)
