@@ -1,0 +1,124 @@
+h1, h2, h3, h4, h5, div.section {
+    clear: both;
+}
+a.downloadBox {
+      font-family: Arial, sans-serif;
+font-size: 16px;
+background-color: #fff;
+line-height: 1.3em;
+    display: block;
+    color: #222;
+    border: 1px solid #004f1c;
+    border-radius: 5px;
+    background: #d1ffe1;
+    width: 280px;
+    float: left;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+a.downloadBox:hover {
+    text-decoration: none;
+}
+.downloadBox .platform {
+    font-size: large;
+}
+.downloadBox .filename {
+    color: #375EAB;
+    font-weight: bold;
+    line-height: 1.5em;
+}
+a.downloadBox:hover .filename {
+    text-decoration: underline;
+}
+.downloadBox .size {
+    font-size: small;
+    font-weight: normal;
+}
+.downloadBox .reqs {
+    font-size: small;
+    font-style: italic;
+}
+.downloadBox .checksum {
+    font-size: 5pt;
+}
+
+.hatnote
+{
+    border-color: #c8c8c8 ;
+    border-style: solid ;
+    border-width: 1px ;
+    font-size: x-small ;
+    font-style: italic ;
+    margin-left: auto ;
+    margin-right: auto ;
+    padding: 3px 2em ;
+}
+
+.console-container::before {
+    content: "";
+    display: block;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    -webkit-box-shadow: inset 0 1px 0 #f4f4f4,inset 0 -1px 0 #888;
+    -moz-box-shadow: inset 0 1px 0 #f4f4f4,inset 0 -1px 0 #888;
+    box-shadow: inset 0 1px 0 #8a8a8a,inset 0 -1px 0 #0e0e0e;
+    margin-top: -50px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: #595757;
+    text-shadow: 0 1px 0 #ddd;
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    background-image: -moz-linear-gradient(top,#8a8a8a 0,#0e0e0e 100%);
+    background-image: -webkit-linear-gradient(top,#8a8a8a 0,#0e0e0e 100%);
+    background-image: linear-gradient(to bottom,#8a8a8a 0,#0e0e0e 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#bababa', GradientType=0);
+}
+
+.console-container {
+    background: #F0F0F0;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    padding: 1px 20px;
+    margin: 40px auto;
+    width: 500px;
+    -webkit-box-shadow: 0 1px 8px #a0acb7;
+    -moz-box-shadow: 0 1px 8px #a0acb7;
+    box-shadow: 0 1px 9px #83898f;
+    position: relative;
+    color: #f7f8f9;
+    font-family: Monaco,"Courier New";
+    font-size: 12pt;
+    padding: 50px 20px 10px;
+}
+
+.console {
+    background: #202020;
+    color: #1d1a1a;
+    background: transparent !important;
+}
+
+.console-container pre {
+    margin: 0 0 10px;
+}
+
+.console-container pre::before {
+    content: "> ";
+    color: #deaa29;
+}
+
+.console code, kbd, pre, samp {
+    font-family: "Open Sans","Helvetica Neue",sans-serif;
+    font-weight: 300;
+    color: #333;
+    font-family: monospace,serif;
+    font-size: 1em;
+}
+.console pre {
+    white-space: pre-wrap;
+}

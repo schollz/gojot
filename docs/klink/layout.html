@@ -1,0 +1,70 @@
+{%- extends "basic/layout.html" %}
+    {%- block extrahead %}
+        {{ super() }}
+<meta name="Description" content="gojot is the command-line journal that is distributed and encrypted, making it easy to jot notes.">
+<meta name="Keywords" content="journal, golang, jot, gojot, notes, notepad, notebook, git, command, line, note, pad">
+
+        <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono:400,500,700' rel='stylesheet' type='text/css'>
+<link rel="apple-touch-icon" sizes="57x57" href="/_static/icon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/_static/icon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/_static/icon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/_static/icon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/_static/icon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/_static/icon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/_static/icon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/_static/icon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/_static/icon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/_static/icon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/_static/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/_static/icon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/_static/icon/favicon-16x16.png">
+<link rel="manifest" href="/_static/icon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/_static/icon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+    {% endblock %}
+
+    {%- block relbar1 %}{% endblock %}
+    {%- block relbar2 %}{% endblock %}
+
+    {%- block sidebar2 %}
+        <aside>
+
+            {% if theme_logo %}
+            <a href="{{ pathto('index') }}" id="logo" title={{project}}><img class="logo" src="{{ pathto('_static/' + theme_logo, 1) }}" width="150px" height="150px" title={{project}} /></a>
+            {% endif %}
+            
+            {{ toctree(includehidden=True) }}
+
+            {% if theme_github %}
+            <ul>
+                <li><a href="https://github.com/{{theme_github}}">Github</a></li>
+            </ul>
+            {% endif %}
+
+            {%- include "searchbox.html" %}
+        </aside>
+    {% endblock %}
+
+    {%- block footer %}
+        <div class="footer">
+            {{ copyright }}
+        </div>
+
+        {% if theme_analytics_id %}
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', '{{theme_analytics_id}}', 'auto');
+            ga('require', 'displayfeatures');
+            ga('send', 'pageview');
+        </script>
+        {% endif %}
+    {%- endblock %}
