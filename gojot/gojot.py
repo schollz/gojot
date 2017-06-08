@@ -716,6 +716,8 @@ def decrypt(fname, passphrase):
     (log, logerr) = p.communicate()
     # logger.debug(log)
     logger.debug(logerr)
+    if b"secret key not" in logerr:
+        raise MyException("Secret key not available to decrypt")
     if b"bad passphrase" in logerr:
         raise MyException("Bad passphrase")
     return log
@@ -840,8 +842,8 @@ def init(repo):
     try:
         content = decrypt("config.asc", passphrase)
         cprint("...ok.", "yellow")
-    except:
-        cprint("...bad credentials.", "red")
+    except BaseException as e:
+        cprint(str(e), "red")
         exit(1)
     config = json.loads(content.decode('utf-8'))
 

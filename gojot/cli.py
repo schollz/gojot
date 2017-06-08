@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import click
-from gojot import *
+from gojot import gojot
 
 
 @click.command()
@@ -14,9 +14,9 @@ def main(repo, doc, imp, args=None):
                "gojot.cli.main")
     click.echo("See click documentation at http://click.pocoo.org/")
     if imp != None:
-        run_import(repo, imp)
+        gojot.run_import(repo, imp)
     else:
-        run(repo, doc)
+        gojot.run(repo, doc)
     # TODO
     # Add flag for editing a single entry (boolean)
 
