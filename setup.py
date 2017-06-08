@@ -30,7 +30,7 @@ test_requirements = [
 
 setup(
     name='gojot',
-    version='3.0.0',
+    version='3.0.1',
     description="A command-line journal that is distributed and encrypted, making it easy to jot notes.",
     long_description=readme + '\n\n' + history,
     author="Zack Scholl",
