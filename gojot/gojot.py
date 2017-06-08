@@ -108,8 +108,8 @@ def git_log():
     return log
 
 
-def git_clone():
-    p = Popen('git clone git@github.com:schollz/test5.git',
+def git_clone(repo):
+    p = Popen('git clone ' + repo,
               shell=True, stdout=PIPE, stderr=PIPE)
     (log, logerr) = p.communicate()
     logger.debug(log)
@@ -122,6 +122,14 @@ def git_pull():
     (log, logerr) = p.communicate()
     logger.debug(log)
     logger.debug(logerr)
+
+def git_push():
+    p = Popen('git push -u origin master',
+              shell=True, stdout=PIPE, stderr=PIPE)
+    (log, logerr) = p.communicate()
+    logger.debug(log)
+    logger.debug(logerr)
+
 
 
 def decrypt(fname, passphrase):
@@ -216,33 +224,35 @@ def fix_gpg_conf():
 
 
 def init(repo):
+    repo_dir = repo.split("/")[-1].split(".git")[0].strip()
     fix_gpg_conf()
     call('clear', shell=True)
-    cprint("Working on schollz/test5", "green")
+
+    cprint("Working on %s" % repo, "green")
     chdir("/tmp/")
     git_thread = None
-    if isdir("test5"):
+    if isdir(repo_dir):
         cprint("Pulling the latest...", "yellow")
-        chdir("test5")
+        chdir(repo_dir)
         git_thread = Thread(target=git_pull)
         git_thread.start()
     else:
         cprint("Cloning the latest...", "yellow")
-        git_clone()
-        chdir("test5")
+        git_clone(repo)
+        chdir(repo_dir)
 
     # Check if config file exists
     config = {}
     if not isfile("config.asc"):
-        cprint("Generating credentials...", "yellow")
+        cprint("Generating credentials...", "yellow", end='', flush=True)
         username = pick_key()
         config = {"user": username, "salt": str(uuid4())}
         add_file("config", json.dumps(config), config['user'])
         cprint("...ok.", "yellow")
 
     # Check passphrase
-    passphrase = getpass("Passphrase: ")
-    cprint("Checking credentials...", "yellow")
+    passphrase = getpass("\nPassphrase? ")
+    cprint("\nChecking credentials...", "yellow", end='', flush=True)
     try:
         content = decrypt("config.asc", passphrase)
         cprint("...ok.", "yellow")
@@ -334,7 +344,7 @@ def get_file_contents(config, encoded_subject):
             file_contents[key] = data
     add_file(join(encoded_subject, "file_contents.json"), json.dumps(
         file_contents), config['user'], add_to_git=False)
-    cprint("...done","yellow")
+    cprint("\n...ok.","yellow")
     return file_contents
 
 
@@ -358,7 +368,7 @@ def run(repo, subject):
             [subject, index] = pick(["New"] + subjects, "Enter subject: ")
         
         if len(subjects) == 0 or subject == "New":
-            subject = input("Document? ")
+            subject = input("\nDocument? ")
 
     encoded_subject = encode_str(subject, config['salt'])
 
@@ -388,6 +398,13 @@ def run(repo, subject):
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
     import_file(config, open("/tmp/temp.txt", 'r').read())
+
+    cprint("Pushing...","yellow", end='', flush=True)
+    try:
+        git_push()
+        cprint("...ok.","yellow")
+    except:
+        cprint("...oh well.","red")
 
 
 # Import
