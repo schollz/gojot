@@ -692,6 +692,8 @@ def git_clone(repo):
     (log, logerr) = p.communicate()
     logger.debug(log)
     logger.debug(logerr)
+    if b'does not exist' in logerr:
+        raise MyException("repo does not exist")
 
 
 def git_pull():
@@ -824,8 +826,13 @@ def init(repo):
         git_thread.start()
     else:
         cprint("Cloning the latest...", "yellow")
-        git_clone(repo)
+        try:
+            git_clone(repo)
+        except BaseException as e:
+            cprint(str(e), "red")
+            exit(1)
         chdir(repo_dir)
+
 
     # Check if config file exists
     config = {}
