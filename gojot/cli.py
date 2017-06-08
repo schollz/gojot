@@ -17,6 +17,8 @@ def main(repo, doc, imp, args=None):
         run_import(repo, imp)
     else:
         run(repo, doc)
+    # TODO
+    # Add flag for editing a single entry (boolean)
 
 
 if __name__ == "__main__":

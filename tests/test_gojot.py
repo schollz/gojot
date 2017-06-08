@@ -12,6 +12,8 @@ import pytest
 
 from contextlib import contextmanager
 from click.testing import CliRunner
+from os.path import isfile, isdir
+from shutil import rmtree
 
 from gojot import gojot
 from gojot import cli
@@ -31,11 +33,37 @@ def test_content(response):
     """
     # from bs4 import BeautifulSoup
     # assert 'GitHub' in BeautifulSoup(response.content).title.string
+
+
+def test_gojot():
+    assert gojot.encode_str('teststring', 'testsalt') == '3of9iviQfPizfBuLhBS0'
+    assert gojot.decode_str('3of9iviQfPizfBuLhBS0', 'testsalt') == 'teststring'
+    assert '_' in gojot.random_name()
+    gojot.git_clone('https://github.com/schollz/test5.git')
+    assert isdir('test5') == True
+    rmtree('test5')
+    datas = gojot.parse_entries("""
+---
+time: '2017-06-07 09:36:02'
+entry: cool_entry1
+---
+Some text
+---
+time: '2017-06-07 09:36:03'
+entry: cool_entry2
+---
+Some other text
+""")
+    assert len(datas) == 2
+    assert datas[1] == {'hash': 'f0e124f2a81affb35281aa971ff5c318', 'meta': {
+        'entry': 'cool_entry2', 'time': '2017-06-07 09:36:03'}, 'text': 'Some other text'}
+
+
 def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
-    assert result.exit_code == 0
-    assert 'gojot.cli.main' in result.output
+    # assert result.exit_code == 0
+    assert 'Missing argument' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
-    assert '--help  Show this message and exit.' in help_result.output
+    assert 'Show this message and exit.' in help_result.output
