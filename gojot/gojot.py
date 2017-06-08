@@ -264,14 +264,14 @@ def import_file(config, temp_contents):
     for entry in parse_entries(temp_contents):
         if len(entry['text'].strip()) < 2:
             continue
-        if not isfile(entry['hash'] + '.asc'):
+        if "document" not in entry['meta']:
+            entry['meta']['document'] = "imported"
+        if not isfile(join(encode_str(entry['meta']['document'],config['salt']),entry['hash'] + '.asc')):
             entry['meta']['last_modified'] = str(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             if "time" not in entry['meta']:
                 entry['meta']['time'] = str(
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            if "document" not in entry['meta']:
-                entry['meta']['document'] = "imported"
             if "entry" not in entry['meta']:
                 entry['meta']['entry'] = random_name()
             encoded_subject = encode_str(
@@ -281,6 +281,7 @@ def import_file(config, temp_contents):
             entry_text = "---\n\n" + \
                 yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
                 "\n---\n" + entry['text'].strip()
+            cprint("Adding {}".format(entry['hash']),'green')
             add_file(join(encoded_subject, entry[
                      'hash']), entry_text.strip(), config['user'])
 
@@ -313,10 +314,15 @@ def get_file_contents(config, encoded_subject):
         all_files = list(set(all_files) - set(known_files))
         logger.debug(len(all_files))
 
+
+    cprint("Getting latest entries...","yellow")
     p = Pool(4)
     max_ = len(all_files)
     with tqdm(total=max_) as pbar:
         for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=config['passphrase']), all_files))):
+            pbar.update()
+            if len(datum) == 0:
+                continue
             pieces = datum.decode('utf-8').split('---')
             data = {}
             data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
@@ -326,10 +332,9 @@ def get_file_contents(config, encoded_subject):
                 if data['meta']['last_modified'] < file_contents[key]['meta']['last_modified']:
                     continue
             file_contents[key] = data
-            pbar.update()
     add_file(join(encoded_subject, "file_contents.json"), json.dumps(
         file_contents), config['user'], add_to_git=False)
-
+    cprint("...done","yellow")
     return file_contents
 
 
