@@ -356,7 +356,8 @@ def run(repo, subject):
     if subject == None:
         if len(subjects) > 0:
             [subject, index] = pick(["New"] + subjects, "Enter subject: ")
-        else:
+        
+        if len(subjects) == 0 or subject == "New":
             subject = input("Document? ")
 
     encoded_subject = encode_str(subject, config['salt'])
