@@ -11,10 +11,20 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
+    'pick',
+    'hashids',
+    'termcolor',
+    'tqdm',
+    'ruamel.yaml',
     # TODO: put package requirements here
 ]
 
 test_requirements = [
+    'pick',
+    'hashids',
+    'termcolor',
+    'tqdm',
+    'ruamel.yaml',
     # TODO: put package test requirements here
 ]
 
