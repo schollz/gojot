@@ -727,7 +727,7 @@ def git_clone(repo):
     logger.debug(logerr)
     if b'does not exist' in logerr:
         raise MyException("repo does not exist")
-    if 'Could not resolve' in logerr:
+    if b'Could not resolve' in logerr:
         raise MyException("unable to connect")
 
 def git_pull():
@@ -744,7 +744,7 @@ def git_push():
     (log, logerr) = p.communicate()
     logger.debug(log)
     logger.debug(logerr)
-    if 'Could not resolve' in logerr:
+    if b'Could not resolve' in logerr:
         raise MyException("unable to connect")
 
 def decrypt(fname, passphrase):
