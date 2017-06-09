@@ -13,6 +13,7 @@ from datetime import datetime
 from copy import deepcopy
 from random import choice
 import atexit
+import sys
 
 from hashlib import md5
 from pick import pick
@@ -23,6 +24,9 @@ import ruamel.yaml as yaml
 from ruamel.yaml.comments import CommentedMap
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
+
+tick = '▇'
+sm_tick = '|'
 
 VIMRC = """set nocompatible
 set backspace=2
@@ -663,6 +667,46 @@ def random_name():
 
     return ("{}_{}".format(choice(left),choice(right)))
 
+# FROM https://github.com/mkaz/termgraph/blob/master/termgraph.py
+def chart(labels, data):
+    args = {}
+    args['format'] = '{:>5.0f}'
+    args['suffix'] = ''
+    args['width'] = 50
+
+    # verify data
+    m = len(labels)
+    if m != len(data):
+        print(">> Error: Label and data array sizes don't match")
+        sys.exit(1)
+
+    # massage data
+    # normalize for graph
+    max = 0
+    for i in range(m):
+        if data[i] > max:
+            max = data[i]
+
+    step = max / args['width']
+    # display graph
+    for i in range(m):
+        print_blocks(labels[i], data[i], step, args)
+
+    print()
+
+
+def print_blocks(label, count, step, args):
+    # TODO: add flag to hide data labels
+    blocks = int(count / step)
+    print("{}: ".format(label), end="")
+    if count < step:
+        sys.stdout.write(sm_tick)
+    else:
+        for i in range(blocks):
+            sys.stdout.write(tick)
+
+    print(args['format'].format(count) + args['suffix'])
+
 
 @atexit.register
 def clean_files():
@@ -1036,7 +1080,22 @@ def run_import(repo, fname):
     import_file(config, contents)
 
 
-def run(repo, subject, load_all=False, edit_one=False, export=False):
+def print_stats(file_contents):
+    dates = sorted(file_contents.keys())
+    extracted = {}
+    for d in dates:
+        t = file_contents[d]['meta']['time'].split()[0]
+        if t not in extracted:
+            extracted[t] = 0
+        extracted[t] += len(file_contents[d]['text'].split())
+    labels = []
+    word_count = []
+    for d in sorted(extracted.keys()):
+        labels.append(d)
+        word_count.append(extracted[d])
+    chart(labels,word_count)
+
+def run(repo, subject, load_all=False, edit_one=False, export=False, show_stats=False):
     config = init(repo)
 
     # Decode subjects
@@ -1055,7 +1114,7 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
     encoded_subject = encode_str(subject, config['salt'])
 
     file_contents = {}
-    if load_all or edit_one or export:
+    if load_all or edit_one or export or show_stats:
         file_contents = get_file_contents(config, encoded_subject)
     date_strings = sorted(file_contents.keys())
     if edit_one:
@@ -1080,7 +1139,7 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
             f.write(b"---\n")
             f.write(file_data['text'].encode('utf-8'))
             f.write(b"\n")
-        if not edit_one and not export:
+        if not edit_one and not export and not show_stats:
             if len(date_strings) > 0:
                 f.write(b"\n")
             current_entry = CommentedMap()
@@ -1097,6 +1156,10 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
 
     if export:
         cprint("Wrote %s" % config['output_file'],"green")
+        exit(0)
+
+    if show_stats:
+        print_stats(file_contents)
         exit(0)
 
     with open("/tmp/vimrc.config", "w") as f:
@@ -1143,3 +1206,7 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
 # 	recipient_key = result.get()
 # 	print(recipient_key.user_ids[0],recipient_key.fingerprint, recipient_key.creation_time)
 # 	break
+
+if __name__ == "__main__":
+    run(None, "notes", load_all=False,
+                  edit_one=False, export=False, show_stats=True)
