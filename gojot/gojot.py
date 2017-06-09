@@ -727,7 +727,8 @@ def git_clone(repo):
     logger.debug(logerr)
     if b'does not exist' in logerr:
         raise MyException("repo does not exist")
-
+    if 'Could not resolve' in logerr:
+        raise MyException("unable to connect")
 
 def git_pull():
     p = Popen('git pull --rebase origin master',
@@ -743,7 +744,8 @@ def git_push():
     (log, logerr) = p.communicate()
     logger.debug(log)
     logger.debug(logerr)
-
+    if 'Could not resolve' in logerr:
+        raise MyException("unable to connect")
 
 def decrypt(fname, passphrase):
     p = Popen('gpg --yes --passphrase "{passphrase}" --decrypt {fname}'.format(
