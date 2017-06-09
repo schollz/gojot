@@ -803,7 +803,7 @@ def pick_key():
     return usernames[index]
 
 
-def parse_entries(entry_data):
+def parse_entries(config, entry_data):
     """
     Data should be in the format:
 
@@ -825,7 +825,7 @@ def parse_entries(entry_data):
             data['meta'] = yaml.load(entry, Loader=yaml.Loader)
         elif data['meta'] != None and len(data['meta']) != 0:
             m = md5()
-            m.update(entry.encode('utf-8').strip())
+            m.update(entry.encode('utf-8').strip()+config['salt'].encode('utf-8'))
             entry_hash = m.hexdigest()
             data['hash'] = entry_hash
             data['text'] = entry.strip()
@@ -949,7 +949,7 @@ You can make a new GPG key using
 
 
 def import_file(config, temp_contents):
-    for entry in parse_entries(temp_contents):
+    for entry in parse_entries(config, temp_contents):
         if len(entry['text'].strip()) < 2:
             continue
         if "document" not in entry['meta']:
@@ -992,7 +992,7 @@ def get_file_contents(config, encoded_subject):
         known_files = []
         for f in file_contents:
             m = md5()
-            m.update(file_contents[f]['text'].strip().encode('utf-8'))
+            m.update(file_contents[f]['text'].strip().encode('utf-8')+config['salt'].encode('utf-8'))
             fname = m.hexdigest() + ".asc"
             known_files.append(join(encoded_subject, fname))
         # Update files to only get ones that aren't accounted for
@@ -1076,6 +1076,8 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
             f.write(file_data['text'].encode('utf-8'))
             f.write(b"\n")
         if not edit_one and not export:
+            if len(date_strings) > 0:
+                f.write(b"\n")
             current_entry = CommentedMap()
             current_entry['time'] = str(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
