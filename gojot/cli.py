@@ -6,8 +6,8 @@ from gojot import gojot
 
 @click.command()
 @click.option('--repo', '-r', default=None, help='Repo to open.')
-@click.option('--doc', '-d', default=None, help='Document to open.')
-@click.option('--imp', '-i', default=None, help='File to import.')
+@click.option('--document', '-d', default=None, help='Document to open.')
+@click.option('--import', '-i', default=None, help='File to import.')
 @click.option('--all', '-a', 'load_all', is_flag=True, help='Open all entries.')
 @click.option('--edit', '-e', 'edit_one', is_flag=True, help='Edit an entry.')
 @click.option('--export', '-x', 'export', is_flag=True, help='Export a document.')
