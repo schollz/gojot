@@ -767,7 +767,11 @@ def add_file(fname, contents, recipient, add_to_git=True):
 
 def pick_key():
     p = Popen('gpg --list-keys', shell=True, stdout=PIPE, stderr=PIPE)
-    (log, _) = p.communicate()
+    (log, logerr) = p.communicate()
+    if log == b'':
+        raise MyException("need to create gpg key")
+    logger.debug(log)
+    logger.debug(logerr)
     keys = []
     usernames = []
     for gpg_key in log.split(b"------\n")[1].split(b"\n\n"):
@@ -856,7 +860,24 @@ def init(repo):
     config = {}
     if not isfile("config.asc"):
         cprint("Generating credentials...", "yellow", end='', flush=True)
-        username = pick_key()
+        try:
+            username = pick_key()
+        except:
+            print("""
+Do you have a GPG key?
+
+You can import your keys using
+
+    gpg --import public.key
+    gpg --allow-secret-key-import --import /tmp/private.key
+
+You can make a new GPG key using
+
+    apt-get install rng-tools
+    gpg --gen-key
+
+""")
+            exit(1)
         config = {"user": username, "salt": str(uuid4())}
         add_file("config", json.dumps(config), config['user'])
         cprint("...ok.", "yellow")
