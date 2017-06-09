@@ -5,7 +5,7 @@ from gojot import gojot
 
 
 @click.command()
-@click.argument('repo')
+@click.option('--repo', '-r', default=None, help='Repo to open.')
 @click.option('--doc', '-d', default=None, help='Document to open.')
 @click.option('--imp', '-i', default=None, help='File to import.')
 @click.option('--all', '-a', 'load_all', is_flag=True, help='Open all entries.')
@@ -15,7 +15,7 @@ def main(repo, doc, imp, load_all, edit_one, args=None):
     click.echo("")
     click.echo("See gojot documentation at https://gojot.schollz.com/")
     if imp != None:
-        gojot.run_import(repo, imp)
+        gojot.run_import( imp)
     else:
         gojot.run(repo, doc, load_all=load_all, edit_one=edit_one)
 

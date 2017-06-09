@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger, FileHandler, Formatter, DEBUG
-from os import chdir, walk, mkdir, listdir, system, remove
+from os import chdir, walk, mkdir, listdir, system, remove, makedirs
 from os.path import isfile, join, isdir, expanduser
 from subprocess import Popen, PIPE, call
 from getpass import getpass
@@ -74,6 +74,8 @@ formatter = Formatter(
 fh.setFormatter(formatter)
 # add the handlers to the logger
 logger.addHandler(fh)
+
+HOMEDIR = join(expanduser("~"),".cache","gojot")
 
 
 class MyException(Exception):
@@ -672,6 +674,9 @@ def clean_files():
     if isfile('{0}/.gnupg/gpg.conf.backup'.format(expanduser('~'))):
         system('mv {0}/.gnupg/gpg.conf.backup {0}/.gnupg/gpg.conf'.format(expanduser('~')))
 
+def setup_cache():
+    if not isdir(HOMEDIR):
+        makedirs(HOMEDIR)
 
 def encode_str(s, salt):
     hashids = Hashids(salt=salt)
@@ -703,6 +708,16 @@ def git_log():
     log = [dict(zip(GIT_COMMIT_FIELDS, row)) for row in log]
     return log
 
+def git_get_remote_origin_url():
+    
+    p = Popen('git config --get remote.origin.url',
+              shell=True, stdout=PIPE, stderr=PIPE)
+    (log, logerr) = p.communicate()
+    logger.debug(log)
+    logger.debug(logerr)
+    if b'does not exist' in logerr:
+        raise MyException("repo does not exist")
+    return log.decode('utf-8').strip()
 
 def git_clone(repo):
     p = Popen('git clone ' + repo,
@@ -834,12 +849,38 @@ def fix_gpg_conf():
 
 
 def init(repo):
-    repo_dir = repo.split("/")[-1].split(".git")[0].strip()
+    setup_cache()
     fix_gpg_conf()
     call('clear', shell=True)
+    chdir(HOMEDIR)
 
+    # Determine which repo
+    if repo != None:
+        repo_dir = repo.split("/")[-1].split(".git")[0].strip()        
+    else:
+        repo_dirs = [d for d in listdir('.') if isdir(join('.', d))]
+        repos = []
+        for repo_dir in repo_dirs:
+            chdir(repo_dir)
+            repos.append(git_get_remote_origin_url())
+            chdir('..')
+        if len(repo_dirs) == 1:
+            repo_dir = repo_dirs[0]
+            repo = repos[0]
+        elif len(repo_dirs) == 0:
+            repo = input("Repo? (e.g. https://github.com/USER/REPO.git) ")
+            repo_dir = repo.split("/")[-1].split(".git")[0].strip()
+        else:
+            [_,index] = pick(["New"]+repos,"Which repo? ")
+            if index == 0:
+                repo = input("Repo? (e.g. https://github.com/USER/REPO.git) ")
+                repo_dir = repo.split("/")[-1].split(".git")[0].strip()
+            else:
+                repo = repos[index-1]
+                repo_dir = repo_dirs[index-1]    
     cprint("Working on %s" % repo, "green")
-    chdir("/tmp/")
+
+
     git_thread = None
     if isdir(repo_dir):
         cprint("Pulling the latest...", "yellow")
@@ -847,7 +888,7 @@ def init(repo):
         git_thread = Thread(target=git_pull)
         git_thread.start()
     else:
-        cprint("Cloning the latest...", "yellow")
+        cprint("Cloning...", "yellow")
         try:
             git_clone(repo)
         except BaseException as e:
