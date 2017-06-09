@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import click
-from gojot import *
+from gojot import gojot
 
 
 @click.command()
@@ -15,11 +15,9 @@ def main(repo, doc, imp, load_all, edit_one, args=None):
     click.echo("")
     click.echo("See gojot documentation at https://gojot.schollz.com/")
     if imp != None:
-        run_import(repo, imp)
+        gojot.run_import(repo, imp)
     else:
-        run(repo, doc, load_all=load_all, edit_one=edit_one)
-    # TODO
-    # Add flag for editing a single entry (boolean)
+        gojot.run(repo, doc, load_all=load_all, edit_one=edit_one)
 
 
 if __name__ == "__main__":
