@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger, FileHandler, Formatter, DEBUG
-from os import chdir, walk, mkdir, listdir, system, remove, makedirs
+from os import chdir, walk, mkdir, listdir, system, remove, makedirs, getcwd
 from os.path import isfile, join, isdir, expanduser
 from subprocess import Popen, PIPE, call
 from getpass import getpass
@@ -849,6 +849,7 @@ def fix_gpg_conf():
 
 
 def init(repo):
+    current_dir = getcwd()
     setup_cache()
     fix_gpg_conf()
     call('clear', shell=True)
@@ -940,6 +941,10 @@ You can make a new GPG key using
         cprint("...pulled latest.", "yellow")
 
     config['passphrase'] = passphrase
+    config['repo'] = repo 
+    config['repo_dir'] = repo_dir
+    config['current_dir'] = current_dir
+    config['output_file'] = '/tmp/temp.txt'
     return config
 
 
@@ -1026,7 +1031,7 @@ def run_import(repo, fname):
     import_file(config, contents)
 
 
-def run(repo, subject, load_all=False, edit_one=False):
+def run(repo, subject, load_all=False, edit_one=False, export=False):
     config = init(repo)
 
     # Decode subjects
@@ -1045,7 +1050,7 @@ def run(repo, subject, load_all=False, edit_one=False):
     encoded_subject = encode_str(subject, config['salt'])
 
     file_contents = {}
-    if load_all or edit_one:
+    if load_all or edit_one or export:
         file_contents = get_file_contents(config, encoded_subject)
     date_strings = sorted(file_contents.keys())
     if edit_one:
@@ -1058,7 +1063,10 @@ def run(repo, subject, load_all=False, edit_one=False):
         [_, index] = pick(title_strings, "Pick entry: ")
         date_strings = [date_strings[index]]
 
-    with open("/tmp/temp.txt", "wb") as f:
+    if export:
+        config['output_file'] = join(config['current_dir'],subject + ".txt")
+
+    with open(config['output_file'], "wb") as f:
         for date_str in date_strings:
             file_data = file_contents[date_str]
             f.write(b"\n---\n")
@@ -1067,7 +1075,7 @@ def run(repo, subject, load_all=False, edit_one=False):
             f.write(b"---\n")
             f.write(file_data['text'].encode('utf-8'))
             f.write(b"\n")
-        if not edit_one:
+        if not edit_one and not export:
             current_entry = CommentedMap()
             current_entry['time'] = str(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -1080,11 +1088,16 @@ def run(repo, subject, load_all=False, edit_one=False):
             f.write(yaml.round_trip_dump(current_entry).encode('utf-8'))
             f.write(b"---\n\n\n")
 
+    if export:
+        cprint("Wrote %s" % config['output_file'],"green")
+        exit(0)
+
     with open("/tmp/vimrc.config", "w") as f:
         if load_all:
             f.write(VIMRC)
         else:
             f.write(VIMRC2)
+
 
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
