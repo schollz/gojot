@@ -42,7 +42,7 @@ def test_gojot():
     gojot.git_clone('https://github.com/schollz/test5.git')
     assert isdir('test5') == True
     rmtree('test5')
-    datas = gojot.parse_entries("""
+    datas = gojot.parse_entries({'salt':'asldkfjalkdsfj'},"""
 ---
 time: '2017-06-07 09:36:02'
 entry: cool_entry1
@@ -55,15 +55,5 @@ entry: cool_entry2
 Some other text
 """)
     assert len(datas) == 2
-    assert datas[1] == {'hash': 'f0e124f2a81affb35281aa971ff5c318', 'meta': {
-        'entry': 'cool_entry2', 'time': '2017-06-07 09:36:03'}, 'text': 'Some other text'}
-
-
-def test_command_line_interface():
-    runner = CliRunner()
-    result = runner.invoke(cli.main)
-    # assert result.exit_code == 0
-    assert 'Missing argument' in result.output
-    help_result = runner.invoke(cli.main, ['--help'])
-    assert help_result.exit_code == 0
-    assert 'Show this message and exit.' in help_result.output
+    assert datas[1] == {'hash': '911e2ea1b3fc4ffba9ed6ca14acaa506', 'meta': {
+            'entry': 'cool_entry2', 'time': '2017-06-07 09:36:03'}, 'text': 'Some other text'}
