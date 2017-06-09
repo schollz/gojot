@@ -949,6 +949,7 @@ You can make a new GPG key using
 
 
 def import_file(config, temp_contents):
+    entry_updates = 0
     for entry in parse_entries(config, temp_contents):
         if len(entry['text'].strip()) < 2:
             continue
@@ -969,9 +970,11 @@ def import_file(config, temp_contents):
             entry_text = "---\n\n" + \
                 yaml.dump(entry['meta'],  Dumper=yaml.RoundTripDumper) + \
                 "\n---\n" + entry['text'].strip()
-            cprint("Adding {}".format(entry['hash']), 'green')
+            cprint("Updating {}".format(entry['hash']), 'green')
             add_file(join(encoded_subject, entry[
                      'hash']), entry_text.strip(), config['user'])
+            entry_updates += 1
+    return entry_updates
 
 
 def get_file_contents(config, encoded_subject):
@@ -1103,15 +1106,17 @@ def run(repo, subject, load_all=False, edit_one=False, export=False):
 
     system("vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt")
 
-    import_file(config, open("/tmp/temp.txt", 'r').read())
+    entry_updates = import_file(config, open("/tmp/temp.txt", 'r').read())
 
-    cprint("Pushing...", "yellow", end='', flush=True)
-    try:
-        git_push()
-        cprint("...ok.", "yellow")
-    except:
-        cprint("...oh well.", "red")
-
+    if entry_updates > 0:
+        cprint("Pushing...", "yellow", end='', flush=True)
+        try:
+            git_push()
+            cprint("...ok.", "yellow")
+        except:
+            cprint("...oh well.", "red")
+    else:
+        cprint("No updates to push.","yellow")
 
 # Import
 # gpg --import ../public_key_2017.gpg
