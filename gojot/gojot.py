@@ -66,6 +66,9 @@ endfu
 com! WPCLI call WordProcessorModeCLI()
 """
 
+if isfile('gojot.log'):
+    remove('gojot.log')
+    
 # create logger with 'spam_application'
 logger = getLogger('gojot')
 logger.setLevel(DEBUG)
@@ -1032,16 +1035,16 @@ def get_file_contents(config, encoded_subject):
         if "file_contents.json.asc" not in filename:
             all_files.append(join(encoded_subject, filename))
 
-    file_contents = {}
+    all_file_contents = []
     if isfile(join(encoded_subject, 'file_contents.json.asc')):
         logger.debug("Using cache")
         file_contents_string = decrypt(
             join(encoded_subject, 'file_contents.json.asc'), config['passphrase'])
-        file_contents = json.loads(file_contents_string.decode('utf-8'))
+        all_file_contents = json.loads(file_contents_string.decode('utf-8'))
         known_files = []
-        for f in file_contents:
+        for f in all_file_contents:
             m = md5()
-            m.update(file_contents[f]['text'].strip().encode('utf-8')+config['salt'].encode('utf-8'))
+            m.update(f['text'].strip().encode('utf-8')+config['salt'].encode('utf-8'))
             fname = m.hexdigest() + ".asc"
             known_files.append(join(encoded_subject, fname))
         # Update files to only get ones that aren't accounted for
@@ -1052,7 +1055,7 @@ def get_file_contents(config, encoded_subject):
         logger.debug(len(all_files))
 
     cprint("Getting latest entries...", "yellow")
-    p = Pool(4)
+    p = Pool(8)
     max_ = len(all_files)
     with tqdm(total=max_) as pbar:
         for i, datum in tqdm(enumerate(p.imap_unordered(partial(decrypt, passphrase=config['passphrase']), all_files))):
@@ -1063,14 +1066,20 @@ def get_file_contents(config, encoded_subject):
             data = {}
             data['meta'] = yaml.load(pieces[1], Loader=yaml.Loader)
             data['text'] = pieces[2]
-            key = data['meta']['time'] + data['meta']['entry']
-            if data['meta']['time'] in file_contents:
-                if data['meta']['last_modified'] < file_contents[key]['meta']['last_modified']:
-                    continue
-            file_contents[key] = data
+            all_file_contents.append(data)
     add_file(join(encoded_subject, "file_contents.json"), json.dumps(
-        file_contents), config['user'], add_to_git=False)
+        all_file_contents), config['user'], add_to_git=False)
     cprint("\n...ok.", "yellow")
+
+    file_contents = {}
+    for data in all_file_contents:    
+        key = data['meta']['time']
+        if key in file_contents:
+            if data['meta']['last_modified'] < file_contents[key]['meta']['last_modified']:
+                continue
+        if data['text'].strip() == 'ignore document' or data['text'].strip() == 'ignore entry':
+            continue
+        file_contents[key] = data
     return file_contents
 
 
