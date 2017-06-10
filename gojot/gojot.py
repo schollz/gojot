@@ -22,6 +22,7 @@ from termcolor import cprint
 from tqdm import tqdm
 import ruamel.yaml as yaml
 from ruamel.yaml.comments import CommentedMap
+from humanize import intcomma
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
 
@@ -1093,16 +1094,19 @@ def print_stats(file_contents):
     dates = sorted(file_contents.keys())
     extracted = {}
     for d in dates:
-        t = file_contents[d]['meta']['time'].split()[0]
+        t = '-'.join(file_contents[d]['meta']['time'].split()[0].split('-')[0:2])
         if t not in extracted:
             extracted[t] = 0
         extracted[t] += len(file_contents[d]['text'].split())
     labels = []
     word_count = []
+    total_words = 0
     for d in sorted(extracted.keys()):
         labels.append(d)
         word_count.append(extracted[d])
+        total_words += extracted[d]
     chart(labels,word_count)
+    print('\n{} words total'.format(intcomma(total_words)))
 
 def run(repo, subject, load_all=False, edit_one=False, export=False, show_stats=False):
     config = init(repo)

@@ -16,6 +16,7 @@ requirements = [
     'termcolor',
     'tqdm',
     'ruamel.yaml',
+    'humanize',
     # TODO: put package requirements here
 ]
 
@@ -25,6 +26,7 @@ test_requirements = [
     'termcolor',
     'tqdm',
     'ruamel.yaml',
+    'humanize',
     # TODO: put package test requirements here
 ]
 
