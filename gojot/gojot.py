@@ -1072,6 +1072,7 @@ def get_file_contents(config, encoded_subject):
         all_file_contents), config['user'], add_to_git=False)
     cprint("\n...ok.", "yellow")
 
+    keys_to_ignore = []
     file_contents = {}
     for data in all_file_contents:    
         key = data['meta']['time']
@@ -1079,8 +1080,11 @@ def get_file_contents(config, encoded_subject):
             if data['meta']['last_modified'] < file_contents[key]['meta']['last_modified']:
                 continue
         if data['text'].strip() == 'ignore document' or data['text'].strip() == 'ignore entry':
-            continue
+            keys_to_ignore.append(key)
         file_contents[key] = data
+    for key in keys_to_ignore:
+        if key in file_contents:
+            file_contents.pop(key,None)
     return file_contents
 
 
