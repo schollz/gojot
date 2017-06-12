@@ -42,8 +42,8 @@ Features
 -  Open-source
      `Source on Github`_, written in `Go`_ and licensed under the MIT, with exception of a few open source components from third parties.
 
-.. _check if its encrypted: https://github.com/schollz/demo
-.. _see mine: https://github.com/schollz/demo
+.. _check if its encrypted: https://github.com/schollz/test5
+.. _see mine: https://github.com/schollz/test5
 .. _OpenPGP: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 .. _ChaCha20: https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 .. _all major systems and architectures: /install.html
