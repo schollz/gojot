@@ -28,6 +28,8 @@ help:
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
+version: clean
+	sed -i 's/3.0.3/3.0.4/g' setup.cfg setup.py gojot/gojot.py gojot/cli.py gojot/__init__.py
 
 clean-build: ## remove build artifacts
 	rm -fr build/

@@ -20,7 +20,7 @@ def main(repo, document, imp, load_all, edit_one, export, show_stats, version, a
     if imp != None:
         gojot.run_import(repo, imp)
     elif version != False:
-        print("gojot version 3.0.2")
+        print("gojot version 3.0.3")
     else:
         gojot.run(repo, document, load_all=load_all,
                   edit_one=edit_one, export=export, show_stats=show_stats)
