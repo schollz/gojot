@@ -6,6 +6,6 @@ flake8==3.3.0
 tox==2.7.0
 coverage==4.4.1
 Sphinx==1.6.2
-cryptography
+cryptography==1.9
 PyYAML
 pytest
