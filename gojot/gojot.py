@@ -28,8 +28,6 @@ from .chart import chart
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-=_+"
 
-tick = '▇'
-sm_tick = '|'
 
 VIMRC = """set nocompatible
 set backspace=2
