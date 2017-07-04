@@ -951,7 +951,7 @@ def init(repo):
     # Check if config file exists
     config = {}
     if not isfile("config.asc"):
-        cprint("Generating credentials...", "yellow", end='', flush=True)
+        cprint("Generating credentials...", "yellow", end='')
         try:
             username = pick_key()
         except:
@@ -976,7 +976,7 @@ You can make a new GPG key using
 
     # Check passphrase
     passphrase = getpass("\nPassphrase? ")
-    cprint("\nChecking credentials...", "yellow", end='', flush=True)
+    cprint("\nChecking credentials...", "yellow", end='')
     try:
         content = decrypt("config.asc", passphrase)
         cprint("...ok.", "yellow")

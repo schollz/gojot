@@ -4,6 +4,15 @@
 Installation
 ============
 
+Requirements
+------------
+
+First make sure you have ``gpg``, ``git``, and ``vim`` installed:
+
+.. code-block:: console
+
+    $ sudo apt-get install gpg git vim
+
 
 Stable release
 --------------
