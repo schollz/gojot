@@ -13,10 +13,10 @@ gojot
         :target: https://gojot.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+
 .. image:: https://pyup.io/repos/github/schollz/gojot/shield.svg
      :target: https://pyup.io/repos/github/schollz/gojot/
      :alt: Updates
-
 
 *gojot* is a modern command-line journal that is distributed and encrypted by default.
 
@@ -28,6 +28,8 @@ the entire document synchronized in it a ``git`` repository.
 
 Here's what it looks like in action (`check if its encrypted`_):
 
+.. image:: /docs/_static/demo2.gif
+     :alt: Updates
 
 Install
 -------
