@@ -18,8 +18,7 @@ gojot
      :alt: Updates
 
 
-*gojot* is a modern command-line journal that is distributed and encryptedby default.
-
+*gojot* is a modern command-line journal that is distributed and encrypted by default.
 
 
 Install
@@ -33,6 +32,7 @@ Make sure you have ``gpg`` and ``git`` installed, and then:
 
 Features
 --------
+
 
 
 

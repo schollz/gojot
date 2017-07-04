@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'gojot'
-copyright = u"2017, Zack Scholl"
+copyright = u"2017, Zack"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -111,7 +111,15 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'alabaster'
+html_theme_options = {
+    'logo': 'logo.png',
+    'github_user': 'schollz',
+    'github_repo': 'gojot',
+    'github_button': True,
+    'github_count': True,
+    'travis_button': True,
+}
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
@@ -131,7 +139,7 @@ html_theme = 'default'
 
 # The name of an image file (relative to this directory) to place at the
 # top of the sidebar.
-#html_logo = None
+html_logo = '_static/logo.png'
 
 # The name of an image file (within the static path) to use as favicon
 # of the docs.  This file should be a Windows icon file (.ico) being
@@ -210,7 +218,7 @@ latex_elements = {
 latex_documents = [
     ('index', 'gojot.tex',
      u'gojot Documentation',
-     u'Zack Scholl', 'manual'),
+     u'Zack', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -241,7 +249,7 @@ latex_documents = [
 man_pages = [
     ('index', 'gojot',
      u'gojot Documentation',
-     [u'Zack Scholl'], 1)
+     [u'Zack'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -256,7 +264,7 @@ man_pages = [
 texinfo_documents = [
     ('index', 'gojot',
      u'gojot Documentation',
-     u'Zack Scholl',
+     u'Zack',
      'gojot',
      'One line description of project.',
      'Miscellaneous'),

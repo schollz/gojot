@@ -1123,10 +1123,13 @@ def run(repo, subject, load_all=False, edit_one=False, export=False, show_stats=
 
     if subject == None:
         if len(subjects) > 0:
-            [subject, index] = pick(["New"] + subjects, "Enter subject: ")
+            [subject, index] = pick(["New"] + subjects, "Choose document: ")
 
         if len(subjects) == 0 or subject == "New":
             subject = input("\nDocument? ")
+        if subject == "":
+            subject = "notes"
+        subject = subject.lower()
 
     encoded_subject = encode_str(subject, config['salt'])
 
