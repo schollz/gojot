@@ -581,30 +581,6 @@ def run(repo, subject, load_all=False, edit_one=False, export=False, show_stats=
     else:
         cprint("No updates to push.","yellow")
 
-# Import
-# gpg --import ../public_key_2017.gpg
-# gpg --allow-secret-key-import --import ../private_key_2017.gpg
-
-# Encrypt (must do one file at a time)
-# gpg --yes --armor --recipient "Zackary N. Scholl" --encrypt test2.txt
-# os.system('gpg --yes --armor --recipient "Zackary N. Scholl" --encrypt
-# test2.txt')
-
-# Decrypt (batch)
-# gpg --yes --decrypt-files *.asc
-# gpg --yes --passphrase "PASSPHRASE" --decrypt *.asc
-
-# from pgp import *   #pip install py-pgp
-# from pgp.keyserver import get_keyserver
-
-# ks = get_keyserver('hkp://pgp.mit.edu/')
-# results = ks.search('zack.scholl@gmail.com')
-# print(results)
-# for result in results:
-# 	recipient_key = result.get()
-# 	print(recipient_key.user_ids[0],recipient_key.fingerprint, recipient_key.creation_time)
-# 	break
-
 if __name__ == "__main__":
     run(None, "notes", load_all=False,
                   edit_one=False, export=False, show_stats=True)
