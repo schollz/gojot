@@ -29,8 +29,9 @@ Here's what it looks like in action (`check if its encrypted`_):
 .. image:: /docs/_static/demo2.gif
      :alt: Updates
 
+=======
 Install
--------
+=======
 
 First make sure you have ``gpg``, ``git``, and ``vim`` installed:
 
