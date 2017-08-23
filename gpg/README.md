@@ -10,3 +10,8 @@ See the tests and documentation for more info.
 ## License
 
 MIT
+
+## To Do
+
+- [ ] Add logging
+- [ ] Automatically look for keyrings and use the first one found (unless otherwise specified)
