@@ -159,7 +159,7 @@ func basicPrompt() {
 			}()
 		case line == "open":
 			fmt.Println("Choose a file to open. Press tab to view folders/file. Type close to go back.")
-			filePrompt()
+			goto files
 		case line == "bye":
 			goto exit
 		case line == "sleep":
@@ -170,7 +170,8 @@ func basicPrompt() {
 			log.Println("you said:", strconv.Quote(line))
 		}
 	}
-
+files:
+	filePrompt()
 exit:
 }
 
@@ -183,7 +184,7 @@ func filePrompt() {
 			),
 		})
 	l, err := readline.NewEx(&readline.Config{
-		Prompt:              "\033[31m»\033[0m ",
+		Prompt:              "\033[32m»\033[0m ",
 		HistoryFile:         "/tmp/readline.tmp",
 		AutoComplete:        completer,
 		InterruptPrompt:     "^C",
@@ -218,6 +219,8 @@ func filePrompt() {
 
 		line = strings.TrimSpace(line)
 		switch {
+		case line == "close":
+			goto back
 		case line == "bye":
 			goto exit
 		case line == "":
@@ -225,6 +228,8 @@ func filePrompt() {
 			log.Println("you said:", strconv.Quote(line))
 		}
 	}
+back:
+	basicPrompt()
 exit:
 }
 func main() {
