@@ -7,6 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCommit(t *testing.T) {
+	var err error
+	gr, _ := New("https://github.com/schollz/test.git", "testtest")
+	gr.Debug(true)
+	err = gr.Update()
+	assert.Equal(t, nil, err)
+	err = gr.AddData([]byte("hi2"), "hello/hi2.txt")
+	assert.Equal(t, nil, err)
+	err = gr.Push()
+	assert.Equal(t, nil, err)
+}
+
 func TestGeneral(t *testing.T) {
 	gr, err := New("https://github.com/schollz/asdf.git", "testtest")
 	gr.Debug(true)
