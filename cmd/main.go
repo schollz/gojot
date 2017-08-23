@@ -29,37 +29,7 @@ func listFiles(path string) func(string) []string {
 	}
 }
 
-var completer = readline.NewPrefixCompleter(
-	readline.PcItem("mode",
-		readline.PcItem("vi"),
-		readline.PcItem("emacs"),
-	),
-	readline.PcItem("login"),
-	readline.PcItem("say",
-		readline.PcItemDynamic(listFiles("./"),
-			readline.PcItem("with",
-				readline.PcItem("following"),
-				readline.PcItem("items"),
-			),
-		),
-		readline.PcItem("hello"),
-		readline.PcItem("bye"),
-	),
-	readline.PcItem("setprompt"),
-	readline.PcItem("setpassword"),
-	readline.PcItem("bye"),
-	readline.PcItem("help"),
-	readline.PcItem("go",
-		readline.PcItem("build", readline.PcItem("-o"), readline.PcItem("-v")),
-		readline.PcItem("install",
-			readline.PcItem("-v"),
-			readline.PcItem("-vv"),
-			readline.PcItem("-vvv"),
-		),
-		readline.PcItem("test"),
-	),
-	readline.PcItem("sleep"),
-)
+var completer = readline.NewPrefixCompleter()
 
 func filterInput(r rune) (rune, bool) {
 	switch r {
@@ -70,14 +40,48 @@ func filterInput(r rune) (rune, bool) {
 	return r, true
 }
 
-func main() {
-	l, err := readline.NewEx(&readline.Config{
-		Prompt:          "\033[31m»\033[0m ",
-		HistoryFile:     "/tmp/readline.tmp",
-		AutoComplete:    completer,
-		InterruptPrompt: "^C",
-		EOFPrompt:       "exit",
+func basicPrompt() {
+	completer = readline.NewPrefixCompleter(
+		readline.PcItem("mode",
+			readline.PcItem("vi"),
+			readline.PcItem("emacs"),
+		),
+		readline.PcItem("login"),
+		readline.PcItem("test1",
+			readline.PcItemDynamic(listFiles("./test1")),
+		),
 
+		readline.PcItem("say",
+			readline.PcItemDynamic(listFiles("./"),
+				readline.PcItem("with",
+					readline.PcItem("following"),
+					readline.PcItem("items"),
+				),
+			),
+			readline.PcItem("hello"),
+			readline.PcItem("bye"),
+		),
+		readline.PcItem("setprompt"),
+		readline.PcItem("setpassword"),
+		readline.PcItem("bye"),
+		readline.PcItem("help"),
+		readline.PcItem("go",
+			readline.PcItem("build", readline.PcItem("-o"), readline.PcItem("-v")),
+			readline.PcItem("install",
+				readline.PcItem("-v"),
+				readline.PcItem("-vv"),
+				readline.PcItem("-vvv"),
+			),
+			readline.PcItem("test"),
+		),
+		readline.PcItem("sleep"),
+	)
+	l, err := readline.NewEx(&readline.Config{
+		Prompt:              "\033[31m»\033[0m ",
+		HistoryFile:         "/tmp/readline.tmp",
+		AutoComplete:        completer,
+		InterruptPrompt:     "^C",
+		EOFPrompt:           "exit",
 		HistorySearchFold:   true,
 		FuncFilterInputRune: filterInput,
 	})
@@ -153,6 +157,9 @@ func main() {
 					log.Println(line)
 				}
 			}()
+		case line == "open":
+			fmt.Println("Choose a file to open. Press tab to view folders/file. Type close to go back.")
+			filePrompt()
 		case line == "bye":
 			goto exit
 		case line == "sleep":
@@ -163,5 +170,64 @@ func main() {
 			log.Println("you said:", strconv.Quote(line))
 		}
 	}
+
 exit:
+}
+
+func filePrompt() {
+	completer = readline.NewPrefixCompleter()
+	completer.SetChildren(
+		[]readline.PrefixCompleterInterface{
+			readline.PcItem("test2",
+				readline.PcItemDynamic(listFiles("./test2")),
+			),
+		})
+	l, err := readline.NewEx(&readline.Config{
+		Prompt:              "\033[31m»\033[0m ",
+		HistoryFile:         "/tmp/readline.tmp",
+		AutoComplete:        completer,
+		InterruptPrompt:     "^C",
+		EOFPrompt:           "exit",
+		HistorySearchFold:   true,
+		FuncFilterInputRune: filterInput,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer l.Close()
+
+	setPasswordCfg := l.GenPasswordConfig()
+	setPasswordCfg.SetListener(func(line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
+		l.SetPrompt(fmt.Sprintf("Enter password(%v): ", len(line)))
+		l.Refresh()
+		return nil, 0, false
+	})
+
+	log.SetOutput(l.Stderr())
+	for {
+		line, err := l.Readline()
+		if err == readline.ErrInterrupt {
+			if len(line) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+
+		line = strings.TrimSpace(line)
+		switch {
+		case line == "bye":
+			goto exit
+		case line == "":
+		default:
+			log.Println("you said:", strconv.Quote(line))
+		}
+	}
+exit:
+}
+func main() {
+
+	basicPrompt()
 }
