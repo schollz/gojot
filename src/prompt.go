@@ -264,7 +264,3 @@ back:
 	basicPrompt()
 exit:
 }
-func main() {
-
-	basicPrompt()
-}
