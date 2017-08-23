@@ -14,4 +14,5 @@ MIT
 ## To Do
 
 - [ ] Add logging
-- [ ] Automatically look for keyrings and use the first one found (unless otherwise specified)
+- [ ] Automatically look for keyrings and use the first one found, otherwise throw error. Can override with specified key ring.
+
