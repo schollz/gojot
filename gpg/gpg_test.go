@@ -7,8 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const secring = `/home/zns/.gnupg/secring.gpg` //`C:\cygwin64\home\Zack\.gnupg\secring.gpg`
-const pubring = `/home/zns/.gnupg/pubring.gpg` //`C:\cygwin64\home\Zack\.gnupg\pubring.gpg`
+const secring = `C:\Users\Zack\AppData\Roaming\gnupg\secring.gpg`
+
+//`/home/zns/.gnupg/secring.gpg` //`C:\cygwin64\home\Zack\.gnupg\secring.gpg`
+const pubring = `C:\Users\Zack\AppData\Roaming\gnupg\pubring.gpg`
+
+// `/home/zns/.gnupg/pubring.gpg` //`C:\cygwin64\home\Zack\.gnupg\pubring.gpg`
 
 func BenchmarkDecryptFile(b *testing.B) {
 	gs, _ := New(secring, pubring)
