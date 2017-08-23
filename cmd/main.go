@@ -5,12 +5,44 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/chzyer/readline"
+	"github.com/schollz/gogpg"
 )
+
+func bulkDecrypt() {
+	filelist := []string{}
+	filepath.Walk("/home/zns/.cache/gojot/zack", func(fp string, fi os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err) // can't walk here,
+			return nil       // but continue walking elsewhere
+		}
+		if fi.IsDir() {
+			return nil // not a file.  ignore.
+		}
+		matched, err := filepath.Match("*.asc", fi.Name())
+		if err != nil {
+			fmt.Println(err) // malformed pattern
+			return err       // this is fatal.
+		}
+		if matched {
+			filelist = append(filelist, fp)
+		}
+		return nil
+	})
+	gr, _ := gogpg.New(true)
+	gr.Init("USER", "PASS")
+	data, err := gr.BulkDecrypt(filelist, true)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(data["/home/zns/.cache/gojot/zack/config.asc"])
+}
 
 func usage(w io.Writer) {
 	io.WriteString(w, "commands:\n")
