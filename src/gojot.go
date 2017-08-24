@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -23,6 +24,7 @@ import (
 type gojot struct {
 	debug  bool
 	root   string
+	docs   Documents
 	repo   *gogit.GitRepo
 	gpg    *gogpg.GPGStore
 	logger *logrus.Logger
@@ -204,7 +206,6 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 		return
 	}
 
-	// Check config file
 	return
 }
 
@@ -317,6 +318,43 @@ func (gj *gojot) NewConfig(overrideIdentityPassword ...string) (err error) {
 	return
 }
 
+func (gj *gojot) LoadRepo() (err error) {
+	filelist := []string{}
+	filepath.Walk(gj.root, func(fp string, fi os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err) // can't walk here,
+			return nil       // but continue walking elsewhere
+		}
+		if fi.IsDir() {
+			return nil // not a file.  ignore.
+		}
+		matched, err := filepath.Match("*.asc", fi.Name())
+		if err != nil {
+			fmt.Println(err) // malformed pattern
+			return err       // this is fatal.
+		}
+		if matched {
+			filelist = append(filelist, fp)
+		}
+		return nil
+	})
+	data, err := gj.gpg.BulkDecrypt(filelist, true)
+	if err != nil {
+		return err
+	}
+
+	fulltext := ""
+	for filename := range data {
+		fulltext += data[filename]
+	}
+	gj.docs, err = ParseScroll(fulltext)
+	if err != nil {
+		return err
+	}
+	// TODO: See if this works
+	return
+}
+
 func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 	err = gj.VerifyIdentity(overrideIdentityPassword...)
 	if !exists(path.Join(gj.root, "config.asc")) {
@@ -386,7 +424,6 @@ func (gj *gojot) SaveDocuments(docs Documents) (err error) {
 				err = err2
 				return
 			}
-
 		}
 	}
 	return
