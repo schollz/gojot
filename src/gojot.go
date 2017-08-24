@@ -369,12 +369,6 @@ func (gj *gojot) SaveDocuments(docs Documents) (err error) {
 }
 
 func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString string, err error) {
-	tmpfile, err := ioutil.TempFile("", "write")
-	if err != nil {
-		return
-	}
-	defer os.Remove(tmpfile.Name()) // clean up
-
 	var document, entry string
 	if len(documentEntry) == 2 {
 		document = documentEntry[0]
@@ -415,15 +409,32 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 		return
 	}
 
-	err = ioutil.WriteFile(tmpfile.Name(), []byte(docsString+"\n\n"+dString), 0644)
+	tmpfile, err := ioutil.TempFile("", "write")
+	if err != nil {
+		return
+	}
+	defer os.Remove(tmpfile.Name()) // clean up\
+	err = ioutil.WriteFile(tmpfile.Name(), []byte(strings.TrimSpace(docsString+"\n\n"+dString)+"\n\n\n"), 0644)
 	if err != nil {
 		return
 	}
 
-	// TODO: backup vimrc
-	// TODO: load new vimrc depending on loading all or none
-	// TODO: Change vim command vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt
-	cmd := exec.Command("vim", tmpfile.Name())
+	vimrc, err := ioutil.TempFile("", "vimrc")
+	if err != nil {
+		return
+	}
+	defer os.Remove(vimrc.Name()) // clean up
+	if showAll {
+		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC), 0644)
+	} else {
+		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC2), 0644)
+	}
+	if err != nil {
+		return
+	}
+
+	gj.log.Infof("Running '%s'", strings.Join([]string{"vim", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
+	cmd := exec.Command("vim", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()
