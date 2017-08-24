@@ -15,7 +15,7 @@ func run() (err error) {
 	if err != nil {
 		return
 	}
-	err = gj.NewEntry()
+	err = gj.NewEntry(false)
 	if err != nil {
 		return
 	}

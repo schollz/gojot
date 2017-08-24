@@ -344,8 +344,20 @@ func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 // func (gj *gojot) Open() (err error) {
 // 	docs, err := gj.gpg.BulkDecrypt()
 // }
+func (gj *gojot) NewEntry(showAll bool) (err error) {
+	fulltext, err := gj.Write(showAll)
+	if err != nil {
+		return
+	}
+	docs, err := ParseScroll(fulltext)
+	if err != nil {
+		return
+	}
+	fmt.Println(docs)
+	return
+}
 
-func (gj *gojot) Write(docs Documents, documentEntry ...string) (writtenTextString string, err error) {
+func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString string, err error) {
 	tmpfile, err := ioutil.TempFile("", "write")
 	if err != nil {
 		return
@@ -361,80 +373,29 @@ func (gj *gojot) Write(docs Documents, documentEntry ...string) (writtenTextStri
 	}
 
 	if document == "" {
-		// Setup prompter
-		completer = readline.NewPrefixCompleter()
-		completer.SetChildren(
-			[]readline.PrefixCompleterInterface{
-				readline.PcItemDynamic(listThings([]string{"notes"})),
-			})
-		l, err2 := readline.NewEx(&readline.Config{
-			AutoComplete:        completer,
-			Prompt:              "\033[31m»\033[0m ",
-			InterruptPrompt:     "^C",
-			EOFPrompt:           "exit",
-			FuncFilterInputRune: filterInput,
-		})
-		if err2 != nil {
-			err = err2
+		document, err = gj.promptForDocument()
+		if err != nil {
 			return
 		}
-		defer l.Close()
-		fmt.Println("Please enter a document name:")
-		for {
-			line, err := l.Readline()
-			if err == readline.ErrInterrupt {
-				if len(line) == 0 {
-					break
-				} else {
-					continue
-				}
-			} else if err == io.EOF {
-				break
-			}
-			document = strings.TrimSpace(line)
-			break
+	}
+
+	var docs Documents
+	var docsString string
+	if showAll {
+		// TODO: load all docs for the specified document
+		docsString, err = docs.String()
+		if err != nil {
+			return
 		}
+	} else {
+		docsString = ""
 	}
 
 	if entry == "" {
-		// Setup prompter
-		completer = readline.NewPrefixCompleter()
-		completer.SetChildren(
-			[]readline.PrefixCompleterInterface{
-				readline.PcItemDynamic(listThings([]string{"entry1"})),
-			})
-		l, err2 := readline.NewEx(&readline.Config{
-			AutoComplete:        completer,
-			Prompt:              "\033[31m»\033[0m ",
-			InterruptPrompt:     "^C",
-			EOFPrompt:           "exit",
-			FuncFilterInputRune: filterInput,
-		})
-		if err2 != nil {
-			err = err2
+		entry, err = gj.promptForEntry()
+		if err != nil {
 			return
 		}
-		defer l.Close()
-		fmt.Println("Please enter a entry name:")
-		for {
-			line, err := l.Readline()
-			if err == readline.ErrInterrupt {
-				if len(line) == 0 {
-					break
-				} else {
-					continue
-				}
-			} else if err == io.EOF {
-				break
-			}
-			entry = strings.TrimSpace(line)
-			break
-		}
-	}
-
-	docsString, err := docs.String()
-	if err != nil {
-		return
 	}
 
 	d := NewDocument(document, entry)
@@ -454,11 +415,11 @@ func (gj *gojot) Write(docs Documents, documentEntry ...string) (writtenTextStri
 	if err != nil {
 		return
 	}
-	writtenText, err := ioutil.ReadFile(tmpfile.Name())
+	writtenTextByte, err := ioutil.ReadFile(tmpfile.Name())
 	if err != nil {
 		return
 	}
-	writtenTextString = string(writtenText)
+	writtenTextString = string(writtenTextByte)
 	return
 }
 
@@ -469,4 +430,77 @@ func stringInSlice(a string, list []string) bool {
 		}
 	}
 	return false
+}
+
+func (gj *gojot) promptForDocument() (document string, err error) {
+	completer = readline.NewPrefixCompleter()
+	completer.SetChildren(
+		[]readline.PrefixCompleterInterface{
+			readline.PcItemDynamic(listThings([]string{"notes"})),
+		})
+	l, err2 := readline.NewEx(&readline.Config{
+		AutoComplete:        completer,
+		Prompt:              "\033[31m»\033[0m ",
+		InterruptPrompt:     "^C",
+		EOFPrompt:           "exit",
+		FuncFilterInputRune: filterInput,
+	})
+	if err2 != nil {
+		err = err2
+		return
+	}
+	defer l.Close()
+	fmt.Println("Please enter a document name:")
+	for {
+		line, err := l.Readline()
+		if err == readline.ErrInterrupt {
+			if len(line) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+		document = strings.TrimSpace(line)
+		break
+	}
+	return
+}
+
+func (gj *gojot) promptForEntry() (entry string, err error) {
+	// Setup prompter
+	completer = readline.NewPrefixCompleter()
+	completer.SetChildren(
+		[]readline.PrefixCompleterInterface{
+			readline.PcItemDynamic(listThings([]string{"entry1"})),
+		})
+	l, err2 := readline.NewEx(&readline.Config{
+		AutoComplete:        completer,
+		Prompt:              "\033[31m»\033[0m ",
+		InterruptPrompt:     "^C",
+		EOFPrompt:           "exit",
+		FuncFilterInputRune: filterInput,
+	})
+	if err2 != nil {
+		err = err2
+		return
+	}
+	defer l.Close()
+	fmt.Println("Please enter a entry name:")
+	for {
+		line, err := l.Readline()
+		if err == readline.ErrInterrupt {
+			if len(line) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+		entry = strings.TrimSpace(line)
+		break
+	}
+	return
 }
