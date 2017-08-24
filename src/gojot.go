@@ -44,7 +44,7 @@ func init() {
 	}
 	cacheFolder = path.Join(homedir, ".cache", "gojot2")
 	if !exists(cacheFolder) {
-		os.MkdirAll(cacheFolder, 0666)
+		os.MkdirAll(cacheFolder, 0775)
 	}
 }
 
