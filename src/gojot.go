@@ -361,8 +361,32 @@ func (gj *gojot) NewEntry(showAll bool) (err error) {
 
 func (gj *gojot) SaveDocuments(docs Documents) (err error) {
 	for i := 0; i < docs.Len(); i++ {
+		if !exists(path.Join(gj.root, path.Dir(docs[i].file))) {
+			gj.log.Debugf("Creating '%s'", path.Join(gj.root, path.Dir(docs[i].file)))
+			err2 := os.MkdirAll(path.Join(gj.root, path.Dir(docs[i].file)), 0775)
+			if err2 != nil {
+				err = err2
+				return
+			}
+		}
 		if !exists(path.Join(gj.root, docs[i].file)) {
 			gj.log.Debugf("Saving %s", path.Join(gj.root, docs[i].file))
+			docString, err2 := docs[i].String()
+			if err2 != nil {
+				err = err2
+				return
+			}
+			enc, err2 := gj.gpg.Encrypt([]byte(docString))
+			if err2 != nil {
+				err = err2
+				return
+			}
+			err2 = gj.repo.AddData(enc, path.Join(gj.root, docs[i].file))
+			if err2 != nil {
+				err = err2
+				return
+			}
+
 		}
 	}
 	return

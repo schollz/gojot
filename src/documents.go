@@ -42,7 +42,7 @@ func (d *Document) String() (s string, err error) {
 	}
 	s += string(fm)
 	s += "---\n\n"
-	s += d.Text
+	s += strings.TrimSpace(d.Text)
 	return
 }
 
