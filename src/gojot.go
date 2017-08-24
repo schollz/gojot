@@ -105,8 +105,6 @@ func (gj *gojot) ParseDocuments(text string) (docs Documents, err error) {
 		}
 		docs[i].file = path.Join(docHashID, docs[i].hash+".asc")
 	}
-
-	// TODO: Check which documents need to be saved
 	return
 }
 
@@ -349,11 +347,24 @@ func (gj *gojot) NewEntry(showAll bool) (err error) {
 	if err != nil {
 		return
 	}
-	docs, err := ParseScroll(fulltext)
+	docs, err := gj.ParseDocuments(fulltext)
+	if err != nil {
+		return
+	}
+	err = gj.SaveDocuments(docs)
 	if err != nil {
 		return
 	}
 	fmt.Println(docs)
+	return
+}
+
+func (gj *gojot) SaveDocuments(docs Documents) (err error) {
+	for i := 0; i < docs.Len(); i++ {
+		if !exists(path.Join(gj.root, docs[i].file)) {
+			gj.log.Debugf("Saving %s", path.Join(gj.root, docs[i].file))
+		}
+	}
 	return
 }
 
@@ -408,6 +419,10 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 	if err != nil {
 		return
 	}
+
+	// TODO: backup vimrc
+	// TODO: load new vimrc depending on loading all or none
+	// TODO: Change vim command vim -u /tmp/vimrc.config -c WPCLI +startinsert /tmp/temp.txt
 	cmd := exec.Command("vim", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
