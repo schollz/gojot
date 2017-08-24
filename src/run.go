@@ -7,11 +7,15 @@ func run() (err error) {
 	if err != nil {
 		return
 	}
-	err = gj.SetRepo()
+	err = gj.SetRepo("https://github.com/schollz/demo2.git")
 	if err != nil {
 		return
 	}
-	err = gj.LoadConfig()
+	err = gj.LoadConfig("Testy McTestFace")
+	if err != nil {
+		return
+	}
+	err = gj.Write(Documents{})
 	if err != nil {
 		return
 	}
@@ -21,5 +25,4 @@ func run() (err error) {
 
 func main() {
 	fmt.Println(run())
-
 }

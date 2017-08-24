@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 
@@ -294,14 +295,11 @@ func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) 
 			break
 		}
 	}
-
-	os.Exit(1)
 	return
 }
 
 func (gj *gojot) NewConfig(overrideIdentityPassword ...string) (err error) {
 	gj.log.Info("Generating new config")
-	err = gj.VerifyIdentity(overrideIdentityPassword...)
 	if err != nil {
 		return err
 	}
@@ -322,7 +320,7 @@ func (gj *gojot) NewConfig(overrideIdentityPassword ...string) (err error) {
 }
 
 func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
-	gj.log.Info("Loading config")
+	err = gj.VerifyIdentity(overrideIdentityPassword...)
 	if !exists(path.Join(gj.root, "config.asc")) {
 		gj.log.Info("config.asc not found")
 		err2 := gj.NewConfig(overrideIdentityPassword...)
@@ -330,6 +328,7 @@ func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 			return err2
 		}
 	}
+	gj.log.Info("Loading config")
 	data, err := ioutil.ReadFile(path.Join(gj.root, "config.asc"))
 	if err != nil {
 		return
@@ -340,6 +339,120 @@ func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 	}
 	gj.log.Debugf("config: %s", dec)
 	return json.Unmarshal(dec, &gj.config)
+}
+
+// func (gj *gojot) Open() (err error) {
+// 	docs, err := gj.gpg.BulkDecrypt()
+// }
+
+func (gj *gojot) Write(docs Documents, documentEntry ...string) (err error) {
+	tmpfile, err := ioutil.TempFile("", "write")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmpfile.Name()) // clean up
+
+	var document, entry string
+	if len(documentEntry) == 2 {
+		document = documentEntry[0]
+		entry = documentEntry[1]
+	} else if len(documentEntry) == 1 {
+		document = documentEntry[1]
+	}
+
+	if document == "" {
+		// Setup prompter
+		completer = readline.NewPrefixCompleter()
+		completer.SetChildren(
+			[]readline.PrefixCompleterInterface{
+				readline.PcItemDynamic(listThings([]string{"notes"})),
+			})
+		l, err2 := readline.NewEx(&readline.Config{
+			AutoComplete:        completer,
+			Prompt:              "\033[31m»\033[0m ",
+			InterruptPrompt:     "^C",
+			EOFPrompt:           "exit",
+			FuncFilterInputRune: filterInput,
+		})
+		if err2 != nil {
+			return err2
+		}
+		defer l.Close()
+		fmt.Println("Please enter a document name:")
+		for {
+			line, err := l.Readline()
+			if err == readline.ErrInterrupt {
+				if len(line) == 0 {
+					break
+				} else {
+					continue
+				}
+			} else if err == io.EOF {
+				break
+			}
+			document = strings.TrimSpace(line)
+			break
+		}
+	}
+
+	if entry == "" {
+		// Setup prompter
+		completer = readline.NewPrefixCompleter()
+		completer.SetChildren(
+			[]readline.PrefixCompleterInterface{
+				readline.PcItemDynamic(listThings([]string{"entry1"})),
+			})
+		l, err2 := readline.NewEx(&readline.Config{
+			AutoComplete:        completer,
+			Prompt:              "\033[31m»\033[0m ",
+			InterruptPrompt:     "^C",
+			EOFPrompt:           "exit",
+			FuncFilterInputRune: filterInput,
+		})
+		if err2 != nil {
+			return err2
+		}
+		defer l.Close()
+		fmt.Println("Please enter a entry name:")
+		for {
+			line, err := l.Readline()
+			if err == readline.ErrInterrupt {
+				if len(line) == 0 {
+					break
+				} else {
+					continue
+				}
+			} else if err == io.EOF {
+				break
+			}
+			entry = strings.TrimSpace(line)
+			break
+		}
+	}
+
+	docsString, err := docs.String()
+	if err != nil {
+		return
+	}
+
+	d := NewDocument(document, entry)
+	dString, err := d.String()
+	if err != nil {
+		return
+	}
+
+	err = ioutil.WriteFile(tmpfile.Name(), []byte(docsString+"\n\n"+dString), 0644)
+	if err != nil {
+		return
+	}
+	cmd := exec.Command("vim.exe", tmpfile.Name())
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+	return
 }
 
 func stringInSlice(a string, list []string) bool {
