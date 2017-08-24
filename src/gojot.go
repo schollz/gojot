@@ -335,7 +335,12 @@ func (gj *gojot) LoadRepo() (err error) {
 			return err       // this is fatal.
 		}
 		if matched {
-			filelist = append(filelist, fp)
+			_, file := filepath.Split(p)
+			if len(file) == 36 {
+				// 36 = 32 character hash + .asc
+				// this ensures only actual files go in
+				filelist = append(filelist, fp)
+			}
 		}
 		return nil
 	})
