@@ -345,10 +345,10 @@ func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 // 	docs, err := gj.gpg.BulkDecrypt()
 // }
 
-func (gj *gojot) Write(docs Documents, documentEntry ...string) (err error) {
+func (gj *gojot) Write(docs Documents, documentEntry ...string) (writtenTextString string, err error) {
 	tmpfile, err := ioutil.TempFile("", "write")
 	if err != nil {
-		return err
+		return
 	}
 	defer os.Remove(tmpfile.Name()) // clean up
 
@@ -375,7 +375,8 @@ func (gj *gojot) Write(docs Documents, documentEntry ...string) (err error) {
 			FuncFilterInputRune: filterInput,
 		})
 		if err2 != nil {
-			return err2
+			err = err2
+			return
 		}
 		defer l.Close()
 		fmt.Println("Please enter a document name:")
@@ -410,7 +411,8 @@ func (gj *gojot) Write(docs Documents, documentEntry ...string) (err error) {
 			FuncFilterInputRune: filterInput,
 		})
 		if err2 != nil {
-			return err2
+			err = err2
+			return
 		}
 		defer l.Close()
 		fmt.Println("Please enter a entry name:")
@@ -445,13 +447,18 @@ func (gj *gojot) Write(docs Documents, documentEntry ...string) (err error) {
 	if err != nil {
 		return
 	}
-	cmd := exec.Command("vim.exe", tmpfile.Name())
+	cmd := exec.Command("vim", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()
 	if err != nil {
-		return err
+		return
 	}
+	writtenText, err := ioutil.ReadFile(tmpfile.Name())
+	if err != nil {
+		return
+	}
+	writtenTextString = string(writtenText)
 	return
 }
 

@@ -15,7 +15,7 @@ func run() (err error) {
 	if err != nil {
 		return
 	}
-	err = gj.Write(Documents{})
+	err = gj.NewEntry()
 	if err != nil {
 		return
 	}
