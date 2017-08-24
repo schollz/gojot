@@ -46,6 +46,10 @@ This is some
 	var docs2 Documents
 	json.Unmarshal(b, &docs2)
 	assert.Equal(t, docs, docs)
+
+	docString, err := docs[0].String()
+	assert.Nil(t, err)
+	assert.Equal(t, "---\ntime: 2017-02-16 06:34:59\nlast_modified: 2017-02-16 06:34:59\ndocument: doco1\nentry: entro0\ntags: []\n---\nFirst entry", docString)
 }
 
 func TestScrollFrontMatter(t *testing.T) {

@@ -16,6 +16,35 @@ type Document struct {
 	Text  string
 }
 
+func NewDocument(document, entry string) (d *Document) {
+	d = new(Document)
+	d.Text = ""
+	d.Front = FrontMatter{
+		Document: document,
+		Entry:    entry,
+		Time: MyTime{
+			time.Now(),
+		},
+		LastModified: MyTime{
+			time.Now(),
+		},
+		Tags: []string{},
+	}
+	return
+}
+
+func (d *Document) String() (s string, err error) {
+	s = "---\n"
+	fm, err := MarshalFrontMatter(d.Front)
+	if err != nil {
+		return "", err
+	}
+	s += string(fm)
+	s += "---\n"
+	s += d.Text
+	return
+}
+
 type Documents []Document
 
 func (p Documents) Len() int {
