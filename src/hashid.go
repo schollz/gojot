@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 
 	hashids "github.com/speps/go-hashids"
@@ -27,7 +26,6 @@ func Encode(s, salt string) (enc string, err error) {
 		}
 	}
 	ints = ints[:it]
-	fmt.Println(ints)
 	enc, err = h.Encode(ints)
 	return
 }
@@ -43,7 +41,6 @@ func Decode(s, salt string) (dec string, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println(ints)
 	dec = ""
 	for _, i := range ints {
 		dec += string(ALPHABET[i])

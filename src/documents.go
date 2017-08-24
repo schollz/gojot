@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -14,6 +13,8 @@ import (
 type Document struct {
 	Front FrontMatter
 	Text  string
+	hash  string
+	file  string
 }
 
 func NewDocument(document, entry string) (d *Document) {
@@ -40,12 +41,42 @@ func (d *Document) String() (s string, err error) {
 		return "", err
 	}
 	s += string(fm)
-	s += "---\n"
+	s += "---\n\n"
 	s += d.Text
 	return
 }
 
 type Documents []Document
+
+func (d Documents) String(documentFilter ...string) (s string, err error) {
+	m := make(map[string]bool)
+	docStrings := make([]string, d.Len())
+	docStringI := 0
+	for i := d.Len() - 1; i >= 0; i-- {
+		if len(documentFilter) > 0 {
+			// only add if in document
+			if d[i].Front.Document != documentFilter[0] {
+				continue
+			}
+			// only add if it is new
+			if _, ok := m[d[i].Front.Entry]; ok {
+				continue
+			}
+		}
+		m[d[i].Front.Entry] = true
+		docStrings[docStringI], err = d[i].String()
+		if err != nil {
+			return "", err
+		}
+		docStringI++
+	}
+	docStrings = docStrings[:docStringI]
+	for i, j := 0, len(docStrings)-1; i < j; i, j = i+1, j-1 {
+		docStrings[i], docStrings[j] = docStrings[j], docStrings[i]
+	}
+	s = strings.Join(docStrings, "\n\n")
+	return
+}
 
 func (p Documents) Len() int {
 	return len(p)
@@ -142,7 +173,6 @@ func ParseScroll(fulltext string) (docs Documents, err error) {
 		} else if math.Mod(float64(i), 2) == float64(1) && i > 0 {
 			doc.Front, err = UnmarshalFrontMatter([]byte(strings.TrimSpace(text)))
 			if err != nil {
-				fmt.Println(text)
 				return
 			}
 		}

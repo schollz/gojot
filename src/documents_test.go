@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +10,7 @@ import (
 
 func TestParseScroll(t *testing.T) {
 	fulltext := `---	
-time: '2017-02-17 06:34:59'
+time: '2016-02-17 06:34:59'
 last_modified: '2017-06-09 20:00:38'
 document: doco1
 entry: entro1
@@ -18,8 +19,8 @@ entry: entro1
 This is some text 
 
 ---	
-time: '2017-02-16 06:34:59'
-last_modified: '2017-02-16 06:34:59'
+time: '2015-02-16 06:34:59'
+last_modified: '2015-02-16 06:34:59'
 document: doco1
 entry: entro0
 ---
@@ -27,8 +28,8 @@ entry: entro0
 First entry
 
 ---	
-time: '2017-02-17 06:34:59'
-last_modified: '2017-02-17 06:34:59'
+time: '2016-02-17 06:34:59'
+last_modified: '2016-02-17 06:34:59'
 document: doco1
 entry: entro1
 ---
@@ -49,7 +50,18 @@ This is some
 
 	docString, err := docs[0].String()
 	assert.Nil(t, err)
-	assert.Equal(t, "---\ntime: 2017-02-16 06:34:59\nlast_modified: 2017-02-16 06:34:59\ndocument: doco1\nentry: entro0\ntags: []\n---\nFirst entry", docString)
+	assert.Equal(t, "---\ntime: 2015-02-16 06:34:59\nlast_modified: 2015-02-16 06:34:59\ndocument: doco1\nentry: entro0\ntags: []\n---\n\nFirst entry", docString)
+
+	docsString, err := docs.String()
+	assert.Nil(t, err)
+	assert.Equal(t, "---\ntime: 2015-02-16 06:34:59\nlast_modified: 2015-02-16 06:34:59\ndocument: doco1\nentry: entro0\ntags: []\n---\n\nFirst entry\n\n---\ntime: 2016-02-17 06:34:59\nlast_modified: 2016-02-17 06:34:59\ndocument: doco1\nentry: entro1\ntags: []\n---\n\nThis is some\n\n---\ntime: 2016-02-17 06:34:59\nlast_modified: 2017-06-09 20:00:38\ndocument: doco1\nentry: entro1\ntags: []\n---\n\nThis is some text", docsString)
+
+	docsString, err = docs.String("doco1")
+	fmt.Println("+++++++")
+	fmt.Println(docsString)
+	fmt.Println("+++++++")
+	assert.Nil(t, err)
+	assert.Equal(t, "---\ntime: 2015-02-16 06:34:59\nlast_modified: 2015-02-16 06:34:59\ndocument: doco1\nentry: entro0\ntags: []\n---\n\nFirst entry\n\n---\ntime: 2016-02-17 06:34:59\nlast_modified: 2017-06-09 20:00:38\ndocument: doco1\nentry: entro1\ntags: []\n---\n\nThis is some text", docsString)
 }
 
 func TestScrollFrontMatter(t *testing.T) {

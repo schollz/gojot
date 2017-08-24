@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -125,6 +127,30 @@ func (gj *gojot) Init() (err error) {
 	if !exists(path.Join(gj.root, "config.asc")) {
 		return errors.New("Need to make config file")
 	}
+	return
+}
+
+// ParseDocuments collects the documents and uses the user salt
+// to find the hash. This hash is used to determine whether it is new or not.
+func (gj *gojot) ParseDocuments(text string) (docs Documents, err error) {
+	docs, err = ParseScroll(text)
+	if err != nil {
+		return
+	}
+	for i := 0; i < docs.Len(); i++ {
+		hasher := md5.New()
+		hasher.Write([]byte(docs[i].Text))
+		hasher.Write([]byte(gj.config.Salt))
+		docs[i].hash = hex.EncodeToString(hasher.Sum(nil))
+		docHashID, err2 := Encode(docs[i].Front.Document, gj.config.Salt)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		docs[i].file = path.Join(docHashID, docs[i].hash+".asc")
+	}
+
+	// TODO: Check which documents need to be saved
 	return
 }
 
