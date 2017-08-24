@@ -39,6 +39,9 @@ func init() {
 		return
 	}
 	cacheFolder = path.Join(homedir, ".cache", "gojot2")
+	if !exists(cacheFolder) {
+		os.MkdirAll(cacheFolder, 0666)
+	}
 }
 
 func New(repo string, debug ...bool) (gj *gojot, err error) {
