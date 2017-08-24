@@ -49,6 +49,13 @@ func usage(w io.Writer) {
 	io.WriteString(w, completer.Tree("    "))
 }
 
+// Basic constructor - constructs new function for listing whatever
+func listThings(list []string) func(string) []string {
+	return func(line string) []string {
+		return list
+	}
+}
+
 // Function constructor - constructs new function for listing given directory
 func listFiles(path string) func(string) []string {
 	return func(line string) []string {

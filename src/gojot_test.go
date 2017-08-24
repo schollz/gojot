@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -23,7 +22,8 @@ entry: '44982409'
 Are proteins ever in equilibrium? Is it possible that they only need to exist
 "natively" for the lifetime of the human or the human cell?`
 	os.RemoveAll(path.Join(cacheFolder, "demo2"))
-	gj, err := New("https://github.com/schollz/demo2.git", true)
+	gj, err := New(true)
+	gj.SetRepo("https://github.com/schollz/demo2.git")
 	gj.config.Salt = "39c7c512-25be-4a35-921c-629f5d67fd88"
 	assert.Nil(t, err)
 	docs, err := gj.ParseDocuments(doc)
@@ -33,28 +33,19 @@ Are proteins ever in equilibrium? Is it possible that they only need to exist
 
 func TestGojotGeneral(t *testing.T) {
 	os.RemoveAll(path.Join(cacheFolder, "demo2"))
-	gj, err := New("https://github.com/schollz/demo2.git", true)
+	gj, err := New(true)
 	assert.Nil(t, err)
 
-	err = gj.Init()
-	if err != nil {
-		if err.Error() == "Need to make config file" {
-			fmt.Println("Here's the available keys")
-			fmt.Println(gj.gpg.ListPrivateKeys())
-			id := "Testy McTestFace"
-			passphrase := "1234"
-			err2 := gj.gpg.Init(id, passphrase)
-			assert.Nil(t, err2)
-			err2 = gj.NewConfig()
-			assert.Nil(t, err2)
-		}
-	}
+	err = gj.SetRepo("https://github.com/schollz/demo2.git")
+	id := "Testy McTestFace"
+	passphrase := "1234"
+	err = gj.LoadConfig(id, passphrase)
+	assert.Nil(t, err)
 
-	assert.Nil(t, gj.LoadConfig())
 	assert.Equal(t, "Testy McTestFace", gj.config.Identity)
 	assert.Equal(t, 4, strings.Count(gj.config.Salt, "-"))
 
-	repos, err := ListDirs()
+	repos, err := ListAvailableRepos()
 	assert.Nil(t, err)
 	assert.Equal(t, true, strings.Contains(repos["https://github.com/schollz/demo2.git"], ".cache/gojot2/demo2"))
 }

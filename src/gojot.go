@@ -4,12 +4,14 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
+	"github.com/chzyer/readline"
 	homedir "github.com/mitchellh/go-homedir"
 	uuid "github.com/satori/go.uuid"
 	"github.com/schollz/gogit"
@@ -18,6 +20,7 @@ import (
 )
 
 type gojot struct {
+	debug  bool
 	root   string
 	repo   *gogit.GitRepo
 	gpg    *gogpg.GPGStore
@@ -44,7 +47,7 @@ func init() {
 	}
 }
 
-func New(repo string, debug ...bool) (gj *gojot, err error) {
+func New(debug ...bool) (gj *gojot, err error) {
 	gj = new(gojot)
 	gj.logger = logrus.New()
 	gj.log = gj.logger.WithFields(logrus.Fields{
@@ -52,85 +55,34 @@ func New(repo string, debug ...bool) (gj *gojot, err error) {
 	})
 
 	// check debug
-	toDebug := false
+	gj.debug = false
 	if len(debug) > 0 {
-		toDebug = debug[0]
+		gj.debug = debug[0]
 	}
 
 	// setup GPG
 	gj.log.Info("Setting up GPG")
-	gj.gpg, err = gogpg.New(toDebug)
+	gj.gpg, err = gogpg.New(gj.debug)
 	if err != nil {
 		return
 	}
 
-	// setup Git
-	gj.log.Info("Setting up Git")
-	gj.root = path.Join(cacheFolder, gogit.ParseRepoFolder(repo))
-	gj.repo, err = gogit.New(repo, gj.root)
-	if err != nil {
-		return
-	}
-	gj.repo.Debug(toDebug)
-	gj.Debug(toDebug)
+	gj.Debug(gj.debug)
 	return
-}
-
-func (gj *gojot) NewConfig() (err error) {
-	config := Config{
-		Salt:     uuid.NewV4().String(),
-		Identity: gj.gpg.Identity(),
-	}
-	configB, err := json.Marshal(config)
-	if err != nil {
-		return
-	}
-	enc, err := gj.gpg.Encrypt(configB)
-	if err != nil {
-		return
-	}
-	err = gj.repo.AddData(enc, path.Join(gj.root, "config.asc"))
-	return
-}
-
-func (gj *gojot) LoadConfig() (err error) {
-	if !exists(path.Join(gj.root, "config.asc")) {
-		return errors.New("Need to make config file")
-	}
-	data, err := ioutil.ReadFile(path.Join(gj.root, "config.asc"))
-	if err != nil {
-		return
-	}
-	dec, err := gj.gpg.Decrypt(data)
-	if err != nil {
-		return
-	}
-	gj.log.Debugf("config: %s", dec)
-	fmt.Println(string(dec))
-	return json.Unmarshal(dec, &gj.config)
 }
 
 func (gj *gojot) Debug(on bool) {
-	gj.gpg.Debug(on)
-	gj.repo.Debug(on)
+	if gj.gpg != nil {
+		gj.gpg.Debug(on)
+	}
+	if gj.repo != nil {
+		gj.repo.Debug(on)
+	}
 	if on {
 		gj.logger.SetLevel(logrus.DebugLevel)
 	} else {
 		gj.logger.SetLevel(logrus.WarnLevel)
 	}
-}
-
-func (gj *gojot) Init() (err error) {
-	err = gj.repo.Update()
-	if err != nil {
-		return
-	}
-
-	// Check config file
-	if !exists(path.Join(gj.root, "config.asc")) {
-		return errors.New("Need to make config file")
-	}
-	return
 }
 
 // ParseDocuments collects the documents and uses the user salt
@@ -157,7 +109,7 @@ func (gj *gojot) ParseDocuments(text string) (docs Documents, err error) {
 	return
 }
 
-func ListDirs() (repos map[string]string, err error) {
+func ListAvailableRepos() (repos map[string]string, err error) {
 	repos = make(map[string]string)
 	files, err := ioutil.ReadDir(cacheFolder)
 	if err != nil {
@@ -191,4 +143,210 @@ func exists(path string) bool {
 		return false
 	}
 	return true
+}
+
+func (gj *gojot) SetRepo(repo ...string) (err error) {
+	// setup Git
+	gj.log.Info("Setting up Git")
+	repoString := ""
+	if len(repo) > 0 {
+		repoString = repo[0]
+	} else {
+		fmt.Println("Please select a repo (press tab for available):")
+		availableRepos, err2 := ListAvailableRepos()
+		if err2 != nil {
+			return err2
+		}
+		completer = readline.NewPrefixCompleter()
+		for repo := range availableRepos {
+			completer.SetChildren(
+				[]readline.PrefixCompleterInterface{
+					readline.PcItem(repo),
+				})
+		}
+
+		l, err2 := readline.NewEx(&readline.Config{
+			AutoComplete:        completer,
+			Prompt:              "\033[31m»\033[0m ",
+			InterruptPrompt:     "^C",
+			EOFPrompt:           "exit",
+			FuncFilterInputRune: filterInput,
+		})
+		if err2 != nil {
+			return err2
+		}
+		defer l.Close()
+		for {
+			line, err := l.Readline()
+			if err == readline.ErrInterrupt {
+				if len(line) == 0 {
+					break
+				} else {
+					continue
+				}
+			} else if err == io.EOF {
+				break
+			}
+			repoString = strings.TrimSpace(line)
+			if strings.Contains(repoString, ".git") {
+				break
+			}
+			println("'" + repoString + "' is not a valid repo.")
+		}
+	}
+	gj.root = path.Join(cacheFolder, gogit.ParseRepoFolder(repoString))
+	gj.repo, err = gogit.New(repoString, gj.root)
+	if err != nil {
+		return
+	}
+	gj.repo.Debug(gj.debug)
+	err = gj.repo.Update()
+	if err != nil {
+		return
+	}
+
+	// Check config file
+	return
+}
+
+func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) {
+	// For testing purposes, you can override it
+	if len(overrideIdentityPassword) == 2 {
+		return gj.gpg.Init(overrideIdentityPassword[0], overrideIdentityPassword[1])
+	}
+
+	// Determine available identities
+	availableKeys, err := gj.gpg.ListPrivateKeys()
+	if err != nil {
+		return
+	}
+
+	identity := ""
+	// For caching purposes, the identity can be saved to override
+	if len(overrideIdentityPassword) == 1 {
+		identity = overrideIdentityPassword[0]
+		if stringInSlice(overrideIdentityPassword[0], availableKeys) {
+			identity = overrideIdentityPassword[0]
+		}
+	}
+
+	// Setup prompter
+	completer = readline.NewPrefixCompleter()
+	completer.SetChildren(
+		[]readline.PrefixCompleterInterface{
+			readline.PcItemDynamic(listThings(availableKeys)),
+		})
+	l, err2 := readline.NewEx(&readline.Config{
+		AutoComplete:        completer,
+		Prompt:              "\033[31m»\033[0m ",
+		InterruptPrompt:     "^C",
+		EOFPrompt:           "exit",
+		FuncFilterInputRune: filterInput,
+	})
+	if err2 != nil {
+		return err2
+	}
+	defer l.Close()
+	setPasswordCfg := l.GenPasswordConfig()
+	setPasswordCfg.SetListener(func(line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
+		l.SetPrompt(fmt.Sprintf("Enter password(%v): ", len(line)))
+		l.Refresh()
+		return nil, 0, false
+	})
+
+	if identity == "" {
+		// User chooses
+		gj.log.Info("Prompting for identity")
+
+		fmt.Println("Please select a GPG identity (tab for available options):")
+
+		for {
+			line, err := l.Readline()
+			if err == readline.ErrInterrupt {
+				if len(line) == 0 {
+					break
+				} else {
+					continue
+				}
+			} else if err == io.EOF {
+				break
+			}
+			line = strings.TrimSpace(line)
+			if !stringInSlice(line, availableKeys) {
+				println("'" + line + "' is not a valid identity.")
+			} else {
+				identity = line
+				break
+			}
+		}
+	}
+
+	fmt.Printf("Please enter password for '%s'\n", identity)
+	for {
+		pswd, err2 := l.ReadPasswordWithConfig(setPasswordCfg)
+		if err2 != nil {
+			return err2
+		}
+		err2 = gj.gpg.Init(identity, string(pswd))
+		if err2 != nil {
+			println("Password do not match.")
+		} else {
+			break
+		}
+	}
+
+	os.Exit(1)
+	return
+}
+
+func (gj *gojot) NewConfig(overrideIdentityPassword ...string) (err error) {
+	gj.log.Info("Generating new config")
+	err = gj.VerifyIdentity(overrideIdentityPassword...)
+	if err != nil {
+		return err
+	}
+	config := Config{
+		Salt:     uuid.NewV4().String(),
+		Identity: gj.gpg.Identity(),
+	}
+	configB, err := json.Marshal(config)
+	if err != nil {
+		return
+	}
+	enc, err := gj.gpg.Encrypt(configB)
+	if err != nil {
+		return
+	}
+	err = gj.repo.AddData(enc, path.Join(gj.root, "config.asc"))
+	return
+}
+
+func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
+	gj.log.Info("Loading config")
+	if !exists(path.Join(gj.root, "config.asc")) {
+		gj.log.Info("config.asc not found")
+		err2 := gj.NewConfig(overrideIdentityPassword...)
+		if err2 != nil {
+			return err2
+		}
+	}
+	data, err := ioutil.ReadFile(path.Join(gj.root, "config.asc"))
+	if err != nil {
+		return
+	}
+	dec, err := gj.gpg.Decrypt(data)
+	if err != nil {
+		return
+	}
+	gj.log.Debugf("config: %s", dec)
+	return json.Unmarshal(dec, &gj.config)
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

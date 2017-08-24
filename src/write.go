@@ -29,7 +29,3 @@ func Write(document string, entry ...string) (err error) {
 	}
 	return
 }
-
-func main() {
-	Write("some new", "test")
-}
