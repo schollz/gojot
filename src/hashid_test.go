@@ -1,4 +1,4 @@
-package gojotids
+package main
 
 import (
 	"testing"
