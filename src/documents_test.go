@@ -8,6 +8,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestParseOneDoc(t *testing.T) {
+	fulltext := `---	
+time: '2016-02-17 06:34:59'
+last_modified: '2017-06-09 20:00:38'
+document: doco1
+entry: entro1
+---
+
+This is some text 
+
+`
+	docs, err := ParseScroll(fulltext)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "This is some text", docs[0].Text)
+	assert.Equal(t, "doco1", docs[0].Front.Document)
+	assert.Equal(t, "entro1", docs[0].Front.Entry)
+	assert.Equal(t, "2016-02-17 06:34:59 +0000 UTC", docs[0].Front.Time.String())
+	assert.Equal(t, 1, docs.Len())
+}
+
 func TestParseScroll(t *testing.T) {
 	fulltext := `---	
 time: '2016-02-17 06:34:59'

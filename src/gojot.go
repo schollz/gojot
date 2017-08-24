@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -343,14 +344,17 @@ func (gj *gojot) LoadRepo() (err error) {
 		return err
 	}
 
-	fulltext := ""
+	gj.docs = make(Documents, 0, len(data))
 	for filename := range data {
-		fulltext += data[filename]
+		parsedDocs, err2 := gj.ParseDocuments(data[filename])
+		if err2 != nil {
+			err = err2
+			return
+		}
+		gj.docs = append(gj.docs, parsedDocs[0])
 	}
-	gj.docs, err = ParseScroll(fulltext)
-	if err != nil {
-		return err
-	}
+	sort.Sort(gj.docs)
+
 	// TODO: See if this works
 	return
 }
