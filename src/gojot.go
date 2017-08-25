@@ -23,14 +23,15 @@ import (
 )
 
 type gojot struct {
-	debug  bool
-	root   string
-	docs   Documents
-	repo   *gogit.GitRepo
-	gpg    *gogpg.GPGStore
-	logger *logrus.Logger
-	log    *logrus.Entry
-	config Config
+	debug                 bool
+	root                  string
+	docs                  Documents
+	documentAndEntryNames map[string]map[string]bool
+	repo                  *gogit.GitRepo
+	gpg                   *gogpg.GPGStore
+	logger                *logrus.Logger
+	log                   *logrus.Entry
+	config                Config
 }
 
 type Config struct {
@@ -181,13 +182,9 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 		for {
 			line, err := l.Readline()
 			if err == readline.ErrInterrupt {
-				if len(line) == 0 {
-					break
-				} else {
-					continue
-				}
+				os.Exit(1)
 			} else if err == io.EOF {
-				break
+				os.Exit(1)
 			}
 			repoString = strings.TrimSpace(line)
 			if strings.Contains(repoString, ".git") {
@@ -264,13 +261,9 @@ func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) 
 		for {
 			line, err := l.Readline()
 			if err == readline.ErrInterrupt {
-				if len(line) == 0 {
-					break
-				} else {
-					continue
-				}
+				os.Exit(1)
 			} else if err == io.EOF {
-				break
+				os.Exit(1)
 			}
 			line = strings.TrimSpace(line)
 			if !stringInSlice(line, availableKeys) {
@@ -323,16 +316,14 @@ func (gj *gojot) LoadRepo() (err error) {
 	filelist := []string{}
 	filepath.Walk(gj.root, func(fp string, fi os.FileInfo, err error) error {
 		if err != nil {
-			fmt.Println(err) // can't walk here,
-			return nil       // but continue walking elsewhere
+			return nil // but continue walking elsewhere
 		}
 		if fi.IsDir() {
 			return nil // not a file.  ignore.
 		}
 		matched, err := filepath.Match("*.asc", fi.Name())
 		if err != nil {
-			fmt.Println(err) // malformed pattern
-			return err       // this is fatal.
+			return err // this is fatal.
 		}
 		if matched {
 			_, file := filepath.Split(fp)
@@ -350,6 +341,7 @@ func (gj *gojot) LoadRepo() (err error) {
 	}
 
 	gj.docs = make(Documents, 0, len(data))
+	gj.documentAndEntryNames = make(map[string]map[string]bool)
 	for filename := range data {
 		parsedDocs, err2 := gj.ParseDocuments(data[filename])
 		if err2 != nil {
@@ -357,10 +349,13 @@ func (gj *gojot) LoadRepo() (err error) {
 			return
 		}
 		gj.docs = append(gj.docs, parsedDocs[0])
+		if _, ok := gj.documentAndEntryNames[parsedDocs[0].Front.Document]; !ok {
+			gj.documentAndEntryNames[parsedDocs[0].Front.Document] = make(map[string]bool)
+		}
+		gj.documentAndEntryNames[parsedDocs[0].Front.Document][parsedDocs[0].Front.Entry] = true
 	}
+	gj.log.Infof("%+v", gj.documentAndEntryNames)
 	sort.Sort(gj.docs)
-
-	// TODO: See if this works
 	return
 }
 
@@ -402,7 +397,6 @@ func (gj *gojot) NewEntry(showAll bool) (err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println(docs)
 	return
 }
 
@@ -469,7 +463,7 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 	}
 
 	if entry == "" {
-		entry, err = gj.promptForEntry()
+		entry, err = gj.promptForEntry(document)
 		if err != nil {
 			return
 		}
@@ -481,12 +475,27 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 		return
 	}
 
+	if _, ok := gj.documentAndEntryNames[document]; ok {
+		if _, ok2 := gj.documentAndEntryNames[document][entry]; ok2 {
+			docsString = ""
+			for i := 0; i < gj.docs.Len(); i++ {
+				if gj.docs[i].Front.Entry == entry && gj.docs[i].Front.Document == document {
+					dString, err = gj.docs[i].String()
+					if err != nil {
+						return
+					}
+					showAll = false
+				}
+			}
+		}
+	}
+
 	tmpfile, err := ioutil.TempFile("", "write")
 	if err != nil {
 		return
 	}
 	defer os.Remove(tmpfile.Name()) // clean up\
-	err = ioutil.WriteFile(tmpfile.Name(), []byte(strings.TrimSpace(docsString+"\n\n"+dString)+"\n\n\n"), 0644)
+	err = ioutil.WriteFile(tmpfile.Name(), []byte(strings.TrimSpace(docsString+"\n\n"+dString)+"\n\n\n"), 0666)
 	if err != nil {
 		return
 	}
@@ -505,7 +514,7 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 		return
 	}
 
-	gj.log.Infof("Running '%s'", strings.Join([]string{"vim", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
+	gj.log.Infof("Running '%s'", strings.Join([]string{"vim", "-u", "vim" + vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
 	cmd := exec.Command("vim.exe", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -532,10 +541,17 @@ func stringInSlice(a string, list []string) bool {
 
 func (gj *gojot) promptForDocument() (document string, err error) {
 	completer = readline.NewPrefixCompleter()
+	documents := make([]string, len(gj.documentAndEntryNames))
+	i := 0
+	for documentName := range gj.documentAndEntryNames {
+		documents[i] = documentName
+		i++
+	}
 	completer.SetChildren(
 		[]readline.PrefixCompleterInterface{
-			readline.PcItemDynamic(listThings([]string{"notes"})),
+			readline.PcItemDynamic(listThings(documents)),
 		})
+
 	l, err2 := readline.NewEx(&readline.Config{
 		AutoComplete:        completer,
 		Prompt:              "\033[31m»\033[0m ",
@@ -552,13 +568,9 @@ func (gj *gojot) promptForDocument() (document string, err error) {
 	for {
 		line, err := l.Readline()
 		if err == readline.ErrInterrupt {
-			if len(line) == 0 {
-				break
-			} else {
-				continue
-			}
+			os.Exit(1)
 		} else if err == io.EOF {
-			break
+			os.Exit(1)
 		}
 		document = strings.TrimSpace(line)
 		break
@@ -566,13 +578,21 @@ func (gj *gojot) promptForDocument() (document string, err error) {
 	return
 }
 
-func (gj *gojot) promptForEntry() (entry string, err error) {
+func (gj *gojot) promptForEntry(document string) (entry string, err error) {
 	// Setup prompter
 	completer = readline.NewPrefixCompleter()
-	completer.SetChildren(
-		[]readline.PrefixCompleterInterface{
-			readline.PcItemDynamic(listThings([]string{"entry1"})),
-		})
+	if _, ok := gj.documentAndEntryNames[document]; ok {
+		entries := make([]string, len(gj.documentAndEntryNames[document]))
+		i := 0
+		for entryName := range gj.documentAndEntryNames[document] {
+			entries[i] = entryName
+			i++
+		}
+		completer.SetChildren(
+			[]readline.PrefixCompleterInterface{
+				readline.PcItemDynamic(listThings(entries)),
+			})
+	}
 	l, err2 := readline.NewEx(&readline.Config{
 		AutoComplete:        completer,
 		Prompt:              "\033[31m»\033[0m ",
@@ -589,13 +609,9 @@ func (gj *gojot) promptForEntry() (entry string, err error) {
 	for {
 		line, err := l.Readline()
 		if err == readline.ErrInterrupt {
-			if len(line) == 0 {
-				break
-			} else {
-				continue
-			}
+			os.Exit(1)
 		} else if err == io.EOF {
-			break
+			os.Exit(1)
 		}
 		entry = strings.TrimSpace(line)
 		break

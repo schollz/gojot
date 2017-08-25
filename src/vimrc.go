@@ -18,6 +18,7 @@ func! WordProcessorModeCLI()
     hi NonText ctermfg=black guifg=black
 endfu
 com! WPCLI call WordProcessorModeCLI()
+au BufEnter * set noro
 `
 
 const VIMRC2 = `set nocompatible
@@ -37,4 +38,5 @@ func! WordProcessorModeCLI()
     hi NonText ctermfg=black guifg=black
 endfu
 com! WPCLI call WordProcessorModeCLI()
+au BufEnter * set noro
 `
