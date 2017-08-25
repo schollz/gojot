@@ -6,19 +6,10 @@ import (
 	"github.com/fatih/color"
 )
 
-var highlight = color.New(color.FgYellow).SprintFunc()
-
 func Run() (err error) {
 	// TODO: Unbundle vim
-	color.Set(color.FgYellow, color.Bold)
-	fmt.Println(`
-  ___   __     __   __  ____ 
- / __) /  \  _(  ) /  \(_  _)
-( (_ \(  O )/ \) \(  O ) )(  
- \___/ \__/ \____/ \__/ (__) 
-`)
-	color.Unset()
-	gj, err := New(true)
+
+	gj, err := New(false)
 	if err != nil {
 		return
 	}
@@ -29,6 +20,7 @@ func Run() (err error) {
 	repoString := gj.RepoString
 	identity := gj.IdentityString
 	if len(repoString) > 0 && len(identity) > 0 {
+		highlight := color.New(color.FgYellow).SprintFunc()
 		fmt.Printf("Loading settings for '%s' \nin repo '%s'\n\nTo load new repo, use -new\n\n", highlight(identity), highlight(repoString))
 	} else {
 		repoString = ""

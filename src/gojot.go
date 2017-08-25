@@ -469,6 +469,7 @@ func (gj *gojot) SaveDocuments(docs Documents) (err error) {
 				err = err2
 				return
 			}
+			fmt.Printf("Saved '%s' in document '%s'\n", docs[i].Front.Entry, docs[i].Front.Document)
 		}
 	}
 	return
