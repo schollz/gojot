@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -551,8 +552,12 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 		return
 	}
 
-	gj.log.Infof("Running '%s'", strings.Join([]string{"vim", "-u", "vim" + vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
-	cmd := exec.Command("vim.exe", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
+	vimExecutable := "vim"
+	if runtime.GOOS == "windows" {
+		vimExecutable = "vim.exe"
+	}
+	gj.log.Infof("Running '%s'", strings.Join([]string{vimExecutable, "-u", "vim" + vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
+	cmd := exec.Command(vimExecutable, "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()

@@ -9,6 +9,7 @@ import (
 var highlight = color.New(color.FgYellow).SprintFunc()
 
 func Run() (err error) {
+	// TODO: Unbundle vim
 	color.Set(color.FgYellow, color.Bold)
 	fmt.Println(`
   ___   __     __   __  ____ 
