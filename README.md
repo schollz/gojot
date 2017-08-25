@@ -39,3 +39,49 @@ For the first time setup, just use:
 If you do not have any GPG keys you should first generate one with:
 
     gpg --gen-key
+
+License
+========
+
+MIT
+
+History
+=======
+
+Version 4 (current version) ([5464ef97](https://github.com/schollz/gojot/tree/5464ef97c3983b994072d3737f235f35b698b48e))
+
+- Finished August 25th, 2017
+- 1,172 lines of Go
+- Requires `gpg` for encryption
+- Requires `git` for syncing
+
+
+Version 3 ([5faaeb3](https://github.com/schollz/gojot/tree/5faaeb3))
+
+- Finished August 8th, 2017
+- 495 lines of Python
+- Requires `gpg` for encryption
+- Requires `git` for syncing
+
+Version 2 ([f881b416](https://github.com/schollz/gojot/tree/f881b416))
+
+- Finished November 17th, 2016
+- 4,163 lines of Go
+- Built-in `gpg` for encryption
+- Requires `git` for syncing
+
+
+Version 1 ([03b4419a](https://github.com/schollz/gojot/tree/03b4419a1e9a032db8dd96cd18517a0830db4626))
+
+- Finished October 3rd, 2016
+- 1,633 lines of Go
+- Built-in `gpg` for encryption
+- Built-in `rsync` for syncing 
+
+Version 0 ([d6b66c3c](https://github.com/schollz/gojot/tree/d6b66c3c1ac7fa6e34b971342c0f5257e8b7af30))
+
+- Finished August 3rd, 2016
+- 341 lines of Python.
+- Requires `gpg` for encryption
+- Requires `rsync` for syncing
+
