@@ -17,6 +17,7 @@ import (
 	"strings"
 
 	"github.com/chzyer/readline"
+	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
 	uuid "github.com/satori/go.uuid"
 	"github.com/schollz/gogit"
@@ -311,7 +312,8 @@ func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) 
 		}
 	}
 
-	fmt.Printf("Please enter password for '%s'\n", identity)
+	highlight := color.New(color.FgGreen).SprintFunc()
+	fmt.Printf("Please enter password for '%s'\n", highlight(identity))
 	for {
 		pswd, err2 := l.ReadPasswordWithConfig(setPasswordCfg)
 		if err2 != nil {
@@ -673,4 +675,8 @@ func (gj *gojot) promptForEntry(document string) (entry string, err error) {
 		break
 	}
 	return
+}
+
+func (gj *gojot) Push() (err error) {
+	return gj.repo.Push()
 }

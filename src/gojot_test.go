@@ -31,7 +31,7 @@ Are proteins ever in equilibrium? Is it possible that they only need to exist
 	assert.Equal(t, "8ATeHRiksk/70c8d449d188d0824f95da8eb693c14c.asc", docs[0].file)
 }
 
-func TestGojotGeneral(t *testing.T) {
+func TestGojotGeneralOnNewRepo(t *testing.T) {
 	os.RemoveAll(path.Join(cacheFolder, "demo2"))
 	gj, err := New(true)
 	assert.Nil(t, err)
@@ -48,4 +48,27 @@ func TestGojotGeneral(t *testing.T) {
 	repos, err := ListAvailableRepos()
 	assert.Nil(t, err)
 	assert.Equal(t, true, strings.Contains(repos["https://github.com/schollz/demo2.git"], ".cache/gojot2/demo2"))
+}
+func TestGojotGeneralOnOldRepo(t *testing.T) {
+	os.RemoveAll(path.Join(cacheFolder, "demo3"))
+	gj, err := New(true)
+	assert.Nil(t, err)
+
+	err = gj.SetRepo("https://github.com/schollz/demo3.git")
+	id := "Testy McTestFace"
+	passphrase := "1234"
+	err = gj.LoadConfig(id, passphrase)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "Testy McTestFace", gj.config.Identity)
+	assert.Equal(t, 4, strings.Count(gj.config.Salt, "-"))
+
+	err = gj.LoadRepo()
+	assert.Nil(t, err)
+
+	err = gj.SaveDocuments(gj.docs)
+	assert.Nil(t, err)
+	err = gj.Push()
+	assert.Nil(t, err)
+
 }

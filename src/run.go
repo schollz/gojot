@@ -20,7 +20,7 @@ func Run() (err error) {
 	repoString := gj.RepoString
 	identity := gj.IdentityString
 	if len(repoString) > 0 && len(identity) > 0 {
-		highlight := color.New(color.FgYellow).SprintFunc()
+		highlight := color.New(color.FgGreen).SprintFunc()
 		fmt.Printf("Loading settings for '%s' \nin repo '%s'\n\nTo load new repo, use -new\n\n", highlight(identity), highlight(repoString))
 	} else {
 		repoString = ""
@@ -64,7 +64,13 @@ func Run() (err error) {
 		}
 	}
 
-	// TODO: Need to add in Push
+	fmt.Print("Pushing...")
+	err = gj.Push()
+	if err == nil {
+		fmt.Println("...done.")
+	} else {
+		fmt.Println("...failed.")
+	}
 
 	return
 }
