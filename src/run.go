@@ -9,7 +9,7 @@ import (
 func Run() (err error) {
 	// TODO: Unbundle vim
 
-	gj, err := New(false)
+	gj, err := New(true)
 	if err != nil {
 		return
 	}
@@ -64,13 +64,13 @@ func Run() (err error) {
 		}
 	}
 
-	fmt.Print("Pushing...")
-	err = gj.Push()
-	if err == nil {
-		fmt.Println("...done.")
-	} else {
-		fmt.Println("...failed.")
-	}
+	// fmt.Print("Pushing...")
+	// err = gj.Push()
+	// if err == nil {
+	// 	fmt.Println("...done.")
+	// } else {
+	// 	fmt.Println("...failed.")
+	// }
 
 	return
 }

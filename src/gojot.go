@@ -32,6 +32,7 @@ type gojot struct {
 	root                  string
 	docs                  Documents
 	documentAndEntryNames map[string]map[string]bool
+	loadedFiles           map[string]bool
 	repo                  *gogit.GitRepo
 	gpg                   *gogpg.GPGStore
 	logger                *logrus.Logger
@@ -76,6 +77,9 @@ func New(debug ...bool) (gj *gojot, err error) {
 		return
 	}
 
+	gj.docs = Documents{}
+	gj.loadedFiles = make(map[string]bool)
+	gj.documentAndEntryNames = make(map[string]map[string]bool)
 	gj.Debug(gj.debug)
 	return
 }
@@ -353,6 +357,12 @@ func (gj *gojot) NewConfig(overrideIdentityPassword ...string) (err error) {
 }
 
 func (gj *gojot) LoadRepo() (err error) {
+	if exists(path.Join(gj.root, "cache.json")) {
+		err = gj.LoadDocCache()
+		if err != nil {
+			return
+		}
+	}
 	filelist := []string{}
 	filepath.Walk(gj.root, func(fp string, fi os.FileInfo, err error) error {
 		if err != nil {
@@ -367,10 +377,13 @@ func (gj *gojot) LoadRepo() (err error) {
 		}
 		if matched {
 			_, file := filepath.Split(fp)
+			// 36 = 32 character hash + .asc
+			// this ensures only actual files go in
 			if len(file) == 36 {
-				// 36 = 32 character hash + .asc
-				// this ensures only actual files go in
-				filelist = append(filelist, fp)
+				// ensure it wasn't already loaded (from Cache)
+				if _, ok := gj.loadedFiles[fp]; !ok {
+					filelist = append(filelist, fp)
+				}
 			}
 		}
 		return nil
@@ -380,8 +393,6 @@ func (gj *gojot) LoadRepo() (err error) {
 		return err
 	}
 
-	gj.docs = make(Documents, 0, len(data))
-	gj.documentAndEntryNames = make(map[string]map[string]bool)
 	for filename := range data {
 		parsedDocs, err2 := gj.ParseDocuments(data[filename])
 		if err2 != nil {
@@ -389,6 +400,7 @@ func (gj *gojot) LoadRepo() (err error) {
 			return
 		}
 		gj.docs = append(gj.docs, parsedDocs[0])
+		gj.loadedFiles[filename] = true
 		if _, ok := gj.documentAndEntryNames[parsedDocs[0].Front.Document]; !ok {
 			gj.documentAndEntryNames[parsedDocs[0].Front.Document] = make(map[string]bool)
 		}
@@ -396,6 +408,9 @@ func (gj *gojot) LoadRepo() (err error) {
 	}
 	// gj.log.Infof("%+v", gj.documentAndEntryNames)
 	sort.Sort(gj.docs)
+
+	// Save cache
+	err = gj.SaveDocCache()
 	return
 }
 
