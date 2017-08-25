@@ -6,10 +6,10 @@ import (
 	"github.com/fatih/color"
 )
 
-func Run() (err error) {
+func Run(debug bool) (err error) {
 	// TODO: Unbundle vim
 
-	gj, err := New(true)
+	gj, err := New(debug)
 	if err != nil {
 		return
 	}

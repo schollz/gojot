@@ -72,7 +72,7 @@ func main() {
 
 		fmt.Printf("version %s\n\n", version)
 		color.Unset()
-		return gojot.Run()
+		return gojot.Run(c.GlobalBool("debug"))
 	}
 
 	err := app.Run(os.Args)
