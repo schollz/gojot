@@ -1,9 +1,9 @@
 <p align="center">
 <img
-    src="https://raw.githubusercontent.com/schollz/gojot/v3/.github/gojot.png"
+    src="https://raw.githubusercontent.com/schollz/gojot/master/.github/gojot.png"
     width="260" height="80" border="0" alt="gojot">
 <br>
-<a href="https://github.com/schollz/gojot/releases/latest"><img src="https://img.shields.io/badge/version-3.0.0-brightgreen.svg?style=flat-square" alt="Version"></a>
+<a href="https://github.com/schollz/gojot/releases/latest"><img src="https://img.shields.io/badge/version-4.0.0-brightgreen.svg?style=flat-square" alt="Version"></a>
 <img src="https://img.shields.io/badge/coverage-40%25-yellow.svg?style=flat-square" alt="Code Coverage">
 </p>
 
