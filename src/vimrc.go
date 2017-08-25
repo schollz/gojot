@@ -1,4 +1,4 @@
-package main
+package gojot
 
 const VIMRC = `set nocompatible
 set backspace=2

@@ -1,4 +1,4 @@
-package main
+package gojot
 
 import (
 	"crypto/md5"
@@ -228,7 +228,13 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 	gj.repo.Debug(gj.debug)
 	err = gj.repo.Update()
 	if err != nil {
-		return
+		// continue as long as it exists
+		if !exists(gj.root) {
+			gj.log.Error(err)
+			return
+		} else {
+			err = nil
+		}
 	}
 	gj.RepoString = repoString
 	return
@@ -385,7 +391,7 @@ func (gj *gojot) LoadRepo() (err error) {
 		}
 		gj.documentAndEntryNames[parsedDocs[0].Front.Document][parsedDocs[0].Front.Entry] = true
 	}
-	gj.log.Infof("%+v", gj.documentAndEntryNames)
+	// gj.log.Infof("%+v", gj.documentAndEntryNames)
 	sort.Sort(gj.docs)
 	return
 }
@@ -415,9 +421,6 @@ func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 	return json.Unmarshal(dec, &gj.config)
 }
 
-// func (gj *gojot) Open() (err error) {
-// 	docs, err := gj.gpg.BulkDecrypt()
-// }
 func (gj *gojot) NewEntry(showAll bool) (err error) {
 	fulltext, err := gj.Write(showAll)
 	if err != nil {
@@ -540,9 +543,9 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 	}
 	defer os.Remove(vimrc.Name()) // clean up
 	if showAll {
-		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC), 0644)
+		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC), 0755)
 	} else {
-		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC2), 0644)
+		err = ioutil.WriteFile(vimrc.Name(), []byte(VIMRC2), 0755)
 	}
 	if err != nil {
 		return

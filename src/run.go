@@ -1,4 +1,4 @@
-package main
+package gojot
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 var highlight = color.New(color.FgYellow).SprintFunc()
 
-func run() (err error) {
+func Run() (err error) {
 	color.Set(color.FgYellow, color.Bold)
 	fmt.Println(`
   ___   __     __   __  ____ 
@@ -17,7 +17,7 @@ func run() (err error) {
  \___/ \__/ \____/ \__/ (__) 
 `)
 	color.Unset()
-	gj, err := New(false)
+	gj, err := New(true)
 	if err != nil {
 		return
 	}
@@ -38,6 +38,7 @@ func run() (err error) {
 	if err != nil {
 		return
 	}
+	// TODO: Check to see if it still works if the internet is unconnected
 
 	err = gj.LoadConfig(identity)
 	if err != nil {
@@ -70,9 +71,7 @@ func run() (err error) {
 		}
 	}
 
-	return
-}
+	// TODO: Need to add in Push
 
-func main() {
-	fmt.Println(run())
+	return
 }
