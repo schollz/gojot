@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"time"
 
 	"github.com/fatih/color"
@@ -31,6 +33,13 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) (err error) {
+		if runtime.GOOS == "windows" {
+			data, err := Asset("src/bundle/vim.exe")
+			if err == nil {
+				ioutil.WriteFile("vim.exe", data, 0777)
+			}
+		}
+
 		if version == "" {
 			p := path.Join(os.Getenv("GOPATH"), "src", "github.com", "schollz", "gojot")
 			_, err := os.Stat(p)
