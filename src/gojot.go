@@ -23,6 +23,8 @@ import (
 )
 
 type gojot struct {
+	RepoString            string
+	IdentityString        string
 	debug                 bool
 	root                  string
 	docs                  Documents
@@ -73,6 +75,26 @@ func New(debug ...bool) (gj *gojot, err error) {
 	}
 
 	gj.Debug(gj.debug)
+	return
+}
+
+func (gj *gojot) Save() (err error) {
+	gjBytes, err := json.Marshal(gj)
+	if err != nil {
+		return
+	}
+	err = ioutil.WriteFile(path.Join(cacheFolder, "lastUsedSettings.json"), gjBytes, 0666)
+	gj.log.Debugf("Saved lastUsedSettings.json: %s", gjBytes)
+	return
+}
+
+func (gj *gojot) Load() (err error) {
+	if !exists(path.Join(cacheFolder, "lastUsedSettings.json")) {
+		return
+	}
+	gjBytes, err := ioutil.ReadFile(path.Join(cacheFolder, "lastUsedSettings.json"))
+	err = json.Unmarshal(gjBytes, &gj)
+	gj.log.Debugf("Loaded lastUsedSettings.json: %+v", gj)
 	return
 }
 
@@ -153,8 +175,11 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 	gj.log.Info("Setting up Git")
 	repoString := ""
 	if len(repo) > 0 {
-		repoString = repo[0]
-	} else {
+		if repo[0] != "" {
+			repoString = repo[0]
+		}
+	}
+	if repoString == "" {
 		fmt.Println("Please select a repo (press tab for available):")
 		availableRepos, err2 := ListAvailableRepos()
 		if err2 != nil {
@@ -203,7 +228,7 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 	if err != nil {
 		return
 	}
-
+	gj.RepoString = repoString
 	return
 }
 
@@ -288,6 +313,8 @@ func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) 
 			break
 		}
 	}
+
+	gj.IdentityString = identity
 	return
 }
 

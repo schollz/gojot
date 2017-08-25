@@ -7,17 +7,28 @@ func run() (err error) {
 	if err != nil {
 		return
 	}
-	err = gj.SetRepo("https://github.com/schollz/demo2.git")
+	err = gj.Load()
 	if err != nil {
 		return
 	}
-	err = gj.LoadConfig("Testy McTestFace")
+	repoString := gj.RepoString
+	identity := gj.IdentityString
+	err = gj.SetRepo(repoString)
+	if err != nil {
+		return
+	}
+	err = gj.LoadConfig(identity)
 	if err != nil {
 		return
 	}
 	err = gj.LoadRepo()
 
 	err = gj.NewEntry(true)
+	if err != nil {
+		return
+	}
+
+	err = gj.Save()
 	if err != nil {
 		return
 	}
