@@ -64,13 +64,15 @@ func Run() (err error) {
 		}
 	}
 
-	// fmt.Print("Pushing...")
-	// err = gj.Push()
-	// if err == nil {
-	// 	fmt.Println("...done.")
-	// } else {
-	// 	fmt.Println("...failed.")
-	// }
+	fmt.Print("Pushing...")
+	err = gj.Push()
+	if err == nil {
+		highlight := color.New(color.FgGreen).SprintFunc()
+		fmt.Printf("%s\n", highlight("done"))
+	} else {
+		highlight := color.New(color.FgRed).SprintFunc()
+		fmt.Printf("%s\n", highlight("failed"))
+	}
 
 	return
 }

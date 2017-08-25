@@ -239,6 +239,7 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 			gj.log.Error(err)
 			return
 		} else {
+			fmt.Println("Problem pulling latest.")
 			err = nil
 		}
 	}
