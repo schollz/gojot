@@ -68,7 +68,6 @@ func New(debug ...bool) (gj *gojot, err error) {
 	}
 
 	// setup GPG
-	gj.log.Info("Setting up GPG")
 	gj.gpg, err = gogpg.New(gj.debug)
 	if err != nil {
 		return
@@ -600,6 +599,10 @@ func (gj *gojot) promptForDocument() (document string, err error) {
 			os.Exit(1)
 		}
 		document = strings.TrimSpace(line)
+		if len(document) == 0 {
+			fmt.Println("Name cannot be blank.")
+			continue
+		}
 		break
 	}
 	return
@@ -641,6 +644,11 @@ func (gj *gojot) promptForEntry(document string) (entry string, err error) {
 			os.Exit(1)
 		}
 		entry = strings.TrimSpace(line)
+		if len(entry) == 0 {
+			fmt.Println("Name cannot be blank.")
+			continue
+		}
+
 		break
 	}
 	return
