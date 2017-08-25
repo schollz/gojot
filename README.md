@@ -4,7 +4,7 @@
     width="260" height="80" border="0" alt="gojot">
 <br>
 <a href="https://github.com/schollz/gojot/releases/latest"><img src="https://img.shields.io/badge/version-3.0.0-brightgreen.svg?style=flat-square" alt="Version"></a>
-<img src="https://img.shields.io/badge/coverage-36%25-yellow.svg?style=flat-square" alt="Code Coverage">
+<img src="https://img.shields.io/badge/coverage-40%25-yellow.svg?style=flat-square" alt="Code Coverage">
 </p>
 
 <p align="center">gojot is a modern command-line journal that is distributed and encrypted by default</p>
