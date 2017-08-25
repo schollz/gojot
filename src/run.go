@@ -17,7 +17,7 @@ func run() (err error) {
 	}
 	err = gj.LoadRepo()
 
-	err = gj.NewEntry(false)
+	err = gj.NewEntry(true)
 	if err != nil {
 		return
 	}

@@ -335,7 +335,7 @@ func (gj *gojot) LoadRepo() (err error) {
 			return err       // this is fatal.
 		}
 		if matched {
-			_, file := filepath.Split(p)
+			_, file := filepath.Split(fp)
 			if len(file) == 36 {
 				// 36 = 32 character hash + .asc
 				// this ensures only actual files go in
@@ -416,6 +416,10 @@ func (gj *gojot) SaveDocuments(docs Documents) (err error) {
 				return
 			}
 		}
+		docs[i].Text = strings.TrimSpace(docs[i].Text)
+		if len(docs[i].Text) == 0 {
+			continue
+		}
 		if !exists(path.Join(gj.root, docs[i].file)) {
 			gj.log.Debugf("Saving %s", path.Join(gj.root, docs[i].file))
 			docString, err2 := docs[i].String()
@@ -454,11 +458,9 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 		}
 	}
 
-	var docs Documents
 	var docsString string
 	if showAll {
-		// TODO: load all docs for the specified document
-		docsString, err = docs.String()
+		docsString, err = gj.docs.String(document)
 		if err != nil {
 			return
 		}
@@ -504,7 +506,7 @@ func (gj *gojot) Write(showAll bool, documentEntry ...string) (writtenTextString
 	}
 
 	gj.log.Infof("Running '%s'", strings.Join([]string{"vim", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name()}, " "))
-	cmd := exec.Command("vim", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
+	cmd := exec.Command("vim.exe", "-u", vimrc.Name(), "-c", "WPCLI", "+", "+startinsert", tmpfile.Name())
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	err = cmd.Run()
