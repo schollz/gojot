@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -204,11 +205,13 @@ func (gj *gojot) SetRepo(repo ...string) (err error) {
 		}
 		defer l.Close()
 		for {
-			line, err := l.Readline()
-			if err == readline.ErrInterrupt {
-				os.Exit(1)
-			} else if err == io.EOF {
-				os.Exit(1)
+			line, err2 := l.Readline()
+			if err2 == readline.ErrInterrupt {
+				err = errors.New("Quitting time")
+				return
+			} else if err2 == io.EOF {
+				err = errors.New("Quitting time")
+				return
 			}
 			repoString = strings.TrimSpace(line)
 			if strings.Contains(repoString, ".git") {
@@ -283,11 +286,13 @@ func (gj *gojot) VerifyIdentity(overrideIdentityPassword ...string) (err error) 
 		fmt.Println("Please select a GPG identity (tab for available options):")
 
 		for {
-			line, err := l.Readline()
-			if err == readline.ErrInterrupt {
-				os.Exit(1)
-			} else if err == io.EOF {
-				os.Exit(1)
+			line, err2 := l.Readline()
+			if err2 == readline.ErrInterrupt {
+				err = errors.New("Quitting time")
+				return
+			} else if err2 == io.EOF {
+				err = errors.New("Quitting time")
+				return
 			}
 			line = strings.TrimSpace(line)
 			if !stringInSlice(line, availableKeys) {
@@ -387,6 +392,9 @@ func (gj *gojot) LoadRepo() (err error) {
 
 func (gj *gojot) LoadConfig(overrideIdentityPassword ...string) (err error) {
 	err = gj.VerifyIdentity(overrideIdentityPassword...)
+	if err != nil {
+		return
+	}
 	if !exists(path.Join(gj.root, "config.asc")) {
 		gj.log.Info("config.asc not found")
 		err2 := gj.NewConfig(overrideIdentityPassword...)
@@ -592,11 +600,13 @@ func (gj *gojot) promptForDocument() (document string, err error) {
 	defer l.Close()
 	fmt.Println("Please enter a document name:")
 	for {
-		line, err := l.Readline()
-		if err == readline.ErrInterrupt {
-			os.Exit(1)
-		} else if err == io.EOF {
-			os.Exit(1)
+		line, err2 := l.Readline()
+		if err2 == readline.ErrInterrupt {
+			err = errors.New("Quitting time")
+			return
+		} else if err2 == io.EOF {
+			err = errors.New("Quitting time")
+			return
 		}
 		document = strings.TrimSpace(line)
 		if len(document) == 0 {
@@ -637,11 +647,13 @@ func (gj *gojot) promptForEntry(document string) (entry string, err error) {
 	defer l.Close()
 	fmt.Println("Please enter a entry name:")
 	for {
-		line, err := l.Readline()
-		if err == readline.ErrInterrupt {
-			os.Exit(1)
-		} else if err == io.EOF {
-			os.Exit(1)
+		line, err2 := l.Readline()
+		if err2 == readline.ErrInterrupt {
+			err = errors.New("Quitting time")
+			return
+		} else if err2 == io.EOF {
+			err = errors.New("Quitting time")
+			return
 		}
 		entry = strings.TrimSpace(line)
 		if len(entry) == 0 {

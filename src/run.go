@@ -61,7 +61,12 @@ func run() (err error) {
 		fmt.Println("")
 		err = gj.NewEntry(true)
 		if err != nil {
-			return
+			if err.Error() == "Quitting time" {
+				err = nil
+				break
+			} else {
+				return
+			}
 		}
 	}
 
