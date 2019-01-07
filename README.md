@@ -20,7 +20,7 @@ First make sure you have `gpg`, `git`, and `vim` installed:
 $ sudo apt-get install gpg git vim
 ```
 
-Then you can install gojot using `pip`:
+Then you can install gojot using `go get`:
 
 ``` sourceCode
 $ go get github.com/schollz/gojot
